@@ -1,0 +1,33 @@
+@{block #content}
+
+<h1>MultipleFileUpload - form control</h1>
+
+<p>
+    Je formulářový prvek, který umožňuje v kompatibilních prohlížečích vybrat soubory při uploadu na server na 1 kliknutí.
+</p>
+
+<h2>Dokumentace</h2>
+<p>
+    Dokumentaci najdete na stránce: <a href="http://nettephp.com/cs/extras/multiplefileupload" target="_BLANK">http://nettephp.com/cs/extras/multiplefileupload</a>.
+</p>
+
+<h2>Živý příklad</h2>
+<p>
+    Zde si můžete vyzkoušet jak se MultipleFileUpload chová.
+</p>
+<h3>Validace v příkladu</h3>
+<p>
+    Textové políčko musí být vyplněno.
+    Upload nesmí být prázdný.
+    Upload - všechny soubory dohromady musí mít méně než 100kb.
+</p>
+{snippet form}
+  {ifset $values}
+      <h2>Data vrácená formulářem</h2>
+      {? Debug::dump($values); }
+  {else}
+      {widget form}
+  {/if}
+{/snippet}
+
+<a href="{link prekresliForm!}">Zpět!</a>

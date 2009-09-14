@@ -1,0 +1,14 @@
+<div class="ui-widget ui-widget-content ui-corner-all" style="padding: 5px;">
+    <table cellspacing="5">
+        {? for($i=1;$i<=5;$i++): }
+        <tr>
+            <th>
+                {$i}. soubor
+            </th>
+            <td>
+                {!$input}
+            </td>
+        </tr>
+        {? EndFor; }
+    </table>
+</div>

@@ -1,0 +1,65 @@
+<table cellpadding="0" cellspacing="0">
+    <tr>
+        <td>
+            <div id="{$uploadifyId}" class="uploadify"></div>
+        </td>
+        <td>
+            <span id="{$uploadifyId}ClearQueue" style="display: none;margin-left: 5px;" class="button" onclick="$('#'+{$uploadifyId}).uploadifyClearQueue();">Vymazat frontu</span>
+        </td>
+        <td id="{$uploadifyId}Count">
+            
+        </td>
+    </tr>
+</table>
+<div id="{$uploadifyId}-queue" class="ui-widget-content ui-corner-all" style="max-height: 300px;overflow:auto;display: none;margin-top: 5px;margin-bottom: 10px;"></div>
+<script type="text/JavaScript">
+    var queue = $("#{!$uploadifyId}-queue");
+    var uploadify = $("#{!$uploadifyId}");
+    var box = uploadify.parents("div.withJS");
+
+    // TODO: add this to stylesheet
+    $("span.button",box)
+        .addClass("ui-state-default ui-corner-all")
+        .css("cursor","pointer")
+        .css("padding","3px")
+        .css("font-size","12px")
+        .css("font-family","Constantia,Palatino,'palatino linotype',Georgia,'New York CE',utopia,serif");
+
+    uploadify.uploadify({
+        width: 70,
+        height: 22,
+        wmode: "transparent",
+        buttonImg: '{? echo Environment::expand("%baseUri%images/uploadifyButton.png")}',
+        uploader: '{? echo Environment::expand("%baseUri%swf/uploadify.allglyphs.swf")}',
+        cancelImg: '{? echo Environment::expand("%baseUri%images/cancel.png")}',
+        queueID: "{!$uploadifyId}-queue",
+        queueSizeLimit: {$maxFiles},
+        sizeLimit: {$sizeLimit},
+        script: {$backLink},
+        scriptData: {
+            token: {$token}
+        },
+        onInit: function(){
+            box.parent().find(".withoutJS").hide();
+        },
+        auto: false,
+        multi: true,
+        onComplete: function(event, ID, fileObj, response, data){
+            //alert("#" + {$uploadifyId} + ID);
+            jQuery("#" + {$uploadifyId} + ID).hide();
+            return false;
+        },
+        onSelectOnce: function(){
+            var queue = $("#"+$(this).attr("id")+"-queue");
+            $("#"+$(this).attr("id")+"ClearQueue").fadeIn(500);
+            queue.slideDown(1000,function(){
+                $("div.uploadifyQueueItem:first",queue).livequery(function(){
+                    $(this).animate({ marginTop:"0px"},200);
+                });
+            });
+            $("#"+$(this).attr("id")+"Count").text(uploadify.uploadifySettings("queueSize")+" vybraných souborů");
+            return false;
+        },
+        simUploadLimit: 1 // Please do not change. MultpleFileUpload is now not thread-safe
+    });
+</script>
