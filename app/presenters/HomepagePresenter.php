@@ -3,8 +3,7 @@
 /**
  * My Application
  *
- * @copyright  Copyright (c) 2009 John Doe
- * @package    MyApplication
+ * @copyright  Copyright (c) 2009 Jan Kuchař
  */
 
 
@@ -12,10 +11,9 @@
 /**
  * Homepage presenter.
  *
- * @author     John Doe
- * @package    MyApplication
+ * @author     Jan Kuchař
  */
-class HomepagePresenter extends BasePresenter
+class HomepagePresenter extends BasePresenters
 {
 
         public function actionDefault(){
