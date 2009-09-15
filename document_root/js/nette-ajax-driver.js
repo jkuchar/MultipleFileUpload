@@ -36,7 +36,7 @@ jQuery.ajaxSetup({
     error: jQuery.nette.error
 });
 
-$("a[href]").livequery("click",function(e){
+$("a[href].ajax").livequery("click",function(e){
     e.preventDefault();
     $.get($(this).attr("href"));
 })
