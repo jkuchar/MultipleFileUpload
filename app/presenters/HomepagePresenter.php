@@ -13,7 +13,7 @@
  *
  * @author     Jan Kuchař
  */
-class HomepagePresenter extends BasePresenters
+class HomepagePresenter extends BasePresenter
 {
 
         public function actionDefault(){
@@ -25,9 +25,12 @@ class HomepagePresenter extends BasePresenters
             $form->getElementPrototype()->class[] = "ajax";
             $form->addText("test","Textové políčko")
               ->addRule(Form::FILLED, "Textové políčko test musí být vyplněno!");
-            $form->addMultipleFileUpload("upload","Upload test")
+
+            // Uploadů můžete do formuláře samozdřejmě přidat více, ale zatím je docela nepříjemná validace a jedna chybka v JS
+            $form->addMultipleFileUpload("upload","Upload test (max 100kb)")
                 ->addRule("MultipleFileUpload::validateFilled","Musíte odeslat alespoň jeden soubor!")
-                ->addRule("MultipleFileUpload::validateFileSize","Soubory jsou dohromady moc veliké!",100*1024); // 1 KB
+                ->addRule("MultipleFileUpload::validateFileSize","Soubory jsou dohromady moc veliké!",100*1024);
+
             $form->addSubmit("odeslat", "Odeslat");
             $form->onSubmit[] = array($this,"onSubmit");
 
@@ -47,6 +50,8 @@ class HomepagePresenter extends BasePresenters
                 // $file je instance HttpUploadedFile
                 if($file->move(APP_DIR."/uploadData/".$file->getName()))
                     $this->flashMessage("Přesunut soubor ".$file->getName());
+
+                $file->contentType; // Toto zpracuje content-type, který při debug::dump potom uvidíme
             }
         }
 
