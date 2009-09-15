@@ -178,7 +178,9 @@ class MultipleFileUpload extends FileUpload {
         // Pokud všechno proběhlo ok a soubor byl odeslán z flashe
         if(self::isRequestFromFlash()) {
             echo "1";
-            throw new AbortException();
+            
+            // Voláno ještě před spustěním $application-run() -> abort exception by způsobilo akorát nezachycenou výjimku
+            die();
         }
 
         self::$filesProccessed = true;
