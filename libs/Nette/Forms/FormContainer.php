@@ -34,7 +34,7 @@ require_once dirname(__FILE__) . '/../Forms/INamingContainer.php';
  *
  * @property-read ArrayIterator $controls
  * @property-read Form $form
- * @property-read boold $valid
+ * @property-read bool $valid
  * @property   array $values
  */
 class FormContainer extends ComponentContainer implements ArrayAccess, INamingContainer

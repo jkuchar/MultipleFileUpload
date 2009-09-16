@@ -34,7 +34,7 @@ final class Framework
 
 	const VERSION = '0.9';
 
-	const REVISION = '8d0263b released on 2009-09-14';
+	const REVISION = '8d001dd released on 2009-09-15';
 
 	const PACKAGE = 'PHP 5.2';
 	/**#@-*/
