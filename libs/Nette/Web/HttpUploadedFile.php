@@ -17,6 +17,8 @@
  * @package    Nette\Web
  */
 
+/*namespace Nette\Web;*/
+
 
 
 require_once dirname(__FILE__) . '/../Object.php';
@@ -34,12 +36,12 @@ require_once dirname(__FILE__) . '/../Object.php';
  * @property-read string $contentType
  * @property-read int $size
  * @property-read string $temporaryFile
- * @property-read Image $image
+ * @property-read Nette\Image $image
  * @property-read int $error
  * @property-read array $imageSize
  * @property-read bool $ok
  */
-class HttpUploadedFile extends Object
+class HttpUploadedFile extends /*Nette\*/Object
 {
 	/* @var string */
 	private $name;
@@ -67,7 +69,7 @@ class HttpUploadedFile extends Object
 			}
 		}
 		//if (!is_uploaded_file($value['tmp_name'])) {
-			//throw new InvalidStateException("Filename '$value[tmp_name]' is not a valid uploaded file.");
+			//throw new /*\*/InvalidStateException("Filename '$value[tmp_name]' is not a valid uploaded file.");
 		//}
 		$this->name = $value['name'];
 		$this->size = $value['size'];
@@ -174,18 +176,32 @@ class HttpUploadedFile extends Object
 	 * Move uploaded file to new location.
 	 * @param  string
 	 * @return bool
+         *
+         * @author David Grudl, Jan Kuchar
+         * @link http://forum.nettephp.com/cs/2566-httpuploadedfile-bug-pri-safe-mode-nema-opravneni-pri-presunu-souboru
 	 */
-	public function move($dest)
-	{
-		@unlink($dest); // needed in PHP < 5.3 & Windows; intentionally @
-		if (rename($this->tmpName, $dest)) {
-			$this->tmpName = $dest;
-			return TRUE;
+        public function move($dest)
+        {
+                if (move_uploaded_file($this->tmpName, $dest)) {
+                        $this->tmpName = $dest;
+                        return TRUE;
 
-		} else {
-			return FALSE;
-		}
-	}
+                } else {
+                        @unlink($dest); // needed in PHP < 5.3 & Windows; intentionally @
+                        if(rename($this->tmpName, $dest)) {
+                                $this->tmpName = $dest;
+                                return TRUE;
+
+                        } else {
+                                if(copy($this->tmpName, $dest)){
+                                    unlink($this->tmpName);
+                                    $this->tmpName = $dest;
+                                    return TRUE;
+                                }
+                                return FALSE;
+                        }
+                }
+        }
 
 
 
@@ -202,11 +218,11 @@ class HttpUploadedFile extends Object
 
 	/**
 	 * Returns the image.
-	 * @return Image
+	 * @return Nette\Image
 	 */
 	public function getImage()
 	{
-		return Image::fromFile($this->tmpName);
+		return /*Nette\*/Image::fromFile($this->tmpName);
 	}
 
 
