@@ -19,6 +19,8 @@
 
 
 
+
+
 require_once dirname(__FILE__) . '/Object.php';
 
 
@@ -214,7 +216,7 @@ class Image extends Object
 	/**
 	 * Sets image resource.
 	 * @param  resource
-	 * @return void
+	 * @return Image  provides a fluent interface
 	 */
 	protected function setImageResource($image)
 	{
@@ -222,6 +224,7 @@ class Image extends Object
 			throw new InvalidArgumentException('Image is not valid.');
 		}
 		$this->image = $image;
+		return $this;
 	}
 
 
@@ -503,7 +506,8 @@ class Image extends Object
 			}
 			array_unshift($args, $this->getImageResource());
 
-			return call_user_func_array($function, $args);
+			$res = call_user_func_array($function, $args);
+			return is_resource($res) ? new self($res) : $res;
 		}
 
 		return parent::__call($name, $args);

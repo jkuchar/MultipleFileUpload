@@ -19,6 +19,8 @@
 
 
 
+
+
 require_once dirname(__FILE__) . '/../Object.php';
 
 
@@ -230,8 +232,8 @@ class Html extends Object implements ArrayAccess, Countable, IteratorAggregate
 	/**
 	 * Sets element's HTML content.
 	 * @param  string
-	 * @throws InvalidArgumentException
 	 * @return Html  provides a fluent interface
+	 * @throws InvalidArgumentException
 	 */
 	final public function setHtml($html)
 	{
@@ -271,8 +273,8 @@ class Html extends Object implements ArrayAccess, Countable, IteratorAggregate
 	/**
 	 * Sets element's textual content.
 	 * @param  string
-	 * @throws InvalidArgumentException
 	 * @return Html  provides a fluent interface
+	 * @throws InvalidArgumentException
 	 */
 	final public function setText($text)
 	{
@@ -586,6 +588,9 @@ class Html extends Object implements ArrayAccess, Countable, IteratorAggregate
 	}
 
 }
+
+
+
 
 
 

@@ -19,6 +19,8 @@
 
 
 
+
+
 /**
  * Standard template run-time helpers shipped with Nette Framework.
  *

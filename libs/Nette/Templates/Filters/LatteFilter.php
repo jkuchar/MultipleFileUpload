@@ -19,6 +19,8 @@
 
 
 
+
+
 require_once dirname(__FILE__) . '/../../Object.php';
 
 
@@ -76,11 +78,12 @@ class LatteFilter extends Object
 	/**
 	 * Sets a macro handler.
 	 * @param  ILatteHandler
-	 * @return void
+	 * @return LatteFilter  provides a fluent interface
 	 */
 	public function setHandler($handler)
 	{
 		$this->handler = $handler;
+		return $this;
 	}
 
 
@@ -413,7 +416,7 @@ class LatteFilter extends Object
 	 * Changes macro delimiters.
 	 * @param  string  left regular expression
 	 * @param  string  right regular expression
-	 * @return void
+	 * @return LatteFilter  provides a fluent interface
 	 */
 	public function setDelimiters($left, $right)
 	{
@@ -424,6 +427,7 @@ class LatteFilter extends Object
 			' . $right . '
 			(?P<newline>[\ \t]*(?=\r|\n))?
 		';
+		return $this;
 	}
 
 

@@ -15,12 +15,6 @@
 <p>
     Zde si můžete vyzkoušet jak se MultipleFileUpload chová.
 </p>
-<h3>Validace v příkladu</h3>
-<p>
-    Textové políčko musí být vyplněno.
-    Upload nesmí být prázdný.
-    Upload - všechny soubory dohromady musí mít méně než 100kb.
-</p>
 
 {snippet form}
   {ifset $values}
@@ -30,5 +24,51 @@
       {widget form}
   {/if}
 {/snippet}
+
+<h3>Validace v příkladu</h3>
+<p>
+    Textové políčko musí být vyplněno.
+    Upload nesmí být prázdný.
+    Upload - všechny soubory dohromady musí mít méně než 100kb.
+</p>
+
+<h2>Informace o serveru</h2>
+<table cellpadding="5" cellspacing="2" border="2" class="server">
+    <tr>
+        <th>
+            Safe mode
+        </th>
+        <td>
+            {? if(ini_get("safe_mode")) echo "ano"; else echo "ne"; }
+        </td>
+    </tr>
+    
+    <tr>
+        <th>
+            open_basedir
+        </th>
+        <td>
+            {? $data = ini_get("open_basedir"); if($data) echo $data; else echo "<i>bez omezení</i>"; }
+        </td>
+    </tr>
+    
+    <tr>
+        <th>
+            Maximální velikost POST požadavku
+        </th>
+        <td>
+            {? echo ini_get("post_max_size")}
+        </td>
+    </tr>
+    
+    <tr>
+        <th>
+            Maximální velikost odesílaných souborů
+        </th>
+        <td>
+            {? echo ini_get("upload_max_filesize")}
+        </td>
+    </tr>
+</table>
 
 <a href="{link prekresliForm!}" class="ajax">Zpět!</a>

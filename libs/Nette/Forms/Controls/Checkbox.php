@@ -19,6 +19,8 @@
 
 
 
+
+
 require_once dirname(__FILE__) . '/../../Forms/Controls/FormControl.php';
 
 
@@ -48,11 +50,12 @@ class Checkbox extends FormControl
 	/**
 	 * Sets control's value.
 	 * @param  bool
-	 * @return void
+	 * @return Checkbox  provides a fluent interface
 	 */
 	public function setValue($value)
 	{
 		$this->value = is_scalar($value) ? (bool) $value : FALSE;
+		return $this;
 	}
 
 

@@ -19,6 +19,8 @@
 
 
 
+
+
 require_once dirname(__FILE__) . '/../Security/IAuthorizator.php';
 
 require_once dirname(__FILE__) . '/../Object.php';
@@ -542,7 +544,7 @@ class Permission extends Object implements IAuthorizator
 	 * @param  string|array|Permission::ALL  privileges
 	 * @param  IPermissionAssertion assertion
 	 * @throws InvalidStateException
-	 * @return void
+	 * @return Permission  provides a fluent interface
 	 */
 	protected function setRule($toAdd, $type, $roles, $resources, $privileges, IPermissionAssertion $assertion = NULL)
 	{
@@ -636,6 +638,7 @@ class Permission extends Object implements IAuthorizator
 				}
 			}
 		}
+		return $this;
 	}
 
 

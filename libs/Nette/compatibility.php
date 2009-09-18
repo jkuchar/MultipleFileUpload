@@ -30,6 +30,7 @@ if (version_compare(PHP_VERSION, '5.2.0', '<')) {
 
 
 
+
 /**
  * Fix for class::method callback in PHP < 5.2.2
  */

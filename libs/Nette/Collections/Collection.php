@@ -19,6 +19,10 @@
 
 
 
+
+
+
+
 require_once dirname(__FILE__) . '/../Collections/ICollection.php';
 
 
@@ -247,11 +251,12 @@ abstract class Collection extends ArrayObject implements ICollection
 	/**
 	 * Protected exchangeArray().
 	 * @param  array  new array
-	 * @return void
+	 * @return Collection  provides a fluent interface
 	 */
 	protected function setArray($array)
 	{
 		parent::exchangeArray($array);
+		return $this;
 	}
 
 

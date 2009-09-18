@@ -19,6 +19,8 @@
 
 
 
+
+
 require_once dirname(__FILE__) . '/../Object.php';
 
 require_once dirname(__FILE__) . '/../Web/IHttpResponse.php';
@@ -58,7 +60,7 @@ final class HttpResponse extends Object implements IHttpResponse
 	/**
 	 * Sets HTTP response code.
 	 * @param  int
-	 * @return void
+	 * @return HttpResponse  provides a fluent interface
 	 * @throws InvalidArgumentException  if code is invalid
 	 * @throws InvalidStateException  if HTTP headers have been sent
 	 */
@@ -84,6 +86,7 @@ final class HttpResponse extends Object implements IHttpResponse
 			$protocol = isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1';
 			header($protocol . ' ' . $code, TRUE, $code);
 		}
+		return $this;
 	}
 
 
@@ -103,7 +106,7 @@ final class HttpResponse extends Object implements IHttpResponse
 	 * Sends a HTTP header and replaces a previous one.
 	 * @param  string  header name
 	 * @param  string  header value
-	 * @return void
+	 * @return HttpResponse  provides a fluent interface
 	 * @throws InvalidStateException  if HTTP headers have been sent
 	 */
 	public function setHeader($name, $value)
@@ -114,6 +117,7 @@ final class HttpResponse extends Object implements IHttpResponse
 
 		
 		header($name . ': ' . $value, TRUE, $this->code);
+		return $this;
 	}
 
 
@@ -140,12 +144,13 @@ final class HttpResponse extends Object implements IHttpResponse
 	 * Sends a Content-type HTTP header.
 	 * @param  string  mime-type
 	 * @param  string  charset
-	 * @return void
+	 * @return HttpResponse  provides a fluent interface
 	 * @throws InvalidStateException  if HTTP headers have been sent
 	 */
 	public function setContentType($type, $charset = NULL)
 	{
 		$this->setHeader('Content-Type', $type . ($charset ? '; charset=' . $charset : ''));
+		return $this;
 	}
 
 
@@ -263,7 +268,9 @@ final class HttpResponse extends Object implements IHttpResponse
 	 */
 	public function enableCompression()
 	{
-		if (headers_sent()) return FALSE;
+		if (headers_sent()) {
+			return FALSE;
+		}
 
 		if ($this->getHeader('Content-Encoding') !== NULL) {
 			return FALSE; // called twice
@@ -278,7 +285,7 @@ final class HttpResponse extends Object implements IHttpResponse
 			ini_set('zlib.output_compression', 'Off');
 			ini_set('zlib.output_compression_level', '6');
 		}
-		ob_start('ob_gzhandler');
+		ob_start('ob_gzhandler', 1);
 		return TRUE;
 	}
 
@@ -310,7 +317,7 @@ final class HttpResponse extends Object implements IHttpResponse
 	 * @param  string
 	 * @param  string
 	 * @param  bool
-	 * @return void
+	 * @return HttpResponse  provides a fluent interface
 	 * @throws InvalidStateException  if HTTP headers have been sent
 	 */
 	public function setCookie($name, $value, $expire, $path = NULL, $domain = NULL, $secure = NULL)
@@ -335,6 +342,7 @@ final class HttpResponse extends Object implements IHttpResponse
 			$secure === NULL ? $this->cookieSecure : (bool) $secure,
 			TRUE // added in PHP 5.2.0.
 		);
+		return $this;
 	}
 
 

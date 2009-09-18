@@ -19,6 +19,8 @@
 
 
 
+
+
 require_once dirname(__FILE__) . '/../../Forms/Controls/Button.php';
 
 require_once dirname(__FILE__) . '/../../Forms/ISubmitterControl.php';
@@ -60,17 +62,19 @@ class SubmitButton extends Button implements ISubmitterControl
 
 
 	/**
-	 * Sets control's value.
+	 * Sets 'pressed' indicator.
 	 * @param  bool
-	 * @return void
+	 * @return SubmitButton  provides a fluent interface
 	 */
 	public function setValue($value)
 	{
-		parent::setValue($value);
+		$this->value = is_scalar($value) && (bool) $value;
 		$form = $this->getForm();
-		if ($this->isSubmittedBy() || !is_object($form->isSubmitted())) {
+		if ($this->value || !is_object($form->isSubmitted())) {
+			$this->value = TRUE;
 			$form->setSubmittedBy($this);
 		}
+		return $this;
 	}
 
 
@@ -81,7 +85,7 @@ class SubmitButton extends Button implements ISubmitterControl
 	 */
 	public function isSubmittedBy()
 	{
-		return (bool) $this->value;
+		return $this->getForm()->isSubmitted() === $this;
 	}
 
 

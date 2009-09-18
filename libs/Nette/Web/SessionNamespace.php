@@ -19,6 +19,8 @@
 
 
 
+
+
 require_once dirname(__FILE__) . '/../Object.php';
 
 
@@ -183,7 +185,7 @@ final class SessionNamespace extends Object implements IteratorAggregate, ArrayA
 	 * Sets the expiration of the namespace or specific variables.
 	 * @param  mixed   time in seconds, value 0 means "until the browser is closed"
 	 * @param  mixed   optional list of variables / single variable to expire
-	 * @return void
+	 * @return SessionNamespace  provides a fluent interface
 	 */
 	public function setExpiration($seconds, $variables = NULL)
 	{
@@ -212,6 +214,7 @@ final class SessionNamespace extends Object implements IteratorAggregate, ArrayA
 		} else {
 			$this->meta['EXP'][$variables] = array($seconds, $whenBrowserIsClosed);
 		}
+		return $this;
 	}
 
 

@@ -24,6 +24,15 @@ div.flash {
 	margin: 1em 0;
 }
 
+table.server th {
+	background: #FFF9D7;
+        text-align: right;
+}
+
+table.server td {
+        text-align: left;
+}
+
 ul.error{
         color: red;
         font-weight: bold;

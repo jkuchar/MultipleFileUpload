@@ -19,6 +19,8 @@
 
 
 
+
+
 /**
  * Standard template compile-time filters shipped with Nette Framework.
  *

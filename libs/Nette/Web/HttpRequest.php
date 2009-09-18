@@ -19,6 +19,8 @@
 
 
 
+
+
 require_once dirname(__FILE__) . '/../Object.php';
 
 require_once dirname(__FILE__) . '/../Web/IHttpRequest.php';
@@ -101,7 +103,7 @@ class HttpRequest extends Object implements IHttpRequest
 	/**
 	 * Sets URL object.
 	 * @param  UriScript
-	 * @return void
+	 * @return HttpRequest  provides a fluent interface
 	 */
 	public function setUri(UriScript $uri)
 	{
@@ -109,6 +111,7 @@ class HttpRequest extends Object implements IHttpRequest
 		$this->query = NULL;
 		$this->uri->canonicalize();
 		$this->uri->freeze();
+		return $this;
 	}
 
 
@@ -417,7 +420,7 @@ class HttpRequest extends Object implements IHttpRequest
 	 * Recursively converts and checks encoding.
 	 * @param  array
 	 * @param  string
-	 * @return void
+	 * @return HttpRequest  provides a fluent interface
 	 */
 	public function setEncoding($encoding)
 	{
@@ -425,6 +428,7 @@ class HttpRequest extends Object implements IHttpRequest
 			$this->encoding = $encoding;
 			$this->query = $this->post = $this->cookies = $this->files = NULL; // reinitialization required
 		}
+		return $this;
 	}
 
 

@@ -19,6 +19,8 @@
 
 
 
+
+
 require_once dirname(__FILE__) . '/../Object.php';
 
 
@@ -73,11 +75,12 @@ class Link extends Object
 	 * Changes link parameter.
 	 * @param  string
 	 * @param  mixed
-	 * @return void
+	 * @return Link  provides a fluent interface
 	 */
 	public function setParam($key, $value)
 	{
 		$this->params[$key] = $value;
+		return $this;
 	}
 
 

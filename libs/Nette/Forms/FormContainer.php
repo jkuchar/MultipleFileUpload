@@ -19,6 +19,8 @@
 
 
 
+
+
 require_once dirname(__FILE__) . '/../ComponentContainer.php';
 
 require_once dirname(__FILE__) . '/../Forms/INamingContainer.php';
@@ -55,13 +57,14 @@ class FormContainer extends ComponentContainer implements ArrayAccess, INamingCo
 	 * Fill-in with default values.
 	 * @param  array|Traversable  values used to fill the form
 	 * @param  bool     erase other default values?
-	 * @return void
+	 * @return FormContainer  provides a fluent interface
 	 */
 	public function setDefaults($values, $erase = FALSE)
 	{
 		if (!$this->getForm()->isSubmitted()) {
 			$this->setValues($values, $erase);
 		}
+		return $this;
 	}
 
 
@@ -70,7 +73,7 @@ class FormContainer extends ComponentContainer implements ArrayAccess, INamingCo
 	 * Fill-in with values.
 	 * @param  array|Traversable  values used to fill the form
 	 * @param  bool     erase other controls?
-	 * @return void
+	 * @return FormContainer  provides a fluent interface
 	 */
 	public function setValues($values, $erase = FALSE)
 	{
@@ -105,6 +108,7 @@ class FormContainer extends ComponentContainer implements ArrayAccess, INamingCo
 				}
 			}
 		}
+		return $this;
 	}
 
 
@@ -176,11 +180,12 @@ class FormContainer extends ComponentContainer implements ArrayAccess, INamingCo
 
 	/**
 	 * @param  FormGroup
-	 * @return void
+	 * @return FormContainer  provides a fluent interface
 	 */
 	public function setCurrentGroup(FormGroup $group = NULL)
 	{
 		$this->currentGroup = $group;
+		return $this;
 	}
 
 

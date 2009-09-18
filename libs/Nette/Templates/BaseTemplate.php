@@ -19,6 +19,8 @@
 
 
 
+
+
 require_once dirname(__FILE__) . '/../Object.php';
 
 require_once dirname(__FILE__) . '/../Templates/ITemplate.php';
@@ -236,11 +238,12 @@ abstract class BaseTemplate extends Object implements ITemplate
 	/**
 	 * Sets translate adapter.
 	 * @param  ITranslator
-	 * @return void
+	 * @return BaseTemplate  provides a fluent interface
 	 */
 	public function setTranslator(ITranslator $translator = NULL)
 	{
 		$this->registerHelper('translate', $translator === NULL ? NULL : array($translator, 'translate'));
+		return $this;
 	}
 
 
@@ -269,11 +272,12 @@ abstract class BaseTemplate extends Object implements ITemplate
 	/**
 	 * Sets all parameters.
 	 * @param  array
-	 * @return void
+	 * @return BaseTemplate  provides a fluent interface
 	 */
 	public function setParams(array $params)
 	{
 		$this->params = $params;
+		return $this;
 	}
 
 

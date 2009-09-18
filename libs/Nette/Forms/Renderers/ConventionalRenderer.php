@@ -19,6 +19,10 @@
 
 
 
+
+
+
+
 require_once dirname(__FILE__) . '/../../Object.php';
 
 require_once dirname(__FILE__) . '/../../Forms/IFormRenderer.php';
@@ -172,11 +176,12 @@ class ConventionalRenderer extends Object implements IFormRenderer
 	/**
 	 * Sets JavaScript handler.
 	 * @param  object
-	 * @return void
+	 * @return ConventionalRenderer  provides a fluent interface
 	 */
 	public function setClientScript($clientScript = NULL)
 	{
 		$this->clientScript = $clientScript;
+		return $this;
 	}
 
 
@@ -240,7 +245,7 @@ class ConventionalRenderer extends Object implements IFormRenderer
 			$el->action = $uri[0];
 			$s = '';
 			if (isset($uri[1])) {
-				foreach (explode('&', $uri[1]) as $param) {
+				foreach (preg_split('#[;&]#', $uri[1]) as $param) {
 					$parts = explode('=', $param, 2);
 					$name = urldecode($parts[0]);
 					if (!isset($this->form[$name])) {

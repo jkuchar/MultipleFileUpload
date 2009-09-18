@@ -19,6 +19,8 @@
 
 
 
+
+
 require_once dirname(__FILE__) . '/../../Forms/Controls/FormControl.php';
 
 
@@ -40,7 +42,6 @@ class Button extends FormControl
 	{
 		parent::__construct($caption);
 		$this->control->type = 'button';
-		$this->value = FALSE;
 	}
 
 
@@ -52,18 +53,6 @@ class Button extends FormControl
 	public function getLabel($caption = NULL)
 	{
 		return NULL;
-	}
-
-
-
-	/**
-	 * Sets 'pressed' indicator.
-	 * @param  bool
-	 * @return void
-	 */
-	public function setValue($value)
-	{
-		$this->value = is_scalar($value) ? (bool) $value : FALSE;
 	}
 
 

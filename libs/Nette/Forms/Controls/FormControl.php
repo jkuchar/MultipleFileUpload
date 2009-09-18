@@ -19,6 +19,8 @@
 
 
 
+
+
 require_once dirname(__FILE__) . '/../../Component.php';
 
 require_once dirname(__FILE__) . '/../../Forms/IFormControl.php';
@@ -121,14 +123,14 @@ abstract class FormControl extends Component implements IFormControl
 	 * Overloaded parent setter. This method checks for invalid control name.
 	 * @param  IComponentContainer
 	 * @param  string
-	 * @return void
+	 * @return FormControl  provides a fluent interface
 	 */
 	public function setParent(IComponentContainer $parent = NULL, $name = NULL)
 	{
 		if ($name === 'submit') {
 			throw new InvalidArgumentException("Name 'submit' is not allowed due to JavaScript limitations.");
 		}
-		parent::setParent($parent, $name);
+		return parent::setParent($parent, $name);
 	}
 
 
@@ -170,11 +172,12 @@ abstract class FormControl extends Component implements IFormControl
 	/**
 	 * Changes control's HTML id.
 	 * @param  string new ID, or FALSE or NULL
-	 * @return void
+	 * @return FormControl  provides a fluent interface
 	 */
 	public function setHtmlId($id)
 	{
 		$this->htmlId = $id;
+		return $this;
 	}
 
 
@@ -253,11 +256,12 @@ abstract class FormControl extends Component implements IFormControl
 	/**
 	 * Sets translate adapter.
 	 * @param  ITranslator
-	 * @return void
+	 * @return FormControl  provides a fluent interface
 	 */
 	public function setTranslator(ITranslator $translator = NULL)
 	{
 		$this->translator = $translator;
+		return $this;
 	}
 
 
@@ -296,11 +300,12 @@ abstract class FormControl extends Component implements IFormControl
 	/**
 	 * Sets control's value.
 	 * @param  mixed
-	 * @return void
+	 * @return FormControl  provides a fluent interface
 	 */
 	public function setValue($value)
 	{
 		$this->value = $value;
+		return $this;
 	}
 
 

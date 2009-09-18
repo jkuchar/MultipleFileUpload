@@ -88,12 +88,13 @@ final class PresenterRequest extends FreezableObject
 	/**
 	 * Sets the presenter name.
 	 * @param  string
-	 * @return void
+	 * @return PresenterRequest  provides a fluent interface
 	 */
 	public function setPresenterName($name)
 	{
 		$this->updating();
 		$this->name = $name;
+		return $this;
 	}
 
 
@@ -112,12 +113,13 @@ final class PresenterRequest extends FreezableObject
 	/**
 	 * Sets variables provided to the presenter.
 	 * @param  array
-	 * @return void
+	 * @return PresenterRequest  provides a fluent interface
 	 */
 	public function setParams(array $params)
 	{
 		$this->updating();
 		$this->params = $params;
+		return $this;
 	}
 
 
@@ -136,12 +138,13 @@ final class PresenterRequest extends FreezableObject
 	/**
 	 * Sets variables provided to the presenter via POST.
 	 * @param  array
-	 * @return void
+	 * @return PresenterRequest  provides a fluent interface
 	 */
 	public function setPost(array $params)
 	{
 		$this->updating();
 		$this->post = $params;
+		return $this;
 	}
 
 
@@ -160,12 +163,13 @@ final class PresenterRequest extends FreezableObject
 	/**
 	 * Sets all uploaded files.
 	 * @param  array
-	 * @return void
+	 * @return PresenterRequest  provides a fluent interface
 	 */
 	public function setFiles(array $files)
 	{
 		$this->updating();
 		$this->files = $files;
+		return $this;
 	}
 
 
@@ -184,11 +188,23 @@ final class PresenterRequest extends FreezableObject
 	/**
 	 * Sets the method.
 	 * @param  string
-	 * @return void
+	 * @return PresenterRequest  provides a fluent interface
 	 */
 	public function setMethod($method)
 	{
 		$this->method = $method;
+		return $this;
+	}
+
+
+
+	/**
+	 * Returns the method.
+	 * @return string
+	 */
+	public function getMethod()
+	{
+		return $this->method;
 	}
 
 
@@ -220,12 +236,13 @@ final class PresenterRequest extends FreezableObject
 	 * Sets the flag.
 	 * @param  string
 	 * @param  bool
-	 * @return void
+	 * @return PresenterRequest  provides a fluent interface
 	 */
 	public function setFlag($flag, $value = TRUE)
 	{
 		$this->updating();
 		$this->flags[$flag] = (bool) $value;
+		return $this;
 	}
 
 

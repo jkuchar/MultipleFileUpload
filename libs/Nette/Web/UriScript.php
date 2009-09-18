@@ -19,6 +19,8 @@
 
 
 
+
+
 require_once dirname(__FILE__) . '/../Web/Uri.php';
 
 
@@ -62,12 +64,13 @@ class UriScript extends Uri
 	/**
 	 * Sets the script-path part of URI.
 	 * @param  string
-	 * @return void
+	 * @return UriScript  provides a fluent interface
 	 */
 	public function setScriptPath($value)
 	{
 		$this->updating();
 		$this->scriptPath = (string) $value;
+		return $this;
 	}
 
 

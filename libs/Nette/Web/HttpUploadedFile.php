@@ -17,7 +17,7 @@
  * @package    Nette\Web
  */
 
-/*namespace Nette\Web;*/
+
 
 
 
@@ -36,12 +36,12 @@ require_once dirname(__FILE__) . '/../Object.php';
  * @property-read string $contentType
  * @property-read int $size
  * @property-read string $temporaryFile
- * @property-read Nette\Image $image
+ * @property-read Image $image
  * @property-read int $error
  * @property-read array $imageSize
  * @property-read bool $ok
  */
-class HttpUploadedFile extends /*Nette\*/Object
+class HttpUploadedFile extends Object
 {
 	/* @var string */
 	private $name;
@@ -69,7 +69,7 @@ class HttpUploadedFile extends /*Nette\*/Object
 			}
 		}
 		//if (!is_uploaded_file($value['tmp_name'])) {
-			//throw new /*\*/InvalidStateException("Filename '$value[tmp_name]' is not a valid uploaded file.");
+			//throw new InvalidStateException("Filename '$value[tmp_name]' is not a valid uploaded file.");
 		//}
 		$this->name = $value['name'];
 		$this->size = $value['size'];
@@ -172,14 +172,14 @@ class HttpUploadedFile extends /*Nette\*/Object
 
 
 
-	/**
-	 * Move uploaded file to new location.
-	 * @param  string
-	 * @return bool
+        /**
+         * Move uploaded file to new location.
+         * @param  string
+         * @return bool
          *
          * @author David Grudl, Jan Kuchar
          * @link http://forum.nettephp.com/cs/2566-httpuploadedfile-bug-pri-safe-mode-nema-opravneni-pri-presunu-souboru
-	 */
+         */
         public function move($dest)
         {
                 if (move_uploaded_file($this->tmpName, $dest)) {
@@ -218,11 +218,11 @@ class HttpUploadedFile extends /*Nette\*/Object
 
 	/**
 	 * Returns the image.
-	 * @return Nette\Image
+	 * @return Image
 	 */
 	public function getImage()
 	{
-		return /*Nette\*/Image::fromFile($this->tmpName);
+		return Image::fromFile($this->tmpName);
 	}
 
 

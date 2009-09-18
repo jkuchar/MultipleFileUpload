@@ -19,6 +19,8 @@
 
 
 
+
+
 require_once dirname(__FILE__) . '/../../Forms/FormContainer.php';
 
 require_once dirname(__FILE__) . '/../../Forms/IFormControl.php';
@@ -59,7 +61,7 @@ class RepeaterControl extends FormContainer /*implements IFormControl*/
 	/**
 	 * Set value.
 	 * @param  mixed
-	 * @return void
+	 * @return RepeaterControl  provides a fluent interface
 	 */
 	public function setValue($value)
 	{
@@ -68,6 +70,7 @@ class RepeaterControl extends FormContainer /*implements IFormControl*/
 		} else {
 			$this->value = array();
 		}
+		return $this;
 	}
 
 

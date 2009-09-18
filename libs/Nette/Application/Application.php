@@ -19,6 +19,10 @@
 
 
 
+
+
+
+
 require_once dirname(__FILE__) . '/../Object.php';
 
 
@@ -60,7 +64,7 @@ class Application extends Object
 	public $onError;
 
 	/** @var array of string */
-	public $allowedMethods = array('GET', 'POST', 'HEAD');
+	public $allowedMethods = array('GET', 'POST', 'HEAD', 'PUT', 'DELETE');
 
 	/** @var array of PresenterRequest */
 	private $requests = array();
@@ -75,6 +79,7 @@ class Application extends Object
 
 	/**
 	 * Dispatch a HTTP request to a front controller.
+	 * @return void
 	 */
 	public function run()
 	{
@@ -95,7 +100,8 @@ class Application extends Object
 				$httpResponse->setCode(IHttpResponse::S501_NOT_IMPLEMENTED);
 				$httpResponse->setHeader('Allow', implode(',', $this->allowedMethods));
 				$method = htmlSpecialChars($method);
-				die("<h1>Method $method is not implemented</h1>");
+				echo "<h1>Method $method is not implemented</h1>";
+				return;
 			}
 		}
 
@@ -282,11 +288,12 @@ class Application extends Object
 	/**
 	 * Changes router.
 	 * @param  IRouter
-	 * @return void
+	 * @return Application  provides a fluent interface
 	 */
 	public function setRouter(IRouter $router)
 	{
 		$this->getServiceLocator()->addService('Nette\Application\IRouter', $router);
+		return $this;
 	}
 
 

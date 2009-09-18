@@ -19,6 +19,8 @@
 
 
 
+
+
 /**
  * The Nette Framework.
  *
@@ -32,9 +34,9 @@ final class Framework
 	/**#@+ Nette Framework version identification */
 	const NAME = 'Nette Framework';
 
-	const VERSION = '0.9';
+	const VERSION = '0.9.1';
 
-	const REVISION = '8d001dd released on 2009-09-15';
+	const REVISION = 'dc607f0 released on 2009-09-18';
 
 	const PACKAGE = 'PHP 5.2';
 	/**#@-*/

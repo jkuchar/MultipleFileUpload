@@ -19,6 +19,10 @@
 
 
 
+
+
+
+
 require_once dirname(__FILE__) . '/../Application/Control.php';
 
 require_once dirname(__FILE__) . '/../Application/IPresenter.php';
@@ -234,7 +238,7 @@ abstract class Presenter extends Control implements IPresenter
 			$this->phase = self::PHASE_SHUTDOWN;
 
 			// back compatibility for use terminate() instead of sendPayload()
-			if ($this->isAjax() && !($this->response instanceof ForwardingResponse) && (array) $this->payload) {
+			if ($this->isAjax() && !($this->response instanceof ForwardingResponse || $this->response instanceof JsonResponse) && (array) $this->payload) {
 				try { $this->sendPayload(); }
 				catch (AbortException $e) { }
 			}
@@ -421,11 +425,12 @@ abstract class Presenter extends Control implements IPresenter
 	/**
 	 * Changes current view. Any name is allowed.
 	 * @param  string
-	 * @return void
+	 * @return Presenter  provides a fluent interface
 	 */
 	public function setView($view)
 	{
 		$this->view = (string) $view;
+		return $this;
 	}
 
 
@@ -444,11 +449,12 @@ abstract class Presenter extends Control implements IPresenter
 	/**
 	 * Changes or disables layout.
 	 * @param  string|FALSE
-	 * @return void
+	 * @return Presenter  provides a fluent interface
 	 */
 	public function setLayout($layout)
 	{
 		$this->layout = (string) $layout;
+		return $this;
 	}
 
 
