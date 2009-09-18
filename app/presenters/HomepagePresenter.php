@@ -28,7 +28,7 @@ class HomepagePresenter extends BasePresenter
               ->addRule(Form::FILLED, "Textové políčko test musí být vyplněno!");*/
 
             // Uploadů můžete do formuláře samozdřejmě přidat více, ale zatím je docela nepříjemná validace a jedna chybka v JS
-            $form->addMultipleFileUpload("upload","Upload test (max 100kb)")
+            $form->addMultipleFileUpload("upload","Soubory")
                 ->addRule("MultipleFileUpload::validateFilled","Musíte odeslat alespoň jeden soubor!")
                 ->addRule("MultipleFileUpload::validateFileSize","Soubory jsou dohromady moc veliké!",100*1024);
 
