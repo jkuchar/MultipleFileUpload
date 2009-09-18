@@ -48,8 +48,11 @@ class HomepagePresenter extends BasePresenter
             // Přesumene uploadované soubory
             foreach($data["upload"] AS $file){
                 // $file je instance HttpUploadedFile
+
                 if($file->move(APP_DIR."/uploadData/".$file->getName()))
-                    $this->flashMessage("Přesunut soubor ".$file->getName());
+                    $this->flashMessage("Soubor ".$file->getName() . " byl úspěšně přesunut!");
+                else
+                    $this->flashMessage("Při přesouvání souboru ".$file->getName() . " nastala chyba! Pro více informací se podívejte do logů.");
 
                 $file->contentType; // Toto zpracuje content-type, který při debug::dump potom uvidíme
             }
