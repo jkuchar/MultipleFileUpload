@@ -23,8 +23,9 @@ class HomepagePresenter extends BasePresenter
         public function createComponentForm($name) {
             $form = new AppForm($this, $name);
             $form->getElementPrototype()->class[] = "ajax";
-            $form->addText("test","Textové políčko")
-              ->addRule(Form::FILLED, "Textové políčko test musí být vyplněno!");
+
+            /*$form->addText("test","Textové políčko")
+              ->addRule(Form::FILLED, "Textové políčko test musí být vyplněno!");*/
 
             // Uploadů můžete do formuláře samozdřejmě přidat více, ale zatím je docela nepříjemná validace a jedna chybka v JS
             $form->addMultipleFileUpload("upload","Upload test (max 100kb)")
