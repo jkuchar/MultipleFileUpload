@@ -112,7 +112,7 @@ class MultipleFileUpload extends FileUpload {
 
         // Vytvoříme složku a ověříme jestli je zapisovatelná
         if(!file_exists($dir))
-            mkdir($dir,777);
+            mkdir($dir,0777);
         if(!is_writable($dir))
             throw new InvalidStateException($dir." is not writable!");
 
@@ -202,6 +202,8 @@ class MultipleFileUpload extends FileUpload {
 
         //echo "cleaning...";
 
+
+        // Šílený mechanizmus, který si má řešit model a snad někdy taky bude
         $queues = $cache["queues"];
         if(is_array($queues)){
             foreach($queues AS $queueID => $true){
@@ -267,7 +269,7 @@ class MultipleFileUpload extends FileUpload {
      * @return string
      */
     static function getUniqueFilePath($token) {
-        return Environment::expand(self::$uploadFileDirectory."/".$token."-".uniqid()/*.".tmp"*/);
+        return Environment::expand(self::$uploadFileDirectory.DIRECTORY_SEPARATOR.$token."-".uniqid()/*.".tmp"*/);
     }
 
 
@@ -426,7 +428,7 @@ class MultipleFileUpload extends FileUpload {
     function createSectionWithoutJS(Html $input){
         $template = new Template;
         $template->registerFilter('Nette\Templates\CurlyBracketsFilter::invoke');
-        $template->setFile(dirname(__FILE__)."/MultipleFileUpload-withoutJS.phtml");
+        $template->setFile(dirname(__FILE__).DIRECTORY_SEPARATOR."MultipleFileUpload-withoutJS.phtml");
         $template->input = $input;
         return $template->__toString();
     }
