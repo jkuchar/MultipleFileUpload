@@ -446,7 +446,7 @@ class MultipleFileUpload extends FileUpload {
         $template->sizeLimit = self::parseIniSize(ini_get('upload_max_filesize'));
         $template->token = $this->getToken();
         $template->maxFiles = $this->maxFiles;
-        $template->backLink = $this->form->action;
+        $template->backLink = (string)$this->form->action;
         $template->uploadifyId = $uploadifyId;
         return $template->__toString();
     }
