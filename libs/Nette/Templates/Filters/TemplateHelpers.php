@@ -19,8 +19,6 @@
 
 
 
-
-
 /**
  * Standard template run-time helpers shipped with Nette Framework.
  *
@@ -236,6 +234,46 @@ final class TemplateHelpers
 			$bytes = $bytes / 1024;
 		}
 		return round($bytes, $precision) . ' ' . $unit;
+	}
+
+
+
+	/**
+	 * Returns array of string length.
+	 * @param  mixed
+	 * @return int
+	 */
+	public static function length($var)
+	{
+		return is_string($var) ? iconv_strlen($var, 'UTF-8') : count($var);
+	}
+
+
+
+	/**
+	 * Performs a search and replace.
+	 * @param  string
+	 * @param  string
+	 * @param  string
+	 * @return string
+	 */
+	public static function replace($subject, $search, $replacement = '')
+	{
+		return str_replace($search, $replacement, $subject);
+	}
+
+
+
+	/**
+	 * Performs a regular expression search and replace.
+	 * @param  string
+	 * @param  string
+	 * @param  string
+	 * @return string
+	 */
+	public static function replaceRe($subject, $pattern, $replacement = '')
+	{
+		return preg_replace($pattern, $replacement, $subject);
 	}
 
 

@@ -19,8 +19,6 @@
 
 
 
-
-
 require_once dirname(__FILE__) . '/../Object.php';
 
 require_once dirname(__FILE__) . '/../Loaders/LimitedScope.php';
@@ -51,7 +49,11 @@ abstract class AutoLoader extends Object
 	 */
 	final public static function load($type)
 	{
-		class_exists($type);
+		foreach (func_get_args() as $type) {
+			if (!class_exists($type)) {
+				throw new InvalidStateException("Unable to load class or interface '$type'.");
+			}
+		}
 	}
 
 

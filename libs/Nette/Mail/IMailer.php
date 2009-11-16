@@ -19,8 +19,6 @@
 
 
 
-
-
 /**
  * Mailer interface.
  *

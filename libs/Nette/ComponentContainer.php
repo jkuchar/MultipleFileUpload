@@ -19,8 +19,6 @@
 
 
 
-
-
 require_once dirname(__FILE__) . '/Component.php';
 
 require_once dirname(__FILE__) . '/IComponentContainer.php';
@@ -255,17 +253,14 @@ class ComponentContainer extends Component implements IComponentContainer
 	/**
 	 * Is container cloning now?
 	 * @return NULL|IComponent
-	 * @internal
+	 * @ignore internal
 	 */
-	public function isCloning()
+	public function _isCloning()
 	{
 		return $this->cloning;
 	}
 
 }
-
-
-
 
 
 

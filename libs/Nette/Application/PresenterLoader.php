@@ -19,8 +19,6 @@
 
 
 
-
-
 require_once dirname(__FILE__) . '/../Application/IPresenterLoader.php';
 
 
@@ -37,8 +35,21 @@ class PresenterLoader implements IPresenterLoader
 	/** @var bool */
 	public $caseSensitive = FALSE;
 
+	/** @var string */
+	private $baseDir;
+
 	/** @var array */
 	private $cache = array();
+
+
+
+	/**
+	 * @param  string
+	 */
+	public function __construct($baseDir)
+	{
+		$this->baseDir = $baseDir;
+	}
 
 
 
@@ -136,9 +147,8 @@ class PresenterLoader implements IPresenterLoader
 	 */
 	public function formatPresenterFile($presenter)
 	{
-		$presenter = str_replace(':', 'Module/', $presenter);
-		$presenter = Environment::getVariable('presentersDir') . '/' . $presenter . 'Presenter.php';
-		return $presenter;
+		$path = '/' . str_replace(':', 'Module/', $presenter);
+		return $this->baseDir . substr_replace($path, '/presenters', strrpos($path, '/'), 0) . 'Presenter.php';
 	}
 
 }

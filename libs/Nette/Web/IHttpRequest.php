@@ -19,8 +19,6 @@
 
 
 
-
-
 /**
  * IHttpRequest provides access scheme for request sent via HTTP.
  *

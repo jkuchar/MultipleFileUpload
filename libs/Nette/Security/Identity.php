@@ -19,8 +19,6 @@
 
 
 
-
-
 require_once dirname(__FILE__) . '/../Security/IIdentity.php';
 
 require_once dirname(__FILE__) . '/../FreezableObject.php';
@@ -115,7 +113,7 @@ class Identity extends FreezableObject implements IIdentity
 
 
 	/**
-	 * Returns an user data.
+	 * Returns a user data.
 	 * @return array
 	 */
 	public function getData()

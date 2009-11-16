@@ -19,8 +19,6 @@
 
 
 
-
-
 /**
  * Authorizator checks if a given role has authorization
  * to access a given resource.

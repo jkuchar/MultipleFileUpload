@@ -26,8 +26,6 @@
 
 
 
-
-
 if (!function_exists('_netteDebugPrintCode')) {
 
 /**
@@ -463,7 +461,6 @@ if (headers_sent()) {
 
 
 
-
 		<?php if (!empty($application)):?>
 		<?php _netteOpenPanel('Nette Application', TRUE) ?>
 			<h3>Requests</h3>
@@ -473,7 +470,6 @@ if (headers_sent()) {
 			<?php echo _netteDump($application->getPresenter()) ?>
 		<?php _netteClosePanel() ?>
 		<?php endif ?>
-
 
 
 
@@ -514,7 +510,6 @@ if (headers_sent()) {
 			</table>
 			<?php endif ?>
 		<?php _netteClosePanel() ?>
-
 
 
 

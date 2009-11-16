@@ -19,8 +19,6 @@
 
 
 
-
-
 require_once dirname(__FILE__) . '/../../Object.php';
 
 require_once dirname(__FILE__) . '/../../Application/IRouter.php';
@@ -39,7 +37,7 @@ class CliRouter extends Object implements IRouter
 	const PRESENTER_KEY = 'action';
 
 	/** @var array */
-	protected $defaults;
+	private $defaults;
 
 
 

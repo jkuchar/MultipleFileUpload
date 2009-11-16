@@ -19,8 +19,6 @@
 
 
 
-
-
 require_once dirname(__FILE__) . '/../Object.php';
 
 
@@ -588,9 +586,6 @@ class Html extends Object implements ArrayAccess, Countable, IteratorAggregate
 	}
 
 }
-
-
-
 
 
 

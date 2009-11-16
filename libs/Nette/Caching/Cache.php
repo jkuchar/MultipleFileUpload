@@ -19,8 +19,6 @@
 
 
 
-
-
 require_once dirname(__FILE__) . '/../Object.php';
 
 
@@ -49,7 +47,7 @@ class Cache extends Object implements ArrayAccess
 	/** @deprecated */
 	const REFRESH = 'sliding';
 
-	/** @private */
+	/** @ignore internal */
 	const NAMESPACE_SEPARATOR = "\x00";
 
 	/** @var ICacheStorage */

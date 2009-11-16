@@ -19,8 +19,6 @@
 
 
 
-
-
 /**
  * Instance iterator filter.
  *

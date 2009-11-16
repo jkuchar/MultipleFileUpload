@@ -19,8 +19,6 @@
 
 
 
-
-
 require_once dirname(__FILE__) . '/../Object.php';
 
 
@@ -34,6 +32,7 @@ require_once dirname(__FILE__) . '/../Object.php';
  */
 final class Rules extends Object implements IteratorAggregate
 {
+	/** @ignore internal */
 	const VALIDATE_PREFIX = 'validate';
 
 	/** @var array */

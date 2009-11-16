@@ -19,8 +19,6 @@
 
 
 
-
-
 /**
  * Adapter for reading and writing configuration files.
  *

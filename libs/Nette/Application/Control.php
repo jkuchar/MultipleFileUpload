@@ -19,8 +19,6 @@
 
 
 
-
-
 require_once dirname(__FILE__) . '/../Application/PresenterComponent.php';
 
 require_once dirname(__FILE__) . '/../Application/IRenderable.php';
@@ -82,6 +80,7 @@ abstract class Control extends PresenterComponent implements IPartiallyRenderabl
 		$template->control = $this;
 		$template->presenter = $presenter;
 		$template->baseUri = Environment::getVariable('baseUri');
+		$template->basePath = rtrim($template->baseUri, '/');
 
 		// flash message
 		if ($presenter !== NULL && $presenter->hasFlashSession()) {
@@ -97,6 +96,10 @@ abstract class Control extends PresenterComponent implements IPartiallyRenderabl
 		$template->registerHelper('escapeUrl', 'rawurlencode');
 		$template->registerHelper('stripTags', 'strip_tags');
 		$template->registerHelper('nl2br', 'nl2br');
+		$template->registerHelper('substr', 'iconv_substr');
+		$template->registerHelper('repeat', 'str_repeat');
+		$template->registerHelper('implode', 'implode');
+		$template->registerHelper('number', 'number_format');
 		$template->registerHelperLoader('Nette\Templates\TemplateHelpers::loader');
 
 		return $template;
@@ -219,7 +222,7 @@ abstract class Control extends PresenterComponent implements IPartiallyRenderabl
 	public function getSnippetId($name = NULL)
 	{
 		// HTML 4 ID & NAME: [A-Za-z][A-Za-z0-9:_.-]*
-		return $this->getUniqueId() . '__' . $name;
+		return 'snippet-' . $this->getUniqueId() . '-' . $name;
 	}
 
 }

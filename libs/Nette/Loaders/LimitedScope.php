@@ -19,8 +19,6 @@
 
 
 
-
-
 /**
  * Limited scope for PHP code evaluation and script including.
  *

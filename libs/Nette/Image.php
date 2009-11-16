@@ -19,8 +19,6 @@
 
 
 
-
-
 require_once dirname(__FILE__) . '/Object.php';
 
 
@@ -45,10 +43,14 @@ require_once dirname(__FILE__) . '/Object.php';
  */
 class Image extends Object
 {
-	/**#@+ resizing flags {@link resize()} */
+	/** {@link resize()} allows enlarging image (it only shrinks images by default) */
 	const ENLARGE = 1;
+
+	/** {@link resize()} will ignore aspect ratio */
 	const STRETCH = 2;
-	/**#@-*/
+
+	/** {@link resize()} fills (and even overflows) given area */
+	const FILL = 4;
 
 	/**#@+ @int image types {@link send()} */
 	const JPEG = IMAGETYPE_JPEG;
@@ -131,6 +133,10 @@ class Image extends Object
 	 */
 	public static function fromString($s, & $format = NULL)
 	{
+		if (!extension_loaded('gd')) {
+			throw new Exception("PHP extension GD is not loaded.");
+		}
+
 		if (strncmp($s, "\xff\xd8", 2) === 0) {
 			$format = self::JPEG;
 
@@ -309,6 +315,10 @@ class Image extends Object
 				$scale[] = $newHeight / $height;
 			}
 
+			if ($flags & self::FILL) {
+				$scale = array(max($scale));
+			}
+
 			if (($flags & self::ENLARGE) === 0) {
 				$scale[] = 1;
 			}
@@ -325,14 +335,22 @@ class Image extends Object
 
 	/**
 	 * Crops image.
-	 * @param  int    x-coordinate
-	 * @param  int    y-coordinate
+	 * @param  mixed  x-offset in pixels or percent
+	 * @param  mixed  y-offset in pixels or percent
 	 * @param  int    width
 	 * @param  int    height
 	 * @return Image  provides a fluent interface
 	 */
 	public function crop($left, $top, $width, $height)
 	{
+		if (substr($left, -1) === '%') {
+			$left = round(($this->getWidth() - $width) / 100 * $left);
+		}
+
+		if (substr($top, -1) === '%') {
+			$top = round(($this->getHeight() - $height) / 100 * $top);
+		}
+
 		$left = max(0, (int) $left);
 		$top = max(0, (int) $top);
 		$width = min((int) $width, $this->getWidth() - $left);

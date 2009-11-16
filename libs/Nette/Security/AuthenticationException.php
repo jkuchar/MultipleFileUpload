@@ -19,8 +19,6 @@
 
 
 
-
-
 /**
  * Authentication exception.
  *

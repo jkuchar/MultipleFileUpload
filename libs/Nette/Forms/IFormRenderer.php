@@ -19,8 +19,6 @@
 
 
 
-
-
 /**
  * Defines method that must implement form rendered.
  *

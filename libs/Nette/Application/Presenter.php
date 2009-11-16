@@ -19,10 +19,6 @@
 
 
 
-
-
-
-
 require_once dirname(__FILE__) . '/../Application/Control.php';
 
 require_once dirname(__FILE__) . '/../Application/IPresenter.php';
@@ -60,7 +56,7 @@ abstract class Presenter extends Control implements IPresenter
 	const INVALID_LINK_EXCEPTION = 3;
 	/**#@-*/
 
-	/**#@+ special parameter key */
+	/**#@+ @ignore internal special parameter key */
 	const SIGNAL_KEY = 'do';
 	const ACTION_KEY = 'action';
 	const FLASH_KEY = '_fid';
@@ -77,6 +73,9 @@ abstract class Presenter extends Control implements IPresenter
 
 	/** @var bool (experimental) */
 	public $oldLayoutMode = TRUE;
+
+	/** @var bool (experimental) */
+	public $oldModuleMode = TRUE;
 
 	/** @var PresenterRequest */
 	private $request;
@@ -109,7 +108,7 @@ abstract class Presenter extends Control implements IPresenter
 	private $view;
 
 	/** @var string */
-	private $layout = 'layout';
+	private $layout;
 
 	/** @var stdClass */
 	private $payload;
@@ -237,11 +236,17 @@ abstract class Presenter extends Control implements IPresenter
 			// PHASE 4: SHUTDOWN
 			$this->phase = self::PHASE_SHUTDOWN;
 
-			// back compatibility for use terminate() instead of sendPayload()
-			if ($this->isAjax() && !($this->response instanceof ForwardingResponse || $this->response instanceof JsonResponse) && (array) $this->payload) {
-				try { $this->sendPayload(); }
-				catch (AbortException $e) { }
-			}
+			if ($this->isAjax()) try {
+				$hasPayload = count((array) $this->payload) > 1; // ignore 'state'
+				if ($this->response instanceof RenderResponse && ($this->isControlInvalid() || $hasPayload)) { // snippets - TODO
+					SnippetHelper::$outputAllowed = FALSE;
+					$this->response->send();
+					$this->sendPayload();
+
+				} elseif (!$this->response && $hasPayload) { // back compatibility for use terminate() instead of sendPayload()
+					$this->sendPayload();
+				}
+			} catch (AbortException $e) { }
 
 			if ($this->hasFlashSession()) {
 				$this->getFlashSession()->setExpiration($this->response instanceof RedirectingResponse ? '+ 30 seconds': '+ 3 seconds');
@@ -453,7 +458,7 @@ abstract class Presenter extends Control implements IPresenter
 	 */
 	public function setLayout($layout)
 	{
-		$this->layout = (string) $layout;
+		$this->layout = $layout === FALSE ? FALSE : (string) $layout;
 		return $this;
 	}
 
@@ -481,30 +486,31 @@ abstract class Presenter extends Control implements IPresenter
 			}
 
 			if (!$template->getFile()) {
-				$file = str_replace(Environment::getVariable('templatesDir'), "\xE2\x80\xA6", reset($files));
+				$file = str_replace(Environment::getVariable('appDir'), "\xE2\x80\xA6", reset($files));
 				throw new BadRequestException("Page not found. Missing template '$file'.");
 			}
 
 			// layout template
-			if ($this->layout) {
-				foreach ($this->formatLayoutTemplateFiles($this->getName(), $this->layout) as $file) {
+			if ($this->layout !== FALSE) {
+				$files = $this->formatLayoutTemplateFiles($this->getName(), $this->layout ? $this->layout : 'layout');
+				foreach ($files as $file) {
 					if (is_file($file)) {
+						$template->layout = $file;
 						if ($this->oldLayoutMode) {
 							$template->content = clone $template;
 							$template->setFile($file);
 						} else {
-							$template->layout = $template->_extends = $file;
+							$template->_extends = $file;
 						}
 						break;
 					}
 				}
-			}
-		}
 
-		if ($this->isAjax()) { // TODO!
-			SnippetHelper::$outputAllowed = FALSE;
-			$template->render();
-			$this->sendPayload();
+				if (empty($template->layout) && $this->layout !== NULL) {
+					$file = str_replace(Environment::getVariable('appDir'), "\xE2\x80\xA6", reset($files));
+					throw new FileNotFoundException("Layout not found. Missing template '$file'.");
+				}
+			}
 		}
 
 		$this->terminate(new RenderResponse($template));
@@ -520,25 +526,38 @@ abstract class Presenter extends Control implements IPresenter
 	 */
 	public function formatLayoutTemplateFiles($presenter, $layout)
 	{
-		$root = Environment::getVariable('templatesDir');
-		$presenter = str_replace(':', 'Module/', $presenter);
-		$module = substr($presenter, 0, (int) strrpos($presenter, '/'));
-		$base = '';
-		if ($root === Environment::getVariable('presentersDir')) {
-			$base = 'templates/';
-			if ($module === '') {
-				$presenter = 'templates/' . $presenter;
-			} else {
-				$presenter = substr_replace($presenter, '/templates', strrpos($presenter, '/'), 0);
+		if ($this->oldModuleMode) {
+			$root = Environment::getVariable('templatesDir', Environment::getVariable('appDir') . '/templates'); // back compatibility
+			$presenter = str_replace(':', 'Module/', $presenter);
+			$module = substr($presenter, 0, (int) strrpos($presenter, '/'));
+			$base = '';
+			if ($root === Environment::getVariable('appDir') . '/presenters') {
+				$base = 'templates/';
+				if ($module === '') {
+					$presenter = 'templates/' . $presenter;
+				} else {
+					$presenter = substr_replace($presenter, '/templates', strrpos($presenter, '/'), 0);
+				}
 			}
+			return array(
+				"$root/$presenter/@$layout.phtml",
+				"$root/$presenter.@$layout.phtml",
+				"$root/$module/$base@$layout.phtml",
+				"$root/$base@$layout.phtml",
+			);
 		}
 
-		return array(
-			"$root/$presenter/@$layout.phtml",
-			"$root/$presenter.@$layout.phtml",
-			"$root/$module/$base@$layout.phtml",
-			"$root/$base@$layout.phtml",
+		$appDir = Environment::getVariable('appDir');
+		$path = '/' . str_replace(':', 'Module/', $presenter);
+		$pathP = substr_replace($path, '/templates', strrpos($path, '/'), 0);
+		$list = array(
+			"$appDir$pathP/@$layout.phtml",
+			"$appDir$pathP.@$layout.phtml",
 		);
+		while (($path = substr($path, 0, strrpos($path, '/'))) !== FALSE) {
+			$list[] = "$appDir$path/templates/@$layout.phtml";
+		}
+		return $list;
 	}
 
 
@@ -551,18 +570,30 @@ abstract class Presenter extends Control implements IPresenter
 	 */
 	public function formatTemplateFiles($presenter, $view)
 	{
-		$root = Environment::getVariable('templatesDir');
-		$presenter = str_replace(':', 'Module/', $presenter);
-		$dir = '';
-		if ($root === Environment::getVariable('presentersDir')) { // special supported case
-			$pos = strrpos($presenter, '/');
-			$presenter = $pos === FALSE ? 'templates/' . $presenter : substr_replace($presenter, '/templates', $pos, 0);
-			$dir = 'templates/';
+		if ($this->oldModuleMode) {
+			$root = Environment::getVariable('templatesDir', Environment::getVariable('appDir') . '/templates'); // back compatibility
+			$presenter = str_replace(':', 'Module/', $presenter);
+			$dir = '';
+			if ($root === Environment::getVariable('appDir') . '/presenters') { // special supported case
+				$pos = strrpos($presenter, '/');
+				$presenter = $pos === FALSE ? 'templates/' . $presenter : substr_replace($presenter, '/templates', $pos, 0);
+				$dir = 'templates/';
+			}
+			return array(
+				"$root/$presenter/$view.phtml",
+				"$root/$presenter.$view.phtml",
+				"$root/$dir@global.$view.phtml",
+			);
 		}
+
+		$appDir = Environment::getVariable('appDir');
+		$path = '/' . str_replace(':', 'Module/', $presenter);
+		$pathP = substr_replace($path, '/templates', strrpos($path, '/'), 0);
+		$path = substr_replace($path, '/templates', strrpos($path, '/'));
 		return array(
-			"$root/$presenter/$view.phtml",
-			"$root/$presenter.$view.phtml",
-			"$root/$dir@global.$view.phtml",
+			"$appDir$pathP/$view.phtml",
+			"$appDir$pathP.$view.phtml",
+			"$appDir$path/@global.$view.phtml",
 		);
 	}
 
@@ -844,7 +875,7 @@ abstract class Presenter extends Control implements IPresenter
 	 * @param  string   forward|redirect|link
 	 * @return string   URL
 	 * @throws InvalidLinkException
-	 * @internal
+	 * @ignore internal
 	 */
 	final protected function createRequest($component, $destination, array $args, $mode)
 	{
@@ -1287,7 +1318,7 @@ abstract class Presenter extends Control implements IPresenter
 		if (empty($this->params[self::FLASH_KEY])) {
 			$this->params[self::FLASH_KEY] = substr(md5(lcg_value()), 0, 4);
 		}
-		return $this->getSession()->getNamespace('Nette.Application.Flash/' . $this->params[self::FLASH_KEY]);
+		return $this->getSession('Nette.Application.Flash/' . $this->params[self::FLASH_KEY]);
 	}
 
 
@@ -1329,9 +1360,19 @@ abstract class Presenter extends Control implements IPresenter
 	/**
 	 * @return Session
 	 */
-	private function getSession()
+	protected function getSession($namespace = NULL)
 	{
-		return Environment::getSession();
+		return Environment::getSession($namespace);
+	}
+
+
+
+	/**
+	 * @return User
+	 */
+	protected function getUser()
+	{
+		return Environment::getUser();
 	}
 
 }

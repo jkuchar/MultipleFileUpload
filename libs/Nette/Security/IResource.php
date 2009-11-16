@@ -19,8 +19,6 @@
 
 
 
-
-
 /**
  * Represents resource, an object to which access is controlled.
  *

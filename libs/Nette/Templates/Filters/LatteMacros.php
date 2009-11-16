@@ -19,8 +19,6 @@
 
 
 
-
-
 require_once dirname(__FILE__) . '/../../Object.php';
 
 
@@ -48,6 +46,7 @@ require_once dirname(__FILE__) . '/../../Object.php';
  * - {attr ?} HTML element attributes
  * - {block|texy} ... {/block} block
  * - {contentType ...} HTTP Content-Type header
+ * - {status ...} HTTP status
  * - {capture ?} ... {/capture} capture block to parameter
  * - {assign var => value} set template parameter
  * - {default var => value} set default template parameter
@@ -71,8 +70,8 @@ class LatteMacros extends Object
 		'capture' => '<?php %:macroCapture% ?>',
 		'/capture' => '<?php %:macroCaptureEnd% ?>',
 
-		'snippet' => '<?php } if ($_cb->foo = SnippetHelper::create($control%:macroSnippet%)) { $_cb->snippets[] = $_cb->foo ?>',
-		'/snippet' => '<?php array_pop($_cb->snippets)->finish(); } if (SnippetHelper::$outputAllowed) { ?>',
+		'snippet' => '<?php %:macroSnippet% ?>',
+		'/snippet' => '<?php %:macroSnippetEnd% ?>',
 
 		'cache' => '<?php if ($_cb->foo = CachingHelper::create($_cb->key = md5(__FILE__) . __LINE__, $template->getFile(), array(%%))) { $_cb->caches[] = $_cb->foo ?>',
 		'/cache' => '<?php array_pop($_cb->caches)->save(); } if (!empty($_cb->caches)) end($_cb->caches)->addItem($_cb->key) ?>',
@@ -95,6 +94,7 @@ class LatteMacros extends Object
 
 		'include' => '<?php %:macroInclude% ?>',
 		'extends' => '<?php %:macroExtends% ?>',
+		'layout' => '<?php %:macroExtends% ?>',
 
 		'plink' => '<?php echo %:macroEscape%(%:macroPlink%) ?>',
 		'link' => '<?php echo %:macroEscape%(%:macroLink%) ?>',
@@ -104,14 +104,15 @@ class LatteMacros extends Object
 
 		'attr' => '<?php echo Html::el(NULL)->%:macroAttr%attributes() ?>',
 		'contentType' => '<?php %:macroContentType% ?>',
+		'status' => '<?php Environment::getHttpResponse()->setCode(%%) ?>',
 		'assign' => '<?php %:macroAssign% ?>', // deprecated?
 		'default' => '<?php %:macroDefault% ?>',
-		'dump' => '<?php Debug::consoleDump(%:macroDump%, "Template " . str_replace(Environment::getVariable("templatesDir"), "\xE2\x80\xA6", $template->getFile())) ?>',
+		'dump' => '<?php Debug::consoleDump(%:macroDump%, "Template " . str_replace(Environment::getVariable("appDir"), "\xE2\x80\xA6", $template->getFile())) ?>',
 		'debugbreak' => '<?php if (function_exists("debugbreak")) debugbreak() ?>',
 
-		'!_' => '<?php echo $template->translate(%:macroModifiers%) ?>',
+		'!_' => '<?php echo %:macroTranslate% ?>',
 		'!=' => '<?php echo %:macroModifiers% ?>',
-		'_' => '<?php echo %:macroEscape%($template->translate(%:macroModifiers%)) ?>',
+		'_' => '<?php echo %:macroEscape%(%:macroTranslate%) ?>',
 		'=' => '<?php echo %:macroEscape%(%:macroModifiers%) ?>',
 		'!$' => '<?php echo %:macroVar% ?>',
 		'!' => '<?php echo %:macroVar% ?>', // deprecated
@@ -140,7 +141,7 @@ class LatteMacros extends Object
 	/** @var string */
 	private $uniq;
 
-	/**#@+ @internal block type */
+	/**#@+ @ignore internal block type */
 	const BLOCK_NAMED = 1;
 	const BLOCK_CAPTURE = 2;
 	const BLOCK_ANONYMOUS = 3;
@@ -218,7 +219,7 @@ class LatteMacros extends Object
 		if ($this->namedBlocks) {
 			foreach (array_reverse($this->namedBlocks, TRUE) as $name => $foo) {
 				$name = preg_quote($name, '#');
-				$s = preg_replace_callback("#{block($name)} \?>(.*)<\?php {/block$name}#sU", array($this, 'cbNamedBlocks'), $s);
+				$s = preg_replace_callback("#{block ($name)} \?>(.*)<\?php {/block $name}#sU", array($this, 'cbNamedBlocks'), $s);
 			}
 			$s = "<?php\n\n" . implode("\n\n\n", $this->namedBlocks) . "\n\n//\n// end of blocks\n//\n?>" . $s;
 		}
@@ -369,6 +370,16 @@ class LatteMacros extends Object
 
 
 	/**
+	 * {_$var |modifiers}
+	 */
+	private function macroTranslate($var, $modifiers)
+	{
+		return LatteFilter::formatModifiers($var, 'translate|' . $modifiers);
+	}
+
+
+
+	/**
 	 * {syntax ...}
 	 */
 	private function macroSyntax($var)
@@ -414,12 +425,13 @@ class LatteMacros extends Object
 			throw new InvalidStateException("Missing destination in {include} on line {$this->filter->line}.");
 
 		} elseif ($destination[0] === '#') { // include #block
-			if (!preg_match('#^\\#'.LatteFilter::RE_IDENTIFIER.'$#', $destination)) {
+			$destination = ltrim($destination, '#');
+			if (!preg_match('#^'.LatteFilter::RE_IDENTIFIER.'$#', $destination)) {
 				throw new InvalidStateException("Included block name must be alphanumeric string, '$destination' given on line {$this->filter->line}.");
 			}
 
-			$parent = $destination === '#parent';
-			if ($destination === '#parent' || $destination === '#this') {
+			$parent = $destination === 'parent';
+			if ($destination === 'parent' || $destination === 'this') {
 				$item = end($this->blocks);
 				while ($item && $item[0] !== self::BLOCK_NAMED) $item = prev($this->blocks);
 				if (!$item) {
@@ -484,8 +496,9 @@ class LatteMacros extends Object
 			$this->blocks[] = array(self::BLOCK_ANONYMOUS, NULL, $modifiers);
 			return $modifiers === '' ? '' : 'ob_start()';
 
-		} elseif ($name[0] === '#') { // #block
-			if (!preg_match('#^\\#'.LatteFilter::RE_IDENTIFIER.'$#', $name)) {
+		} else { // #block
+			$name = ltrim($name, '#');
+			if (!preg_match('#^'.LatteFilter::RE_IDENTIFIER.'$#', $name)) {
 				throw new InvalidStateException("Block name must be alphanumeric string, '$name' given on line {$this->filter->line}.");
 
 			} elseif (isset($this->namedBlocks[$name])) {
@@ -496,17 +509,14 @@ class LatteMacros extends Object
 			$this->namedBlocks[$name] = $name;
 			$this->blocks[] = array(self::BLOCK_NAMED, $name, '');
 			if (!$top) {
-				return $this->macroInclude($name, $modifiers) . "{block$name}";
+				return $this->macroInclude('#' . $name, $modifiers) . "{block $name}";
 
 			} elseif ($this->extends) {
-				return "{block$name}";
+				return "{block $name}";
 
 			} else {
-				return 'if (!$_cb->extends) { ' . $this->macroInclude($name, $modifiers) . "; } {block$name}";
+				return 'if (!$_cb->extends) { ' . $this->macroInclude('#' . $name, $modifiers) . "; } {block $name}";
 			}
-
-		} else {
-			throw new InvalidStateException("Invalid block parameter '$name' on line {$this->filter->line}.");
 		}
 	}
 
@@ -527,12 +537,39 @@ class LatteMacros extends Object
 		if (($type !== self::BLOCK_NAMED && $type !== self::BLOCK_ANONYMOUS) || ($content && $content !== $name)) {
 			throw new InvalidStateException("Tag {/block $content} was not expected here on line {$this->filter->line}.");
 
-		} elseif ($type === self::BLOCK_NAMED) { // #block
-			return "{/block$name}";
+		} elseif ($type === self::BLOCK_NAMED) { // block
+			return "{/block $name}";
 
 		} else { // anonymous block
 			return $modifiers === '' ? '' : 'echo ' . LatteFilter::formatModifiers('ob_get_clean()', $modifiers);
 		}
+	}
+
+
+
+	/**
+	 * {snippet ...}
+	 */
+	private function macroSnippet($content)
+	{
+		$args = array('');
+		if ($snippet = LatteFilter::fetchToken($content)) {  // [name [,]] [tag]
+			$args[] = LatteFilter::formatString($snippet);
+		}
+		if ($content) {
+			$args[] = LatteFilter::formatString($content);
+		}
+		return '} if ($_cb->foo = SnippetHelper::create($control' . implode(', ', $args) . ')) { $_cb->snippets[] = $_cb->foo';
+	}
+
+
+
+	/**
+	 * {snippet ...}
+	 */
+	private function macroSnippetEnd($content)
+	{
+		return 'array_pop($_cb->snippets)->finish(); } if (SnippetHelper::$outputAllowed) {';
 	}
 
 
@@ -571,7 +608,7 @@ class LatteMacros extends Object
 
 
 	/**
-	 * Converts {block#named}...{/block} to functions.
+	 * Converts {block named}...{/block} to functions.
 	 */
 	private function cbNamedBlocks($matches)
 	{
@@ -651,23 +688,6 @@ class LatteMacros extends Object
 
 
 	/**
-	 * {snippet ...}
-	 */
-	private function macroSnippet($content)
-	{
-		$args = array('');
-		if ($snippet = LatteFilter::fetchToken($content)) {  // [name [,]] [tag]
-			$args[] = LatteFilter::formatString($snippet);
-		}
-		if ($content) {
-			$args[] = LatteFilter::formatString($content);
-		}
-		return implode(', ', $args);
-	}
-
-
-
-	/**
 	 * {widget ...}
 	 */
 	private function macroWidget($content)
@@ -711,9 +731,9 @@ class LatteMacros extends Object
 	/**
 	 * {ifCurrent ...}
 	 */
-	private function macroIfCurrent($content, $modifiers)
+	private function macroIfCurrent($content)
 	{
-		return $content ? LatteFilter::formatModifiers('$presenter->link(' . $this->formatLink($content) .')', $modifiers) : '';
+		return $content ? 'try { $presenter->link(' . $this->formatLink($content) . '); } catch (InvalidLinkException $e) {}' : '';
 	}
 
 

@@ -19,8 +19,6 @@
 
 
 
-
-
 /**
  * Component with ability to save and load its state.
  *

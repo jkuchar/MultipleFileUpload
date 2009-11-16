@@ -19,8 +19,6 @@
 
 
 
-
-
 require_once dirname(__FILE__) . '/../Object.php';
 
 
@@ -38,15 +36,17 @@ require_once dirname(__FILE__) . '/../Object.php';
  */
 class MailMimePart extends Object
 {
-	/**#@+ Encoding */
+	/**#@+ encoding */
 	const ENCODING_BASE64 = 'base64';
 	const ENCODING_7BIT = '7bit';
 	const ENCODING_8BIT = '8bit';
 	const ENCODING_QUOTED_PRINTABLE = 'quoted-printable';
 	/**#@-*/
 
+	/**#@+ @ignore internal */
 	const EOL = "\r\n";
 	const LINE_LENGTH = 76;
+	/**#@-*/
 
 	/** @var array */
 	private $headers = array();

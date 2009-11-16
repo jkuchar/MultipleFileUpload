@@ -19,8 +19,6 @@
 
 
 
-
-
 /**
  * Translator adapter.
  *

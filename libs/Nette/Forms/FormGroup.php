@@ -19,8 +19,6 @@
 
 
 
-
-
 require_once dirname(__FILE__) . '/../Object.php';
 
 
@@ -76,7 +74,7 @@ class FormGroup extends Object
 
 
 	/**
-	 * @return array
+	 * @return array IFormControl
 	 */
 	public function getControls()
 	{

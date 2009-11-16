@@ -19,8 +19,6 @@
 
 
 
-
-
 require_once dirname(__FILE__) . '/../Security/IAuthorizator.php';
 
 require_once dirname(__FILE__) . '/../Object.php';
@@ -979,11 +977,9 @@ class Permission extends Object implements IAuthorizator
 	private function & getRules($resource, $role, $create = FALSE)
 	{
 		// follow $resource
-		do {
-			if ($resource === self::ALL) {
-				$visitor = & $this->rules['allResources'];
-				break;
-			}
+		if ($resource === self::ALL) {
+			$visitor = & $this->rules['allResources'];
+		} else {
 			if (!isset($this->rules['byResource'][$resource])) {
 				if (!$create) {
 					$null = NULL;
@@ -992,7 +988,7 @@ class Permission extends Object implements IAuthorizator
 				$this->rules['byResource'][$resource] = array();
 			}
 			$visitor = & $this->rules['byResource'][$resource];
-		} while (FALSE);
+		}
 
 
 		// follow $role

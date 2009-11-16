@@ -19,8 +19,6 @@
 
 
 
-
-
 /**
  * Tools library.
  *
@@ -154,7 +152,7 @@ final class Tools
 
 	/**
 	 * Internal error handler. Do not call directly.
-	 * @internal
+	 * @ignore internal
 	 */
 	public static function _errorHandler($code, $message)
 	{

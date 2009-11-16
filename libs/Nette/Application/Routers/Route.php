@@ -19,8 +19,6 @@
 
 
 
-
-
 require_once dirname(__FILE__) . '/../../Object.php';
 
 require_once dirname(__FILE__) . '/../../Application/IRouter.php';
@@ -44,7 +42,7 @@ class Route extends Object implements IRouter
 	const CASE_SENSITIVE = 256;
 	const FULL_META = 128;
 
-	/**#@+ uri type */
+	/**#@+ @ignore internal uri type */
 	const HOST = 1;
 	const PATH = 2;
 	const RELATIVE = 3;
@@ -58,7 +56,7 @@ class Route extends Object implements IRouter
 	const FILTER_TABLE = 'filterTable';
 	/**#@-*/
 
-	/**#@+ @internal fixity types - how to handle default value? {@link Route::$metadata} */
+	/**#@+ @ignore internal fixity types - how to handle default value? {@link Route::$metadata} */
 	const OPTIONAL = 0;
 	const PATH_OPTIONAL = 1;
 	const CONSTANT = 2;
@@ -109,16 +107,16 @@ class Route extends Object implements IRouter
 	private $re;
 
 	/** @var array of [value & fixity, filterIn, filterOut] */
-	protected $metadata = array();
+	private $metadata = array();
 
 	/** @var array  */
-	protected $xlat;
+	private $xlat;
 
 	/** @var int HOST, PATH, RELATIVE */
-	protected $type;
+	private $type;
 
 	/** @var int */
-	protected $flags;
+	private $flags;
 
 
 
@@ -178,7 +176,7 @@ class Route extends Object implements IRouter
 		// deletes numeric keys, restore '-' chars
 		$params = array();
 		foreach ($matches as $k => $v) {
-			if (is_string($k)) {
+			if (is_string($k) && $v !== '') {
 				$params[str_replace('___', '-', $k)] = $v; // trick
 			}
 		}
@@ -268,19 +266,19 @@ class Route extends Object implements IRouter
 		$metadata = $this->metadata;
 
 		$presenter = $appRequest->getPresenterName();
-		if (isset($metadata[self::MODULE_KEY])) {
-			if (isset($metadata[self::MODULE_KEY]['fixity'])) {
-				$a = strlen($metadata[self::MODULE_KEY][self::VALUE]);
-				if (substr($presenter, $a, 1) !== ':') {
-					return NULL; // module not match
-				}
+		$params[self::PRESENTER_KEY] = $presenter;
+
+		if (isset($metadata[self::MODULE_KEY])) { // try split into module and [submodule:]presenter parts
+			$module = $metadata[self::MODULE_KEY];
+			if (isset($module['fixity']) && strncasecmp($presenter, $module[self::VALUE] . ':', strlen($module[self::VALUE]) + 1) === 0) {
+				$a = strlen($module[self::VALUE]);
 			} else {
 				$a = strrpos($presenter, ':');
 			}
-			$params[self::MODULE_KEY] = substr($presenter, 0, $a);
-			$params[self::PRESENTER_KEY] = substr($presenter, $a + 1);
-		} else {
-			$params[self::PRESENTER_KEY] = $presenter;
+			if ($a !== FALSE) {
+				$params[self::MODULE_KEY] = substr($presenter, 0, $a);
+				$params[self::PRESENTER_KEY] = substr($presenter, $a + 1);
+			}
 		}
 
 		foreach ($metadata as $name => $meta) {
@@ -313,7 +311,8 @@ class Route extends Object implements IRouter
 
 		// compositing path
 		$sequence = $this->sequence;
-		$optional = TRUE;
+		$brackets = array();
+		$required = 0;
 		$uri = '';
 		$i = count($sequence) - 1;
 		do {
@@ -323,26 +322,29 @@ class Route extends Object implements IRouter
 
 			$name = $sequence[$i]; $i--; // parameter name
 
-			if ($name[0] === '?') { // "foo" parameter
+			if ($name === ']') { // opening optional part
+				$brackets[] = $uri;
+
+			} elseif ($name[0] === '[') { // closing optional part
+				$tmp = array_pop($brackets);
+				if ($required < count($brackets) + 1) { // is this level optional?
+					if ($name !== '[!') { // and not "required"-optional
+						$uri = $tmp;
+					}
+				} else {
+					$required = count($brackets);
+				}
+
+			} elseif ($name[0] === '?') { // "foo" parameter
 				continue;
 
 			} elseif (isset($params[$name]) && $params[$name] != '') { // intentionally ==
-				$optional = FALSE;
+				$required = count($brackets); // make this level required
 				$uri = $params[$name] . $uri;
 				unset($params[$name]);
 
 			} elseif (isset($metadata[$name]['fixity'])) { // has default value?
-				if ($optional) {
-					$uri = '';
-
-				} elseif ($metadata[$name][self::VALUE] == '') { // intentionally ==
-					if ($uri[0] === '/' && substr($sequence[$i], -1) === '/') {
-						return NULL; // default value is empty but is required
-					}
-
-				} else {
-					$uri = $metadata[$name]['defOut'] . $uri;
-				}
+				$uri = $metadata[$name]['defOut'] . $uri;
 
 			} else {
 				return NULL; // missing parameter '$name'
@@ -365,6 +367,10 @@ class Route extends Object implements IRouter
 
 		} elseif ($this->type === self::PATH) {
 			$uri = '//' . $httpRequest->getUri()->getAuthority() . $uri;
+		}
+
+		if (strpos($uri, '//', 2) !== FALSE) {
+			return NULL; // TODO: implement counterpart in match() ?
 		}
 
 		$uri = ($this->flags & self::SECURED ? 'https:' : 'http:') . $uri;
@@ -401,21 +407,27 @@ class Route extends Object implements IRouter
 			}
 		}
 
+		// PARSE MASK
+		$parts = preg_split(
+			'/<([^># ]+) *([^>#]*)(#?[^>\[\]]*)>|(\[!?|\]|\s*\?.*)/',  // <parameter-name [pattern] [#class]> or [ or ] or ?...
+			$mask,
+			-1,
+			PREG_SPLIT_DELIM_CAPTURE
+		);
 
-		// 1) PARSE QUERY PART OF MASK
 		$this->xlat = array();
-		$pos = strpos($mask, ' ? ');
-		if ($pos !== FALSE) {
+		$i = count($parts) - 1;
+
+		// PARSE QUERY PART OF MASK
+		if (isset($parts[$i - 1]) && substr(ltrim($parts[$i - 1]), 0, 1) === '?') {
 			preg_match_all(
 				'/(?:([a-zA-Z0-9_.-]+)=)?<([^># ]+) *([^>#]*)(#?[^>]*)>/', // name=<parameter-name [pattern][#class]>
-				substr($mask, $pos + 1),
+				$parts[$i - 1],
 				$matches,
 				PREG_SET_ORDER
 			);
-			$mask = rtrim(substr($mask, 0, $pos));
-
 			foreach ($matches as $match) {
-				list(, $param, $name, $pattern, $class) = $match;  // $pattern is unsed
+				list(, $param, $name, $pattern, $class) = $match;  // $pattern is not used
 
 				if ($class !== '') {
 					if (!isset(self::$styles[$class])) {
@@ -446,26 +458,33 @@ class Route extends Object implements IRouter
 					$this->xlat[$name] = $param;
 				}
 			}
+			$i -= 5;
 		}
 
-
-		// 2) PARSE URI-PATH PART OF MASK
-		$parts = preg_split(
-			'/<([^># ]+) *([^>#]*)(#?[^>]*)>/',  // <parameter-name [pattern] [#class]>
-			$mask,
-			-1,
-			PREG_SPLIT_DELIM_CAPTURE
-		);
-
-		$optional = TRUE;
-		$sequence = array();
-		$i = count($parts) - 1;
+		$brackets = 0; // optional level
 		$re = '';
+		$sequence = array();
+		$autoOptional = array(0, 0); // strlen($re), count($sequence)
 		do {
 			array_unshift($sequence, $parts[$i]);
+			if (strpos($parts[$i], '{') !== FALSE) {
+				throw new DeprecatedException('Optional parts delimited using {...} are deprecated; use [...] instead.');
+			}
 			$re = preg_quote($parts[$i], '#') . $re;
 			if ($i === 0) break;
 			$i--;
+
+			$part = $parts[$i]; // [ or ]
+			if ($part === '[' || $part === ']' || $part === '[!') {
+				$brackets += $part[0] === '[' ? -1 : 1;
+				if ($brackets < 0) {
+					throw new InvalidArgumentException("Unexpected '$part' in mask '$mask'.");
+				}
+				array_unshift($sequence, $part);
+				$re = ($part[0] === '[' ? '(?:' : ')?') . $re;
+				$i -= 4;
+				continue;
+			}
 
 			$class = $parts[$i]; $i--; // validation class
 			$pattern = trim($parts[$i]); $i--; // validation condition (as regexp)
@@ -506,7 +525,7 @@ class Route extends Object implements IRouter
 			}
 
 			$meta['filterTable2'] = empty($meta[self::FILTER_TABLE]) ? NULL : array_flip($meta[self::FILTER_TABLE]);
-			if (isset($meta[self::VALUE])) {
+			if (array_key_exists(self::VALUE, $meta)) {
 				if (isset($meta['filterTable2'][$meta[self::VALUE]])) {
 					$meta['defOut'] = $meta['filterTable2'][$meta[self::VALUE]];
 
@@ -518,22 +537,31 @@ class Route extends Object implements IRouter
 				}
 			}
 			$meta[self::PATTERN] = "#(?:$pattern)$#A" . ($this->flags & self::CASE_SENSITIVE ? '' : 'i');
-			$metadata[$name] = $meta;
 
 			// include in expression
-			$tmp = str_replace('-', '___', $name); // dirty trick to enable '-' in parameter name
-			if (isset($meta['fixity'])) { // has default value?
-				if (!$optional) {
-					throw new InvalidArgumentException("Parameter '$name' must not be optional because parameters standing on the right side are not optional.");
+			$re = '(?P<' . str_replace('-', '___', $name) . '>' . $pattern . ')' . $re; // str_replace is dirty trick to enable '-' in parameter name
+			if ($brackets) { // is in brackets?
+				if (!isset($meta[self::VALUE])) {
+					$meta[self::VALUE] = $meta['defOut'] = NULL;
 				}
-				$re = '(?:(?P<' . $tmp . '>' . $pattern . ')' . $re . ')?';
-				$metadata[$name]['fixity'] = self::PATH_OPTIONAL;
+				$meta['fixity'] = self::PATH_OPTIONAL;
+
+			} elseif (isset($meta['fixity'])) { // auto-optional
+				$re = '(?:' . substr_replace($re, ')?', strlen($re) - $autoOptional[0], 0);
+				array_splice($sequence, count($sequence) - $autoOptional[1], 0, array(']', ''));
+				array_unshift($sequence, '[', '');
+				$meta['fixity'] = self::PATH_OPTIONAL;
 
 			} else {
-				$optional = FALSE;
-				$re = '(?P<' . $tmp . '>' . $pattern . ')' . $re;
+				$autoOptional = array(strlen($re), count($sequence));
 			}
+
+			$metadata[$name] = $meta;
 		} while (TRUE);
+
+		if ($brackets) {
+			throw new InvalidArgumentException("Missing closing ']' in mask '$mask'.");
+		}
 
 		$this->re = '#' . $re . '/?$#A' . ($this->flags & self::CASE_SENSITIVE ? '' : 'i');
 		$this->metadata = $metadata;

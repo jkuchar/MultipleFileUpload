@@ -19,8 +19,6 @@
 
 
 
-
-
 /**
  * Thread safe / atomic file manipulation. Stream safe://
  *
@@ -64,7 +62,6 @@ final class SafeStream
 	 * Write-error detected?
 	 */
 	private $writeError = FALSE;
-
 
 
 

@@ -19,8 +19,6 @@
 
 
 
-
-
 /**
  * The service locator.
  *

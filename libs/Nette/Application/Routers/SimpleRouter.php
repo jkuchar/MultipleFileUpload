@@ -19,8 +19,6 @@
 
 
 
-
-
 require_once dirname(__FILE__) . '/../../Object.php';
 
 require_once dirname(__FILE__) . '/../../Application/IRouter.php';
@@ -40,13 +38,13 @@ class SimpleRouter extends Object implements IRouter
 	const MODULE_KEY = 'module';
 
 	/** @var string */
-	protected $module = '';
+	private $module = '';
 
 	/** @var array */
-	protected $defaults;
+	private $defaults;
 
 	/** @var int */
-	protected $flags;
+	private $flags;
 
 
 

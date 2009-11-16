@@ -19,8 +19,6 @@
 
 
 
-
-
 require_once dirname(__FILE__) . '/../../Forms/Controls/SubmitButton.php';
 
 
@@ -68,8 +66,8 @@ class ImageButton extends SubmitButton
 	public function loadHttpData()
 	{
 		$path = $this->getHtmlName(); // img_x or img['x']
-		$path = strtr(str_replace(']', '', strpos($path, '[') === FALSE ? $path . '.x' : substr($path, 0, -2)), '.', '_');
-		$this->setValue(ArrayTools::get($this->getForm()->getHttpData(), explode('[', $path)) !== NULL);
+		$path = explode('[', strtr(str_replace(']', '', strpos($path, '[') === FALSE ? $path . '.x' : substr($path, 0, -2)), '.', '_'));
+		$this->setValue(ArrayTools::get($this->getForm()->getHttpData(), $path) !== NULL);
 	}
 
 }

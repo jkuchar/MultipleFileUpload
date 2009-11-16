@@ -19,15 +19,13 @@
 
 
 
-
-
 /**
  * Helpers for Presenter & PresenterComponent.
  *
  * @author     David Grudl
  * @copyright  Copyright (c) 2004, 2009 David Grudl
  * @package    Nette\Application
- * @internal
+ * @ignore internal
  */
 final class PresenterHelpers
 {

@@ -19,8 +19,6 @@
 
 
 
-
-
 /**
  * Nette environment and configuration.
  *
@@ -61,10 +59,6 @@ final class Environment
 		'cacheBase' => array('%tempDir%', TRUE), // deprecated
 		'tempDir' => array('%appDir%/temp', TRUE),
 		'logDir' => array('%appDir%/log', TRUE),
-		'templatesDir' => array('%appDir%/templates', TRUE),
-		'presentersDir' => array('%appDir%/presenters', TRUE),
-		'componentsDir' => array('%appDir%/components', TRUE),
-		'modelsDir' => array('%appDir%/models', TRUE),
 	);
 
 	/** @var array */
@@ -464,7 +458,7 @@ final class Environment
 	public static function getSession($namespace = NULL)
 	{
 		$handler = self::getService('Nette\Web\Session');
-		return func_num_args() === 0 ? $handler : $handler->getNamespace($namespace);
+		return $namespace === NULL ? $handler : $handler->getNamespace($namespace);
 	}
 
 

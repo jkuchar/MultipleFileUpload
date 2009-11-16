@@ -19,8 +19,6 @@
 
 
 
-
-
 require_once dirname(__FILE__) . '/../Object.php';
 
 
@@ -288,6 +286,7 @@ class Session extends Object
 			throw new InvalidArgumentException('Session name must be a string and cannot contain dot.');
 		}
 
+		session_name($name);
 		return $this->setOptions(array(
 			'name' => $name,
 		));

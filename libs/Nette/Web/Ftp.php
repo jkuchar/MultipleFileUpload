@@ -19,8 +19,6 @@
 
 
 
-
-
 require_once dirname(__FILE__) . '/../Object.php';
 
 
@@ -59,6 +57,17 @@ class Ftp extends Object
 
 	/** @var array */
 	private $state;
+
+
+
+	/**
+	 */
+	public function __construct()
+	{
+		if (!extension_loaded('ftp')) {
+			throw new Exception("PHP extension FTP is not loaded.");
+		}
+	}
 
 
 

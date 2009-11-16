@@ -19,8 +19,6 @@
 
 
 
-
-
 require_once dirname(__FILE__) . '/../Loaders/AutoLoader.php';
 
 require_once dirname(__FILE__) . '/../Framework.php';
@@ -40,7 +38,7 @@ class RobotLoader extends AutoLoader
 	public $scanDirs;
 
 	/** @var string  comma separated wildcards */
-	public $ignoreDirs = '.*, *.old, *.bak, *.tmp';
+	public $ignoreDirs = '.*, *.old, *.bak, *.tmp, temp';
 
 	/** @var string  comma separated wildcards */
 	public $acceptFiles = '*.php, *.php5';
@@ -50,6 +48,9 @@ class RobotLoader extends AutoLoader
 
 	/** @var array */
 	private $list = array();
+
+	/** @var array */
+	private $timestamps;
 
 	/** @var bool */
 	private $rebuilded = FALSE;
@@ -63,15 +64,26 @@ class RobotLoader extends AutoLoader
 
 
 	/**
+	 */
+	public function __construct()
+	{
+		if (!extension_loaded('tokenizer')) {
+			throw new Exception("PHP extension Tokenizer is not loaded.");
+		}
+	}
+
+
+
+	/**
 	 * Register autoloader.
 	 * @return void
 	 */
 	public function register()
 	{
 		$cache = $this->getCache();
-		$data = $cache['data'];
-		if ($data['opt'] === array($this->scanDirs, $this->ignoreDirs, $this->acceptFiles)) {
-			$this->list = $data['list'];
+		$key = $this->getKey();
+		if (isset($cache[$key])) {
+			$this->list = $cache[$key];
 		} else {
 			$this->rebuild();
 		}
@@ -127,8 +139,11 @@ class RobotLoader extends AutoLoader
 	 */
 	public function rebuild($force = TRUE)
 	{
+		$cache = $this->getCache();
+		$key = $this->getKey();
 		$this->acceptMask = self::wildcards2re($this->acceptFiles);
 		$this->ignoreMask = self::wildcards2re($this->ignoreDirs);
+		$this->timestamps = $cache[$key . 'ts'];
 
 		if ($force || !$this->rebuilded) {
 			foreach (array_unique($this->scanDirs) as $dir) {
@@ -137,11 +152,9 @@ class RobotLoader extends AutoLoader
 		}
 
 		$this->rebuilded = TRUE;
-		$cache = $this->getCache();
-		$cache['data'] = array(
-			'list' => $this->list,
-			'opt' => array($this->scanDirs, $this->ignoreDirs, $this->acceptFiles),
-		);
+		$cache[$key] = $this->list;
+		$cache[$key . 'ts'] = $this->timestamps;
+		$this->timestamps = NULL;
 	}
 
 
@@ -190,8 +203,6 @@ class RobotLoader extends AutoLoader
 	 */
 	private function scanDirectory($dir)
 	{
-		$dir = realpath($dir);
-		if (!$dir) return;
 		$iterator = dir($dir);
 		if (!$iterator) return;
 
@@ -208,8 +219,7 @@ class RobotLoader extends AutoLoader
 		while (FALSE !== ($entry = $iterator->read())) {
 			if ($entry == '.' || $entry == '..' || isset($disallow[$entry])) continue;
 
-			$path = $dir . '/' . $entry;
-			if (!is_readable($path)) continue;
+			$path = $dir . DIRECTORY_SEPARATOR . $entry;
 
 			// process subdirectories
 			if (is_dir($path)) {
@@ -221,7 +231,11 @@ class RobotLoader extends AutoLoader
 			}
 
 			if (is_file($path) && preg_match($this->acceptMask, $entry)) {
-				$this->scanScript($path);
+				$time = filemtime($path);
+				if (!isset($this->timestamps[$path]) || $this->timestamps[$path] !== $time) {
+					$this->timestamps[$path] = $time;
+					$this->scanScript($path);
+				}
 			}
 		}
 
@@ -331,6 +345,16 @@ class RobotLoader extends AutoLoader
 	protected function getCache()
 	{
 		return Environment::getCache('Nette.RobotLoader');
+	}
+
+
+
+	/**
+	 * @return string
+	 */
+	protected function getKey()
+	{
+		return md5("$this->ignoreDirs|$this->acceptFiles|" . implode('|', $this->scanDirs));
 	}
 
 

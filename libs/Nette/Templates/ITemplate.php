@@ -19,8 +19,6 @@
 
 
 
-
-
 /**
  * Defines template methods.
  *

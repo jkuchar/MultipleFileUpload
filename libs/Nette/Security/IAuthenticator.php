@@ -19,8 +19,6 @@
 
 
 
-
-
 /**
  * Performs authentication.
  *

@@ -19,8 +19,6 @@
 
 
 
-
-
 /**
  * Application fatal error.
  *

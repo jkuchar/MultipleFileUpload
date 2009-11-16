@@ -19,8 +19,6 @@
 
 
 
-
-
 /**
  * Custom output for Nette\Debug.
  *

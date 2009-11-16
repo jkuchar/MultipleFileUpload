@@ -19,8 +19,6 @@
 
 
 
-
-
 require_once dirname(__FILE__) . '/../../Application/IRouter.php';
 
 require_once dirname(__FILE__) . '/../../Collections/ArrayList.php';
@@ -84,6 +82,7 @@ class MultiRouter extends ArrayList implements IRouter
 				if ($presenter === FALSE) continue;
 
 				if (is_string($presenter)) {
+					$presenter = strtolower($presenter);
 					if (!isset($routes[$presenter])) {
 						$routes[$presenter] = $routes['*'];
 					}
@@ -99,7 +98,7 @@ class MultiRouter extends ArrayList implements IRouter
 			$this->cachedRoutes = $routes;
 		}
 
-		$presenter = $appRequest->getPresenterName();
+		$presenter = strtolower($appRequest->getPresenterName());
 		if (!isset($this->cachedRoutes[$presenter])) $presenter = '*';
 
 		foreach ($this->cachedRoutes[$presenter] as $route) {

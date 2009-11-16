@@ -19,8 +19,6 @@
 
 
 
-
-
 /**
  * Represents role, an object that may request access to an IResource.
  *

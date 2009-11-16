@@ -19,8 +19,6 @@
 
 
 
-
-
 require_once dirname(__FILE__) . '/../Object.php';
 
 require_once dirname(__FILE__) . '/../Caching/ICacheStorage.php';
@@ -36,17 +34,17 @@ require_once dirname(__FILE__) . '/../Caching/ICacheStorage.php';
  */
 class MemcachedStorage extends Object implements ICacheStorage
 {
-	/**#@+ internal cache structure */
+	/**#@+ @ignore internal cache structure */
 	const META_CALLBACKS = 'callbacks';
 	const META_DATA = 'data';
 	const META_DELTA = 'delta';
 	/**#@-*/
 
 	/** @var Memcache */
-	protected $memcache;
+	private $memcache;
 
 	/** @var string */
-	protected $prefix;
+	private $prefix;
 
 
 
