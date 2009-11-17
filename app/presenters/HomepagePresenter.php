@@ -29,8 +29,8 @@ class HomepagePresenter extends BasePresenter
 
             // Uploadů můžete do formuláře samozdřejmě přidat více, ale zatím je docela nepříjemná validace a jedna chybka v JS
             $form->addMultipleFileUpload("upload","Soubory")
-                ->addRule("MultipleFileUpload::validateFilled","Musíte odeslat alespoň jeden soubor!")
-                ->addRule("MultipleFileUpload::validateFileSize","Soubory jsou dohromady moc veliké!",100*1024);
+                ->addRule("MultipleFileUpload::validateFilled","Musíte odeslat alespoň jeden soubor!")/*
+                ->addRule("MultipleFileUpload::validateFileSize","Soubory jsou dohromady moc veliké!",100*1024)*/;
 
             $form->addSubmit("odeslat", "Odeslat");
             $form->onSubmit[] = array($this,"onSubmit");
@@ -46,11 +46,13 @@ class HomepagePresenter extends BasePresenter
             // Předáme data do šablony
             $this->template->values = $data;
 
+            $queueId = uniqid();
+
             // Přesumene uploadované soubory
             foreach($data["upload"] AS $file){
                 // $file je instance HttpUploadedFile
 
-                if($file->move(APP_DIR."/uploadData/".$file->getName()))
+                if($file->move(APP_DIR."/uploadData/q{".$queueId."}__f{".rand(10,99)."}__".$file->getName()))
                     $this->flashMessage("Soubor ".$file->getName() . " byl úspěšně přesunut!");
                 else
                     $this->flashMessage("Při přesouvání souboru ".$file->getName() . " nastala chyba! Pro více informací se podívejte do logů.");
