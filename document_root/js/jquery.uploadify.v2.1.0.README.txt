@@ -1,0 +1,1 @@
+Also patched. Replaces - form flash object id. (Internet Explorer bug)

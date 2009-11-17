@@ -24,7 +24,14 @@ THE SOFTWARE.
 */
 
 if(jQuery)(
+
 	function(jQuery){
+
+                // IE issue fix. In id must not be a -
+                var getUploaderId = function(id) {
+                    return id.replace(/-/g,"__") + 'Uploader';
+                }
+
 		jQuery.extend(jQuery.fn,{
 			uploadify:function(options) {
 				jQuery(this).each(function(){
@@ -55,6 +62,7 @@ if(jQuery)(
 					onComplete     : function() {}, // Function to run when an upload is completed
 					onAllComplete  : function() {}  // Functino to run when all uploads are completed
 				}, options);
+
 				var pagePath = location.pathname;
 				pagePath = pagePath.split('/');
 				pagePath.pop();
@@ -91,10 +99,11 @@ if(jQuery)(
 				if (settings.queueID)      data.queueID      = settings.queueID;
 				if (settings.onInit() !== false) {
 					jQuery(this).css('display','none');
-					jQuery(this).after('<div id="' + jQuery(this).attr('id') + 'Uploader"></div>');
-					swfobject.embedSWF(settings.uploader, settings.id + 'Uploader', settings.width, settings.height, '9.0.24', settings.expressInstall, data, {'quality':'high','wmode':settings.wmode,'allowScriptAccess':settings.scriptAccess});
+					jQuery(this).after('<div id="' + getUploaderId(jQuery(this).attr('id')) + '"></div>');
+
+					swfobject.embedSWF(settings.uploader, getUploaderId(settings.id), settings.width, settings.height, '9.0.24', settings.expressInstall, data, {'quality':'high','wmode':settings.wmode,'allowScriptAccess':settings.scriptAccess});
 					if (settings.queueID == false) {
-						jQuery("#" + jQuery(this).attr('id') + "Uploader").after('<div id="' + jQuery(this).attr('id') + 'Queue" class="uploadifyQueue"></div>');
+						jQuery("#" + getUploaderId(jQuery(this).attr('id'))).after('<div id="' + jQuery(this).attr('id') + 'Queue" class="uploadifyQueue"></div>');
 					}
 				}
 				if (typeof(settings.onOpen) == 'function') {
@@ -156,14 +165,14 @@ if(jQuery)(
 							if (event.data.action(event, checkScript, fileQueueObj, folder, single) !== false) {
 								var replaceFile = confirm("Do you want to replace the file " + data[key] + "?");
 								if (!replaceFile) {
-									document.getElementById(jQuery(event.target).attr('id') + 'Uploader').cancelFileUpload(key, true,true);
+									document.getElementById(getUploaderId(jQuery(event.target).attr('id'))).cancelFileUpload(key, true,true);
 								}
 							}
 						}
 						if (single) {
-							document.getElementById(jQuery(event.target).attr('id') + 'Uploader').startFileUpload(singleFileID, true);
+							document.getElementById(getUploaderId(jQuery(event.target).attr('id'))).startFileUpload(singleFileID, true);
 						} else {
-							document.getElementById(jQuery(event.target).attr('id') + 'Uploader').startFileUpload(null, true);
+							document.getElementById(getUploaderId(jQuery(event.target).attr('id'))).startFileUpload(null, true);
 						}
 					}, "json");
 				});
@@ -224,7 +233,7 @@ if(jQuery)(
 					}
 					settingValue = scriptDataString.substr(1);
 				}
-				returnValue = document.getElementById(jQuery(this).attr('id') + 'Uploader').updateSettings(settingName, settingValue);
+				returnValue = document.getElementById(getUploaderId(jQuery(this).attr('id'))).updateSettings(settingName, settingValue);
 			});
 			if (settingValue == null) {
 				if (settingName == 'scriptData') {
@@ -241,17 +250,17 @@ if(jQuery)(
 		},
 		uploadifyUpload:function(ID) {
 			jQuery(this).each(function() {
-				document.getElementById(jQuery(this).attr('id') + 'Uploader').startFileUpload(ID, false);
+				document.getElementById(getUploaderId(jQuery(this).attr('id'))).startFileUpload(ID, false);
 			});
 		},
 		uploadifyCancel:function(ID) {
 			jQuery(this).each(function() {
-				document.getElementById(jQuery(this).attr('id') + 'Uploader').cancelFileUpload(ID, true, false);
+				document.getElementById(getUploaderId(jQuery(this).attr('id'))).cancelFileUpload(ID, true, false);
 			});
 		},
 		uploadifyClearQueue:function() {
 			jQuery(this).each(function() {
-				document.getElementById(jQuery(this).attr('id') + 'Uploader').clearFileUploadQueue(false);
+				document.getElementById(getUploaderId(jQuery(this).attr('id'))).clearFileUploadQueue(false);
 			});
 		}
 	})
