@@ -60,6 +60,12 @@ class MultipleFileUpload extends FileUpload {
     public static $uploadFileDirectory = "%tempDir%/MultipleFileUpload-uploads";
 
     /**
+     * When $uploadFileDirectory has not been writable. System will write directly to %tempDir%
+     * @var bool
+     */
+    public static $allowWriteToRootOfTemp = TRUE;
+
+    /**
      * Cache object
      * @var Cache
      */
@@ -113,8 +119,14 @@ class MultipleFileUpload extends FileUpload {
         // Vytvoříme složku a ověříme jestli je zapisovatelná
         if(!file_exists($dir))
             mkdir($dir,0777);
-        if(!is_writable($dir))
+            
+        if(!is_writable($dir) and self::$allowWriteToRootOfTemp) {
+            $dir = self::$uploadFileDirectory = Environment::expand("%tempDir%");
+        }
+        
+        if(!is_writable($dir)) {
             throw new InvalidStateException($dir." is not writable!");
+        }
 
         // Zpracuj soubory
         if(self::isRequestFromFlash()){
@@ -269,7 +281,7 @@ class MultipleFileUpload extends FileUpload {
      * @return string
      */
     static function getUniqueFilePath($token) {
-        return Environment::expand(self::$uploadFileDirectory.DIRECTORY_SEPARATOR.$token."-".uniqid()/*.".tmp"*/);
+        return Environment::expand(self::$uploadFileDirectory.DIRECTORY_SEPARATOR."upload-".$token."-".uniqid().".tmp");
     }
 
 
@@ -355,7 +367,7 @@ class MultipleFileUpload extends FileUpload {
         parent::__construct($label);
 
         if(!self::$handleUploadsCheck) {
-            trigger_error("MultipleFileUpload::handleUpload() has not been called. You can use only standard upload! Please add MultipleFileUpload::handleUpload(\$this) to startup in your bootstrap.", E_USER_WARNING);
+            throw new InvalidStateException("MultipleFileUpload::handleUpload() has not been called. Call `MultipleFileUpload::register();` from your bootstrap before you call Applicaton::run();");
         };
 
         $this->maxFiles = $maxSelectedFiles;
