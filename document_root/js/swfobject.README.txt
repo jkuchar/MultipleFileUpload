@@ -1,0 +1,1 @@
+This is patched version of swfobject.js. Because there was issue when using flash in form.
