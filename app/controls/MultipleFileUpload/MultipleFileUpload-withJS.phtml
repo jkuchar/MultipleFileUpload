@@ -84,6 +84,9 @@
             jQuery("#" + {$uploadifyId} + ID).hide();
             return false;
         },
+	onError: function(event,queueID,fileObj,errorObj) {
+		console.dir(errorObj);
+	},
         onSelectOnce: function(){
             var queue = $("#"+$(this).attr("id")+"-queue");
             $("#"+$(this).attr("id")+"ClearQueue").fadeIn(500);
