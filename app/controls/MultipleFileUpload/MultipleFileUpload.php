@@ -101,24 +101,41 @@ class MultipleFileUpload extends FileUpload {
 	 * Handles uploading files
 	 */
 	static function handleUploads() {
-
 		// Checks
 		self::$handleUploadsCheck = true;
 		if(self::$filesProccessed === true) return;
 
 		$req = Environment::getHttpRequest();
-		if($req->getMethod() !== "POST" OR stristr($req->getHeader("Content-type"),"multipart") === FALSE)
+		
+
+		// Workaround for: http://forum.nettephp.com/cs/3680-httprequest-getheaders-a-content-type
+		$contentType = $req->getHeader("content-type");
+		if(!$contentType AND isset($_SERVER["CONTENT_TYPE"])){
+			$contentType = $_SERVER["CONTENT_TYPE"];
+		}
+
+		if($req->getMethod() !== "POST" OR !stristr($contentType,"multipart")) {
 			return;
+		}
+		
+		// Zpracuj soubory
+		if(self::isRequestFromFlash()) {
+			self::proccessFilesFromUploadify();
+		}else {
+			self::proccessFilesFormStandardHttpTransfer();
+		}
 
-		// V PHP 5.3 zhodí Apache!
-		if(self::isRequestFromFlash())
-			Debug::enable(Debug::PRODUCTION);
+		self::$filesProccessed = true;
+	}
 
+	static function getDirectory() {
+		
 		$dir = Environment::expand(self::$uploadFileDirectory);
 
 		// Vytvoříme složku a ověříme jestli je zapisovatelná
-		if(!file_exists($dir))
-			mkdir($dir,0777);
+		if(!file_exists($dir)) {
+			mkdir($dir,0777,true);
+		}
 
 		if(!is_writable($dir) and self::$allowWriteToRootOfTemp) {
 			$dir = self::$uploadFileDirectory = Environment::expand("%tempDir%");
@@ -128,75 +145,39 @@ class MultipleFileUpload extends FileUpload {
 			throw new InvalidStateException($dir." is not writable!");
 		}
 
-		// Zpracuj soubory
-		if(self::isRequestFromFlash()) {
-			//throw new Exception();
-			// Uploadify
-			/*
-             * Dostaneme soubor Filedata
-			*/
-			if(!isSet($_POST["token"])) return;
-			$token = $_POST["token"];
-			$store = self::getData($token);
-			foreach(Environment::getHttpRequest()->getFiles() AS $file) {
-				self::processSingleFile($token, $file, $store);
-			}
-			self::saveData($token, $store);
+		return $dir;
+	}
 
-		}else {
-			// Standardní HTTP požadavek
-			/*
-			* Dojde něco ve stylu:
-			*   Array
-			*   (
-			*       [testUpload] => Array
-			*           (
-			*               [files] => Array
-			*                   (
-			*                       [0] => HttpUploadedFile Object
-			*                           (
-			*                               [name:private] => anchor.png
-			*                               [type:private] =>
-			*                               [size:private] => 523
-			*                               [tmpName:private] => C:\Program Files\xampp\tmp\phpBBF2.tmp
-			*                               [error:private] => 0
-			*                           )
-			*
-			*                       [1] => HttpUploadedFile Object
-			*                           (
-			*                               [name:private] => application_edit.png
-			*                               [type:private] =>
-			*                               [size:private] => 703
-			*                               [tmpName:private] => C:\Program Files\xampp\tmp\phpBC03.tmp
-			*                               [error:private] => 0
-			*                           )
-			*                   )
-			*
-			*           )
-			*
-			*   )
-			*/
-			foreach(Environment::getHttpRequest()->getFiles() AS $name => $controlValue) {
-				if(is_array($controlValue) and isSet($controlValue["files"]) and isSet($_POST[$name]["token"])) {
-					$token = $_POST[$name]["token"];
-					$store = self::getData($token);
-					foreach($controlValue["files"] AS $file) {
-						self::processSingleFile($token,$file, $store);
-					}
-					self::saveData($token,$store);
-				}//else zpracuje si to už formulář sám (nejspíš tam bude už HTTPUploadedFile, ale odeslán z klasického FileUpload políčka)
-			}
+	/**
+	 * Zpracuje soubory z Uploadify
+	 */
+	protected static function proccessFilesFromUploadify() {
+		if(!isSet($_POST["token"])) return;
+		$token = $_POST["token"];
+		$store = self::getData($token);
+		foreach(Environment::getHttpRequest()->getFiles() AS $file) {
+			self::processSingleFile($token, $file, $store);
 		}
+		self::saveData($token, $store);
+		
+		// Odpověď klientovi
+		die("1");
+	}
 
-		// Pokud všechno proběhlo ok a soubor byl odeslán z flashe
-		if(self::isRequestFromFlash()) {
-			echo "1";
-
-			// Voláno ještě před spustěním $application-run() -> abort exception by způsobilo akorát nezachycenou výjimku
-			die();
+	/**
+	 * Zpracuje soubory ze standardního HTTP požadavku
+	 */
+	protected static function proccessFilesFormStandardHttpTransfer() {
+		foreach(Environment::getHttpRequest()->getFiles() AS $name => $controlValue) {
+			if(is_array($controlValue) and isSet($controlValue["files"]) and isSet($_POST[$name]["token"])) {
+				$token = $_POST[$name]["token"];
+				$store = self::getData($token);
+				foreach($controlValue["files"] AS $file) {
+					self::processSingleFile($token,$file, $store);
+				}
+				self::saveData($token,$store);
+			}//else zpracuje si to už formulář sám (nejspíš tam bude už HTTPUploadedFile, ale odeslán z klasického FileUpload políčka)
 		}
-
-		self::$filesProccessed = true;
 	}
 
 	/**
@@ -286,7 +267,7 @@ class MultipleFileUpload extends FileUpload {
 	 * @return string
 	 */
 	static function getUniqueFilePath($token) {
-		return Environment::expand( self::$uploadFileDirectory . DIRECTORY_SEPARATOR . "upload-" . $token  ."-" . uniqid() . ".tmp" );
+		return self::getDirectory() . DIRECTORY_SEPARATOR . "upload-" . $token  ."-" . uniqid() . ".tmp";
 	}
 
 
@@ -519,11 +500,15 @@ class MultipleFileUpload extends FileUpload {
 
 	/**
 	 * Returns token
-	 * @return string
+	 * @return string|null
 	 */
-	public function getToken() {
-		if(!$this->token)
+	public function getToken($need=true) {
+		if(!$this->token) {
 			$this->loadHttpData();
+		}
+		/*if(!$this->token AND $need){
+			throw new InvalidStateException("Can't get a token!");
+		}*/
 		return $this->token;
 	}
 
@@ -533,7 +518,7 @@ class MultipleFileUpload extends FileUpload {
 	public function  __destruct() {
 		if($this->form->isSubmitted()) {
 			$data = self::getData($this->getToken());
-			$dir = Environment::expand(self::$uploadFileDirectory);
+			$dir = self::getDirectory();
 			foreach($data AS $file) {
 				$tmpFile = $file->getTemporaryFile();
 				$tmpFileDir = dirname($tmpFile);
