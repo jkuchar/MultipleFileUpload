@@ -102,13 +102,12 @@ class MultipleFileUpload extends FileUpload {
 	 */
 	static function handleUploads() {
 
-
 		// Checks
 		self::$handleUploadsCheck = true;
 		if(self::$filesProccessed === true) return;
 
 		$req = Environment::getHttpRequest();
-		if(!$req->getMethod() === "POST" OR !stristr($req->getHeader("Content-type"),"multipart/form-data"))
+		if($req->getMethod() !== "POST" OR stristr($req->getHeader("Content-type"),"multipart") === FALSE)
 			return;
 
 		// V PHP 5.3 zhodí Apache!
@@ -330,7 +329,8 @@ class MultipleFileUpload extends FileUpload {
 		$cache[$token] = $store;
 
 		// Fronta je aktuální - nastavíme jí aktuální čas
-		$cache["queues"][$token] = time();
+		$queues = $cache["queues"];
+		$queues[$token] = time();
 
 		return true;
 	}
