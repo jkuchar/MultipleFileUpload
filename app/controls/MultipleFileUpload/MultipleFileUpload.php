@@ -107,7 +107,6 @@ class MultipleFileUpload extends FileUpload {
 
 		$req = Environment::getHttpRequest();
 		
-
 		// Workaround for: http://forum.nettephp.com/cs/3680-httprequest-getheaders-a-content-type
 		$contentType = $req->getHeader("content-type");
 		if(!$contentType AND isset($_SERVER["CONTENT_TYPE"])){

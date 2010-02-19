@@ -47,6 +47,7 @@
     </tr>
 </table>
 <div id="{$uploadifyId}-queue" class="ui-widget-content ui-corner-all" style="max-height: 300px;overflow:auto;display: none;margin-top: 5px;margin-bottom: 10px;"></div>
+
 <script type="text/JavaScript">
     var queue = $("#{!$uploadifyId}-queue");
     var uploadify = $("#{!$uploadifyId}");
@@ -84,9 +85,6 @@
             jQuery("#" + {$uploadifyId} + ID).hide();
             return false;
         },
-	onError: function(event,queueID,fileObj,errorObj) {
-		console.dir(errorObj);
-	},
         onSelectOnce: function(){
             var queue = $("#"+$(this).attr("id")+"-queue");
             $("#"+$(this).attr("id")+"ClearQueue").fadeIn(500);
