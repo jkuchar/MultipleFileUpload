@@ -52,7 +52,7 @@ class HomepagePresenter extends BasePresenter
             foreach($data["upload"] AS $file){
                 // $file je instance HttpUploadedFile
 
-                if($file->move(APP_DIR."/uploadData/q{".$queueId."}__f{".rand(10,99)."}__".$file->getName()))
+                if($file->move(APP_DIR."/uploadedData/q{".$queueId."}__f{".rand(10,99)."}__".$file->getName()))
                     $this->flashMessage("Soubor ".$file->getName() . " byl úspěšně přesunut!");
                 else
                     $this->flashMessage("Při přesouvání souboru ".$file->getName() . " nastala chyba! Pro více informací se podívejte do logů.");

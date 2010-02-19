@@ -131,7 +131,7 @@ class MultipleFileUpload extends FileUpload {
 
 		// Zpracuj soubory
 		if(self::isRequestFromFlash()) {
-			throw new Exception();
+			//throw new Exception();
 			// Uploadify
 			/*
              * Dostaneme soubor Filedata
