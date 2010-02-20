@@ -71,8 +71,7 @@ class MultipleFileUpload extends FileUpload {
 	 *
 	 * @var int Time in seconds
 	 */
-	//public static $lifeTime = 3600; // 1 hour
-	public static $lifeTime = 15; // 1 hour
+	public static $lifeTime = 3600; // 1 hour
 
 	/**
 	 * Cleaning up interval
