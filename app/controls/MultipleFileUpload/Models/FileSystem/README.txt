@@ -1,0 +1,1 @@
+Tyto modely jsou zatím nefunkèní!

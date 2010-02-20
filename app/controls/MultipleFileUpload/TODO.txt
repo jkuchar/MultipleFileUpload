@@ -1,0 +1,10 @@
+TODO: 
+- Vytvořit nějaký obecný Storage na data, který je thread-safe a bude nahrazovat časté nesprávné použití cache.
+- Přestat používat CacheStorage
+- Zdá se že současný storage není úplně 100% atomický - občas se v záznamech ztratí nějaký ten soubor
+- Předělat design
+
+
+Možná někdy bude:
+- dodělat JavaScriptovou validaci - hidden field kde se budou cpát hodnoty pro Nettí validátor
+- Nejdříve vygenerovat nějaký jednorázový token, kterým se uživatel následně ověří, že je to opravdu on.

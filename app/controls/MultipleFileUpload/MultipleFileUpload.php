@@ -38,13 +38,23 @@
 
 class MultipleFileUpload extends FileUpload {
 
-	// TODO: dodělat JavaScriptovou validaci - hidden field kde se budou cpát hodnoty pro Nettí validátor
-	// TODO: Thread-safe cache pro seznamy souborů ve frontě. Tip: http://forum.nettephp.com/cs/viewtopic.php?pid=16547#p16547
-	//  Už to mám! :) Vytvořit další soubor v cache s funkcí lock-unlock.
-	// TODO: Vytvořit nějaký obecný Storage na data, který je thread-safe a bude nahrozovat časté nesprávné použití cache.
-	// TODO: Nejdříve vygenerovat nějaký jednorázový token, kterým se uživatel následně ověří, že je to opravdu on.
+	public static function init(){
+		// init queue model
+		self::$queuesModel = new MFUQueuesCache();
+
+		// Auto cofing of lifeTime and cleanInterval
+		$maxInputTime = (int)ini_get("max_input_time");
+		if($maxInputTime < 0) { // Pokud není žádný maximální čas vstupu
+			self::$lifeTime = 3600;
+		}else{
+			self::$lifeTime = $maxInputTime + 5; // Maximální čas vstupu + pár sekund
+		}
+		self::$cleanInterval = self::$lifeTime * 5;
+	}
 
 	public static function register() {
+		self::init();
+
 		$application = Environment::getApplication();
 		$application->onStartup[]  = "MultipleFileUpload::handleUploads";
 		$application->onShutdown[] = "MultipleFileUpload::cleanCache";
@@ -52,44 +62,35 @@ class MultipleFileUpload extends FileUpload {
 
 	/* ##########  HANDLING UPLOADS  ########### */
 
-
-	/**
-	 * Directory for temporary uploads
-	 * @var string
-	 */
-	public static $uploadFileDirectory = "%tempDir%/MultipleFileUpload-uploads";
-
-	/**
-	 * When $uploadFileDirectory has not been writable. System will write directly to %tempDir%
-	 * @var bool
-	 */
-	public static $allowWriteToRootOfTemp = TRUE;
-
 	/**
 	 * Lifetime of files in queue
 	 * When clean up is running, it is watching if there is any added file in their lifetime.
 	 *
 	 * @var int Time in seconds
+	 * @see self::init()
 	 */
-	public static $lifeTime = 3600; // 1 hour
+	public static $lifeTime;
 
 	/**
 	 * Cleaning up interval
 	 * @var int In seconds
+	 * @see self::init()
 	 */
-	public static $cleanInterval = 18000; // 5 hours
-
-	/**
-	 * Cache object
-	 * @var Cache
-	 */
-	protected static $cache;
+	public static $cleanInterval;
 
 	/**
 	 * Is files handle uploads called?
 	 * @var bool
+	 * @see self::handleUploads()
 	 */
 	protected static $handleUploadsCalled = false;
+
+	/**
+	 * Model
+	 * @var MFUQueuesModel
+	 * @see self::init()
+	 */
+	public static $queuesModel;
 
 	/**
 	 * Handles uploading files
@@ -124,37 +125,16 @@ class MultipleFileUpload extends FileUpload {
 
 	}
 
-	protected static function getDirectory() {
-
-		$dir = Environment::expand(self::$uploadFileDirectory);
-
-		// Vytvoříme složku a ověříme jestli je zapisovatelná
-		if(!file_exists($dir)) {
-			mkdir($dir,0777,true);
-		}
-
-		if(!is_writable($dir) and self::$allowWriteToRootOfTemp) {
-			$dir = self::$uploadFileDirectory = Environment::expand("%tempDir%");
-		}
-
-		if(!is_writable($dir)) {
-			throw new InvalidStateException($dir." is not writable!");
-		}
-
-		return $dir;
-	}
-
 	/**
 	 * (internal) Processes sigle file
 	 */
-	protected static function processSingleFile($token, $file, &$store) {
+	protected static function processSingleFile($token, $file) {
 		if($file instanceof HttpUploadedFile and $file->isOk()) {
-			$file->move(self::getUniqueFilePath($token));
-			$store[] = $file;
+			self::getQueuesModel()->getQueue($token,true)
+				->addFile($file);
 			return true;
-		}else {
-			return false;
 		}
+		return false;
 	}
 
 	/**
@@ -163,11 +143,9 @@ class MultipleFileUpload extends FileUpload {
 	protected static function proccessFilesFromUploadify() {
 		if(!isSet($_POST["token"])) return;
 		$token = $_POST["token"];
-		$store = self::getData($token);
 		foreach(Environment::getHttpRequest()->getFiles() AS $file) {
-			self::processSingleFile($token, $file, $store);
+			self::processSingleFile($token, $file);
 		}
-		self::saveData($token, $store);
 
 		// Odpověď klientovi
 		die("1");
@@ -180,11 +158,9 @@ class MultipleFileUpload extends FileUpload {
 		foreach(Environment::getHttpRequest()->getFiles() AS $name => $controlValue) {
 			if(is_array($controlValue) and isSet($controlValue["files"]) and isSet($_POST[$name]["token"])) {
 				$token = $_POST[$name]["token"];
-				$store = self::getData($token);
 				foreach($controlValue["files"] AS $file) {
-					self::processSingleFile($token,$file, $store);
+					self::processSingleFile($token,$file);
 				}
-				self::saveData($token,$store);
 			}//else zpracuje si to už formulář sám (nejspíš tam bude už HTTPUploadedFile, ale odeslán z klasického FileUpload políčka)
 		}
 	}
@@ -194,57 +170,7 @@ class MultipleFileUpload extends FileUpload {
 	 * @return bool
 	 */
 	public static function cleanCache() {
-		$cache  = self::getCache();
-
-		// Pokud ještě není čas
-		if(isSet($cache["lastCleanup"]) and $cache["lastCleanup"] > (time()-self::$cleanInterval))
-			return;
-
-		// Pokud už jiné vlákno čistí...
-		if(isSet($cache["cleaning"])) return;
-
-		// Teď čistím já...
-		$cache["cleaning"]=true;
-
-		// Šílený mechanizmus, který si má řešit model a snad někdy taky bude
-		$queues = $cache["queues"];
-		if(is_array($queues)) {
-			foreach($queues AS $queueID => $true) {
-				if(isSet($cache[$queueID])) {
-					$lastWriteTime = $queues[$queueID];
-					if($lastWriteTime < (time()-self::$lifeTime)) {
-						foreach($cache[$queueID] AS $key => $file) {
-							$tmpName = $file->getTemporaryFile();
-							if(@unlink($tmpName)) {
-								$c = $cache[$queueID];
-								unset($c[$key]);
-								$cache[$queueID] = $c;
-								unset ($c);
-							}else continue 2;
-						}
-						unset($cache[$queueID]);
-					}else // Soubor ještě nepřesáhl maximální věk, nemaž ho:
-						continue;
-				}
-				unset($queues[$queueID]);
-			}
-			$cache["queues"] = $queues;
-		}
-
-		// Už jsem dočistil
-		$cache["lastCleanup"] = time();
-		$cache["cleaning"]=null;
-	}
-
-	/**
-	 * Getts cache
-	 * @return Cache
-	 */
-	protected static function getCache() {
-		if(!self::$cache) {
-			self::$cache = Environment::getCache("MultipleFileUpload");
-		}
-		return self::$cache;
+		self::$queuesModel->clean(self::$lifeTime,self::$cleanInterval);
 	}
 
 	/**
@@ -256,75 +182,14 @@ class MultipleFileUpload extends FileUpload {
 	}
 
 	/**
-	 * Returns unique file name
-	 *
-	 * self::$token must be set!
-	 *
-	 * @return string
+	 * @return MFUQueuesModel
 	 */
-	protected static function getUniqueFilePath($token) {
-		return self::getDirectory() . DIRECTORY_SEPARATOR . "upload-" . $token  ."-" . uniqid() . ".tmp";
-	}
-
-
-	/**
-	 * Returns data from cache
-	 *
-	 * self::$token must be set!
-	 *
-	 * @return mixed
-	 */
-	protected static function getData($token,$create=false) {
-		$cache = self::getCache();
-		if(!isSet($cache[$token])) {
-			$cache[$token] = array();
+	public static function getQueuesModel(){
+		if(!self::$queuesModel instanceof IMFUQueuesModel){
+			throw new InvalidStateException("Queues model is not instance of IMFUQueuesModel!");
 		}
-
-		// Přidáme frontu do seznamu front
-		if(!isSet($cache["queues"])) {
-			$cache["queues"] = array();
-		}
-		$queues = $cache["queues"];
-		if(!isSet($queues[$token])) {
-			$queues[$token] = time();
-		}
-		$cache["queues"] = $queues;
-
-		return $cache[$token];
+		return self::$queuesModel;
 	}
-
-	/**
-	 * Saves cache data
-	 *
-	 * self::$token must be set!
-	 *
-	 * @param mixed $store
-	 * @return bool
-	 */
-	protected static function saveData($token,$store) {
-		$cache = self::getCache();
-		$cache[$token] = $store;
-
-		// Fronta je aktuální - nastavíme jí aktuální čas
-		$queues = $cache["queues"];
-		$queues[$token] = time();
-
-		return true;
-	}
-
-	/**
-	 * Deletes data from cache
-	 * @param string $token
-	 */
-	protected static function deleteData($token) {
-		$cache = self::getCache();
-		unset($cache[$token]);
-
-		$queues = $cache["queues"];
-		unset($queues[$token]);
-		$cache["queues"] = $queues;
-	}
-
 
 	/*******************************************************************************
 	**************************  Form Control  **************************************
@@ -343,6 +208,18 @@ class MultipleFileUpload extends FileUpload {
 	public $maxFiles;
 
 	/**
+	 * Maximum file size of single uploaded file
+	 * @var int
+	 */
+	public $maxFileSize;
+
+	/**
+	 * How many threads will be used to upload files
+	 * @var int
+	 */
+	public $simUploadThreads;
+
+	/**
 	 * Constructor
 	 * @param string $label Label
 	 */
@@ -358,7 +235,10 @@ class MultipleFileUpload extends FileUpload {
 		};
 
 		$this->maxFiles = $maxSelectedFiles;
-		$this->control = Html::el("div");
+		$this->control = Html::el("div"); // TODO: support for prototype
+		$this->maxFileSize = self::parseIniSize(ini_get('upload_max_filesize'));
+		$this->simUploadThreads = (self::getQueuesModel()->threadSafe) ? 10 : 1;
+
 	}
 
 	/**
@@ -378,10 +258,6 @@ class MultipleFileUpload extends FileUpload {
 	 */
 	public function getControl() {
 		$this->setOption('rendered', TRUE);
-
-		if(!$this->form->isSubmitted() and !$this->token) {
-			$this->token = uniqid(rand());
-		}
 
 		// Create control
 		$control = Html::el('div class=MultipleFileUpload')
@@ -440,11 +316,12 @@ class MultipleFileUpload extends FileUpload {
 	protected function createSectionWithJS($uploadifyId,$token) {
 		$template = new MFUTemplate();
 		$template->setFile(dirname(__FILE__)."/MultipleFileUpload-withJS.phtml");
-		$template->sizeLimit = self::parseIniSize(ini_get('upload_max_filesize'));
+		$template->sizeLimit = $this->maxFileSize;
 		$template->token = $this->getToken();
 		$template->maxFiles = $this->maxFiles;
 		$template->backLink = (string)$this->form->action;
 		$template->uploadifyId = $uploadifyId;
+		$template->simUploadFiles = $this->simUploadThreads;
 		return $template->__toString();
 	}
 
@@ -456,6 +333,9 @@ class MultipleFileUpload extends FileUpload {
 		$data = $this->getForm()->getHttpData();
 		if (isset($data[$name])) {
 
+			// TODO: zjistit co to přesně dělá
+			// Pokud se správně pamatuji, tak to má za úkol zjitit token, pokud je posíláno bez JS
+			// a je na stránce více MFU
 			if (isset($data[$name]["token"])) {
 				$this->token = $data[$name]["token"];
 			}else
@@ -472,8 +352,9 @@ class MultipleFileUpload extends FileUpload {
 	public function setValue($value) {
 		if($value === null) {
 			// pole se vymaže samo v destructoru
-		}else
+		}else{
 			throw new NotSupportedException('Value of MultiFileUpload component cannot be directly set.');
+		}
 	}
 
 	/**
@@ -481,13 +362,13 @@ class MultipleFileUpload extends FileUpload {
 	 * @return array
 	 */
 	public function getValue() {
-		$data = self::getData($this->getToken());
+		$data = $this->getQueue()->getFiles();
 
-		// Ořízneme data navíc
+		// Ořízneme soubory, kterých je více než maximální *počet* souborů
 		$pocetPolozek = count($data);
 		if($pocetPolozek > $this->maxFiles) {
 			$rozdil = $pocetPolozek - $this->maxFiles;
-			for($rozdil = $pocetPolozek - $this->maxFiles;$rozdil>0;$rozdil--) {
+			for($rozdil = $pocetPolozek - $this->maxFiles; $rozdil>0; $rozdil--) {
 				array_pop($data);
 			}
 		}
@@ -500,33 +381,40 @@ class MultipleFileUpload extends FileUpload {
 	 * @return string|null
 	 */
 	public function getToken($need=true) {
+		// Load token from request
 		if(!$this->token) {
-			$this->loadHttpData();
+			$this->loadHttpData(); // Calls self::handleUploads()
 		}
-		/*if(!$this->token AND $need){
+
+		// Generate token
+		if(!$this->form->isSubmitted() and !$this->token) {
+			$this->token = uniqid(rand());
+		}
+
+		if(!$this->token AND $need){
 			throw new InvalidStateException("Can't get a token!");
-		}*/
+		}
+		
 		return $this->token;
+	}
+
+	public function getQueue($create=false){
+		return self::getQueuesModel()
+			->getQueue($this->getToken(),$create);
 	}
 
 	/**
 	 * Destructors: makes fast cleanup
 	 */
 	public function  __destruct() {
-		if($this->form->isSubmitted()) {
-			$data = self::getData($this->getToken());
-			$dir = self::getDirectory();
-			foreach($data AS $file) {
-				$tmpFile = $file->getTemporaryFile();
-				$tmpFileDir = dirname($tmpFile);
-				if($dir == $tmpFileDir and file_exists($tmpFile)) {
-					// Pokud soubor nebyl zpracován (nebyl přesunut do jiného umístění)
-					@unlink($tmpFile);
-				}
-			}
-			self::deleteData($this->getToken());
+		if($this->getForm()->isSubmitted()) {
+			$this->getQueue()->delete();
 		}
 	}
+
+	/*******************************************************************************
+	****************************  Validators  **************************************
+	*******************************************************************************/
 
 	/**
 	 * Filled validator: has been any file uploaded?
@@ -563,7 +451,7 @@ class MultipleFileUpload extends FileUpload {
 	 */
 	public static function validateMimeType(FileUpload $control, $mimeType) {
 		throw new NotSupportedException("Can't validate mime type on multiple files!");
-		return FALSE;
+		return false;
 	}
 
 	/********************* Helpers *********************/
@@ -585,7 +473,6 @@ class MultipleFileUpload extends FileUpload {
 	}
 }
 
-
 /**
  * Extension method for FormContainer
  */
@@ -593,3 +480,4 @@ function FormContainer_addMultipleFileUpload(Form $_this,$name, $label = NULL,$m
 	return $_this[$name] = new MultipleFileUpload($label,$maxFiles);
 }
 FormContainer::extensionMethod("FormContainer::addMultipleFileUpload", "FormContainer_addMultipleFileUpload");
+

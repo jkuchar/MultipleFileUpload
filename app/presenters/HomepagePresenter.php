@@ -16,10 +16,6 @@
 class HomepagePresenter extends BasePresenter
 {
 
-        public function actionDefault(){
-
-        }
-
         public function createComponentForm($name) {
             $form = new AppForm($this, $name);
             $form->getElementPrototype()->class[] = "ajax";
@@ -29,7 +25,7 @@ class HomepagePresenter extends BasePresenter
 
             // Uploadů můžete do formuláře samozdřejmě přidat více, ale zatím je docela nepříjemná validace a jedna chybka v JS
             $form->addMultipleFileUpload("upload","Soubory")
-                ->addRule("MultipleFileUpload::validateFilled","Musíte odeslat alespoň jeden soubor!")/*
+                /*->addRule("MultipleFileUpload::validateFilled","Musíte odeslat alespoň jeden soubor!")
                 ->addRule("MultipleFileUpload::validateFileSize","Soubory jsou dohromady moc veliké!",100*1024)*/;
 
             $form->addSubmit("odeslat", "Odeslat");
@@ -51,23 +47,19 @@ class HomepagePresenter extends BasePresenter
             // Přesumene uploadované soubory
             foreach($data["upload"] AS $file){
                 // $file je instance HttpUploadedFile
-
-                if($file->move(APP_DIR."/uploadedData/q{".$queueId."}__f{".rand(10,99)."}__".$file->getName()))
+		$newFilePath = APP_DIR."/uploadedData/q{".$queueId."}__f{".rand(10,99)."}__".$file->getName();
+                if(/*$file->move($newFilePath)*/true)
                     $this->flashMessage("Soubor ".$file->getName() . " byl úspěšně přesunut!");
                 else
                     $this->flashMessage("Při přesouvání souboru ".$file->getName() . " nastala chyba! Pro více informací se podívejte do logů.");
 
-                $file->contentType; // Toto zpracuje content-type, který při debug::dump potom uvidíme
+                //$file->contentType; // Toto zpracuje content-type, který při debug::dump potom uvidíme
+		// Vypnuto: Nalezen bug v Nette: http://forum.nettephp.com/cs/3691-httpuploadedfile-v-getcontenttype
             }
         }
 
         public function handlePrekresliForm() {
             $this->invalidateControl("form");
         }
-
-	public function renderDefault()
-	{
-		
-	}
 
 }
