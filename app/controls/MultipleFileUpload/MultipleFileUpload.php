@@ -44,7 +44,7 @@ class MultipleFileUpload extends FileUpload {
 	// TODO: Vytvořit nějaký obecný Storage na data, který je thread-safe a bude nahrozovat časté nesprávné použití cache.
 	// TODO: Nejdříve vygenerovat nějaký jednorázový token, kterým se uživatel následně ověří, že je to opravdu on.
 
-	static function register() {
+	public static function register() {
 		$application = Environment::getApplication();
 		$application->onStartup[]  = "MultipleFileUpload::handleUploads";
 		$application->onShutdown[] = "MultipleFileUpload::cleanCache";
@@ -66,30 +66,13 @@ class MultipleFileUpload extends FileUpload {
 	public static $allowWriteToRootOfTemp = TRUE;
 
 	/**
-	 * Cache object
-	 * @var Cache
-	 */
-	private static $cache;
-
-	/**
-	 * Is files proccessed?
-	 * @var bool
-	 */
-	private static $filesProccessed = false;
-
-	/**
-	 * Check if handleUploads was called
-	 * @var bool
-	 */
-	public static $handleUploadsCheck = false;
-
-	/**
 	 * Lifetime of files in queue
 	 * When clean up is running, it is watching if there is any added file in their lifetime.
 	 *
 	 * @var int Time in seconds
 	 */
-	public static $lifeTime = 3600; // 1 hour
+	//public static $lifeTime = 3600; // 1 hour
+	public static $lifeTime = 15; // 1 hour
 
 	/**
 	 * Cleaning up interval
@@ -98,25 +81,41 @@ class MultipleFileUpload extends FileUpload {
 	public static $cleanInterval = 18000; // 5 hours
 
 	/**
+	 * Cache object
+	 * @var Cache
+	 */
+	protected static $cache;
+
+	/**
+	 * Is files handle uploads called?
+	 * @var bool
+	 */
+	protected static $handleUploadsCalled = false;
+
+	/**
 	 * Handles uploading files
 	 */
-	static function handleUploads() {
-		// Checks
-		self::$handleUploadsCheck = true;
-		if(self::$filesProccessed === true) return;
+	public static function handleUploads() {
 
-		$req = Environment::getHttpRequest();
-		
-		// Workaround for: http://forum.nettephp.com/cs/3680-httprequest-getheaders-a-content-type
-		$contentType = $req->getHeader("content-type");
-		if(!$contentType AND isset($_SERVER["CONTENT_TYPE"])){
-			$contentType = $_SERVER["CONTENT_TYPE"];
+		// Pokud už bylo voláno handleUploads - skonči
+		if(self::$handleUploadsCalled === true) {
+			return;
+		}else {
+			self::$handleUploadsCalled = true;
 		}
 
+		$req = Environment::getHttpRequest();
+
+		// Workaround for: http://forum.nettephp.com/cs/3680-httprequest-getheaders-a-content-type
+		$contentType = $req->getHeader("content-type");
+		if(!$contentType AND isset($_SERVER["CONTENT_TYPE"])) {
+			$contentType = $_SERVER["CONTENT_TYPE"];
+		}
+		
 		if($req->getMethod() !== "POST" OR !stristr($contentType,"multipart")) {
 			return;
 		}
-		
+
 		// Zpracuj soubory
 		if(self::isRequestFromFlash()) {
 			self::proccessFilesFromUploadify();
@@ -124,11 +123,10 @@ class MultipleFileUpload extends FileUpload {
 			self::proccessFilesFormStandardHttpTransfer();
 		}
 
-		self::$filesProccessed = true;
 	}
 
-	static function getDirectory() {
-		
+	protected static function getDirectory() {
+
 		$dir = Environment::expand(self::$uploadFileDirectory);
 
 		// Vytvoříme složku a ověříme jestli je zapisovatelná
@@ -148,6 +146,19 @@ class MultipleFileUpload extends FileUpload {
 	}
 
 	/**
+	 * (internal) Processes sigle file
+	 */
+	protected static function processSingleFile($token, $file, &$store) {
+		if($file instanceof HttpUploadedFile and $file->isOk()) {
+			$file->move(self::getUniqueFilePath($token));
+			$store[] = $file;
+			return true;
+		}else {
+			return false;
+		}
+	}
+
+	/**
 	 * Zpracuje soubory z Uploadify
 	 */
 	protected static function proccessFilesFromUploadify() {
@@ -158,7 +169,7 @@ class MultipleFileUpload extends FileUpload {
 			self::processSingleFile($token, $file, $store);
 		}
 		self::saveData($token, $store);
-		
+
 		// Odpověď klientovi
 		die("1");
 	}
@@ -183,7 +194,7 @@ class MultipleFileUpload extends FileUpload {
 	 * Cleans cache
 	 * @return bool
 	 */
-	static function cleanCache() {
+	public static function cleanCache() {
 		$cache  = self::getCache();
 
 		// Pokud ještě není čas
@@ -230,7 +241,7 @@ class MultipleFileUpload extends FileUpload {
 	 * Getts cache
 	 * @return Cache
 	 */
-	private static function getCache() {
+	protected static function getCache() {
 		if(!self::$cache) {
 			self::$cache = Environment::getCache("MultipleFileUpload");
 		}
@@ -238,23 +249,10 @@ class MultipleFileUpload extends FileUpload {
 	}
 
 	/**
-	 * (internal) Processes sigle file
-	 */
-	private static function processSingleFile($token, $file, &$store) {
-		if($file instanceof HttpUploadedFile and $file->isOk()) {
-			$file->move(self::getUniqueFilePath($token));
-			$store[] = $file;
-			return true;
-		}else {
-			return false;
-		}
-	}
-
-	/**
 	 * Is request from flash?
 	 * @return bool
 	 */
-	static function isRequestFromFlash() {
+	protected static function isRequestFromFlash() {
 		return (Environment::getHttpRequest()->getHeader('user-agent') === 'Shockwave Flash');
 	}
 
@@ -265,7 +263,7 @@ class MultipleFileUpload extends FileUpload {
 	 *
 	 * @return string
 	 */
-	static function getUniqueFilePath($token) {
+	protected static function getUniqueFilePath($token) {
 		return self::getDirectory() . DIRECTORY_SEPARATOR . "upload-" . $token  ."-" . uniqid() . ".tmp";
 	}
 
@@ -277,7 +275,7 @@ class MultipleFileUpload extends FileUpload {
 	 *
 	 * @return mixed
 	 */
-	static function getData($token,$create=false) {
+	protected static function getData($token,$create=false) {
 		$cache = self::getCache();
 		if(!isSet($cache[$token])) {
 			$cache[$token] = array();
@@ -304,7 +302,7 @@ class MultipleFileUpload extends FileUpload {
 	 * @param mixed $store
 	 * @return bool
 	 */
-	static function saveData($token,$store) {
+	protected static function saveData($token,$store) {
 		$cache = self::getCache();
 		$cache[$token] = $store;
 
@@ -319,7 +317,7 @@ class MultipleFileUpload extends FileUpload {
 	 * Deletes data from cache
 	 * @param string $token
 	 */
-	static function deleteData($token) {
+	protected static function deleteData($token) {
 		$cache = self::getCache();
 		unset($cache[$token]);
 
@@ -353,9 +351,10 @@ class MultipleFileUpload extends FileUpload {
 		// Monitorování
 		$this->monitor('Nette\Forms\Form');
 		//$this->monitor('Nette\Application\Presenter');
-		parent::__construct($label);
 
-		if(!self::$handleUploadsCheck) {
+		parent::__construct($label);
+		
+		if(!self::$handleUploadsCalled) {
 			throw new InvalidStateException("MultipleFileUpload::handleUpload() has not been called. Call `MultipleFileUpload::register();` from your bootstrap before you call Applicaton::run();");
 		};
 
@@ -426,7 +425,7 @@ class MultipleFileUpload extends FileUpload {
 	 * @param Html $input
 	 * @return string
 	 */
-	function createSectionWithoutJS(Html $input) {
+	protected function createSectionWithoutJS(Html $input) {
 		$template = new MFUTemplate();
 		$template->setFile(dirname(__FILE__).DIRECTORY_SEPARATOR."MultipleFileUpload-withoutJS.phtml");
 		$template->input = $input;
@@ -439,7 +438,7 @@ class MultipleFileUpload extends FileUpload {
 	 * @param string $token
 	 * @return string
 	 */
-	function createSectionWithJS($uploadifyId,$token) {
+	protected function createSectionWithJS($uploadifyId,$token) {
 		$template = new MFUTemplate();
 		$template->setFile(dirname(__FILE__)."/MultipleFileUpload-withJS.phtml");
 		$template->sizeLimit = self::parseIniSize(ini_get('upload_max_filesize'));

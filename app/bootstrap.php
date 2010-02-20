@@ -34,7 +34,9 @@ $session->setSavePath(APP_DIR . '/sessions/');
 // 3a) get and setup a front controller
 $application = Environment::getApplication();
 $application->errorPresenter = 'Error';
-$application->catchExceptions = TRUE;
+if(Environment::isProduction()){
+	$application->catchExceptions = TRUE;
+}
 
 
 
