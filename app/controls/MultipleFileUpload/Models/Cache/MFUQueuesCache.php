@@ -4,7 +4,7 @@ class MFUQueuesCache extends LockableObject implements IMFUQueuesModel {
 
 	public static $cache;
 
-	public $threadSafe = true;
+	public $threadSafe = false;
 
 	function getQueue($token,$create=false) {
 		$this->lock();
