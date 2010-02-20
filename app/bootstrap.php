@@ -15,7 +15,11 @@
 require LIBS_DIR . '/Nette/loader.php';
 //require dirname(__FILE__) . '/../../../Nette/loader.php';
 
-
+if(preg_match('/^(127.|::1)/',$_SERVER["REMOTE_ADDR"])) {
+	Environment::setName(Environment::DEVELOPMENT);
+}else{
+	Environment::setName(Environment::PRODUCTION);
+}
 
 // Step 2: Configure environment
 // 2a) enable Nette\Debug for better exception and error visualisation
