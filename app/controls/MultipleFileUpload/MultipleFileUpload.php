@@ -40,7 +40,7 @@ class MultipleFileUpload extends FileUpload {
 
 	const NAME = "Multiple File Uploader";
 
-	const REVISION = '$Rev$ released on $Date$';
+	const VERSION = '$Rev$ released on $Date$';
 
 	public static function init(){
 		// init queue model
