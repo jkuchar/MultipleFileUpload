@@ -48,6 +48,8 @@
 </table>
 <div id="{$uploadifyId}-queue" class="ui-widget-content ui-corner-all" style="max-height: 300px;overflow:auto;display: none;margin-top: 5px;margin-bottom: 10px;"></div>
 
+<!--<a href="#" id="{$uploadifyId}-swithBack" onclick="$('#{!$uploadifyId}').parents('div.withJS').hide().parent().find('.withoutJS').show();">Odesílání mi nefunguje. Přepnout do standardního rozhraní.</a>-->
+
 <script type="text/JavaScript">
 (function($){
 
@@ -67,21 +69,22 @@
 	width: 70,
 	height: 22,
 	wmode: "transparent",
-	buttonImg: '{? echo Environment::expand("%baseUri%images/uploadifyButton.png")}',
-	uploader: '{? echo Environment::expand("%baseUri%swf/uploadify.allglyphs.swf")}',
-	cancelImg: '{? echo Environment::expand("%baseUri%images/cancel.png")}',
-	queueID: "{!$uploadifyId}-queue",
+	auto: false,
+	multi: true,
+	queueID: {$uploadifyId}+"-queue",
+	buttonImg: {=Environment::expand("%baseUri%images/uploadifyButton.png")},
+	uploader: {=Environment::expand("%baseUri%swf/uploadify.allglyphs.swf")},
+	cancelImg: {=Environment::expand("%baseUri%images/cancel.png")},
 	queueSizeLimit: {$maxFiles},
 	sizeLimit: {$sizeLimit},
 	script: {$backLink},
+	simUploadLimit: {$simUploadFiles},
 	scriptData: {
 	    token: {$token}
 	},
 	onInit: function(){
 	    box.parent().find(".withoutJS").hide();
 	},
-	auto: false,
-	multi: true,
 	onComplete: function(event, ID, fileObj, response, data){
 	    jQuery("#" + {$uploadifyId} + ID).hide();
 	    return false;
@@ -90,6 +93,15 @@
 		if(fileObj.size > uploadify.uploadifySettings("sizeLimit")) {
 			uploadify.trigger({
 				type: "sizeLimitExcessed",
+				fileObj: fileObj,
+				queueID: queueID
+			});
+			uploadify.uploadifyCancel(queueID);
+			return false;
+		}
+		if(fileObj.size == 0) {
+			uploadify.trigger({
+				type: "emptyFile",
 				fileObj: fileObj,
 				queueID: queueID
 			});
@@ -107,11 +119,16 @@
 	    });
 	    $("#"+$(this).attr("id")+"Count").text(uploadify.uploadifySettings("queueSize")+" vybraných souborů");
 	    return false;
-	},
-	simUploadLimit: {$simUploadFiles}
+	}
     });
+
     uploadify.bind("sizeLimitExcessed",function(event){
 	alert("soubor '"+event.fileObj.name+"' je moc velký! Bude přeskočen.");
-    })
+    });
+
+    uploadify.bind("emptyFile",function(event){
+	alert("soubor '"+event.fileObj.name+"' je prázdný! Bude přeskočen.");
+    });
+
 })(jQuery);
 </script>

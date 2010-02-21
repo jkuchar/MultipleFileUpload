@@ -75,7 +75,7 @@ class MFUQueueCache extends LockableObject implements IMFUQueueModel {
 	 * @return Cache
 	 */
 	protected function getQueueData($lock=true) {
-		if($lock) $this->lock();
+		//if($lock) $this->lock();
 		$cache = self::getCache();
 		return $cache[$this->token];
 	}
@@ -83,7 +83,7 @@ class MFUQueueCache extends LockableObject implements IMFUQueueModel {
 	protected function saveQueueData($data) {
 		$cache = self::getCache();
 		$cache[$this->token] = $data;
-		$this->unlock();
+		//$this->unlock();
 
 		$this->setAccessTime(time());
 	}
@@ -121,7 +121,7 @@ class MFUQueueCache extends LockableObject implements IMFUQueueModel {
 	}
 
 	public function delete() {
-		$this->lock();
+		//$this->lock();
 		//Environment::getService('Nette\Logger')
 		//	->logMessage("delete queue: ".$this->getToken());
 
@@ -139,14 +139,14 @@ class MFUQueueCache extends LockableObject implements IMFUQueueModel {
 
 		$cache = self::getCache();
 
-		$this->queuesModel->lock();
+		//$this->queuesModel->lock();
 		$queues = $cache["queues"];
 		unset ($queues[$this->getToken()]);
 		$cache["queues"] = $queues;
-		$this->queuesModel->unlock();
+		//$this->queuesModel->unlock();
 
 		unset($cache[$this->getToken()]);
-		$this->unlock();
+		//$this->unlock();
 	}
 
 	public function getLockKey(){
@@ -163,11 +163,11 @@ class MFUQueueCache extends LockableObject implements IMFUQueueModel {
 		if(!$time) $time = time();
 		$cache = self::getCache();
 
-		$this->queuesModel->lock();
+		//$this->queuesModel->lock();
 		$queues = $cache["queues"];
 		$queues[$this->token] = $time;
 		$cache["queues"] = $queues;
-		$this->queuesModel->unlock();
+		//$this->queuesModel->unlock();
 	}
 
 }

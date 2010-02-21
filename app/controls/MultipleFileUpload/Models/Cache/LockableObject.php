@@ -10,7 +10,7 @@ class LockableObject extends Object {
 		return Environment::getCache("LockableObject-locks");
 	}
 
-	protected function lock() {
+	public function lock() {
 		$cache = $this->getLockModel();
 		while ($this->isLocked()) {
 			$time = rand(5000,15000); // 1000000 = 1s => 5ms až 15ms
@@ -21,12 +21,12 @@ class LockableObject extends Object {
 		return $this;
 	}
 
-	protected function isLocked() {
+	public function isLocked() {
 		$cache = $this->getLockModel();
 		return isset($cache[$this->getLockKey()]);
 	}
 
-	protected function unlock() {
+	public function unlock() {
 		$cache = $this->getLockModel();
 		unset($cache[$this->getLockKey()]);
 		return $this;

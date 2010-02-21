@@ -35,10 +35,10 @@
 </head>
 
 <body>
+	@{include #content}
+	
         {snippet flashes}
 	{foreach $flashes as $flash}<div class="flash {$flash->type}">{$flash->message}</div>{/foreach}
         {/snippet}
-
-	@{include #content}
 </body>
 </html>

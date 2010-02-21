@@ -6,8 +6,13 @@ class MFUQueuesCache extends LockableObject implements IMFUQueuesModel {
 
 	public $threadSafe = false;
 
+	//private $locked = false;
+
 	function getQueue($token,$create=false) {
-		$this->lock();
+		/*if(!$this->locked) {
+			$this->lock();
+			$this->locked = true;
+		}*/
 		$cache = self::getCache();
 
 		if(!isSet($cache["queues"])) {
@@ -22,7 +27,7 @@ class MFUQueuesCache extends LockableObject implements IMFUQueuesModel {
 			$queues[$token] = time();
 			$cache["queues"] = $queues;
 		}
-		$this->unlock();
+		//$this->unlock();
 		return new MFUQueueCache($token,$this);
 	}
 

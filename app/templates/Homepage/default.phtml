@@ -2,7 +2,7 @@
 
 <h1>MultipleFileUpload - form control</h1>
 <p>
-    Je formulářový prvek, který umožňuje v kompatibilních prohlížečích vybrat soubory při uploadu na server na 1 kliknutí.
+	Je formulářový prvek, který umožňuje v kompatibilních prohlížečích vybrat soubory při uploadu na server na 1 kliknutí.
 </p>
 
 
@@ -10,7 +10,7 @@
 
 <h2>Dokumentace</h2>
 <p>
-    Dokumentaci najdete na stránce: <a href="http://nettephp.com/cs/extras/multiplefileupload" target="_BLANK">http://nettephp.com/cs/extras/multiplefileupload</a>.
+	Dokumentaci najdete na stránce: <a href="http://nettephp.com/cs/extras/multiplefileupload" target="_BLANK">http://nettephp.com/cs/extras/multiplefileupload</a>.
 </p>
 
 
@@ -18,73 +18,100 @@
 
 <h2>Živý příklad</h2>
 {snippet form}
-  {ifset $values}
-      <h2>Data vrácená formulářem</h2>
-      {? Debug::dump($values); }
-  {else}
-      {widget form}
-  {/if}
+	{ifset $values}
+		<h2>Data vrácená formulářem</h2>
+		<b>{=count($values["upload"])}</b> přijatých souborů.
+		<table>
+			<tr>
+				<th>
+					Název souboru
+				</th>
+				<th>
+					Velikost souboru
+				</th>
+				<th>
+					Cesta k souboru
+				</th>
+			</tr>
+			{foreach $values["upload"] AS $file}
+			{* $file is instanceof HttpUploadedFile *}
+			<tr>
+				<th style="text-align: center;">
+					{$file->name}
+				</th>
+				<td style="text-align: center;">
+					{$file->size|bytes}
+				</td>
+				<td>
+					<i style="font-size: 60%;">{$file->temporaryFile}</i>
+				</td>
+			</tr>
+			{/foreach}
+		</table>
+		<form class="ajax" action="{link prekresliForm!}" style="padding-top: 10px;">
+			<input type="submit" name="tlacitko" value="Zpět na formulář">
+		</form>
+	{else}
+		{widget form}
+	{/if}
 {/snippet}
 
-<form class="ajax" action="{link prekresliForm!}" style="padding-top: 10px;">
-    <input type="submit" name="tlacitko" value="prekresliForm!"> - <b>Překresli formulář</b> - pokud je formulář odeslán, vrátí vás to zpět na zadání vstupních dat
-</form>
 
 
 
 <h2>Nastavení serveru</h2>
 <table cellpadding="5" cellspacing="2" border="2" class="server">
-    <tr>
-        <th>
-            Safe mode
-        </th>
-        <td>
-            {? if(ini_get("safe_mode")) echo "ano"; else echo "ne"; }
-        </td>
-    </tr>
-    
-    <tr>
-        <th>
-            open_basedir
-        </th>
-        <td>
-            {? $data = ini_get("open_basedir"); if($data) echo $data; else echo "<i>bez omezení</i>"; }
-        </td>
-    </tr>
-    
-    <tr>
-        <th>
-            Maximální velikost POST požadavku
-        </th>
-        <td>
-            {? echo ini_get("post_max_size")}
-        </td>
-    </tr>
-    
-    <tr>
-        <th>
-            Maximální velikost odesílaných souborů
-        </th>
-        <td>
-            {? echo ini_get("upload_max_filesize")}
-        </td>
-    </tr>
+	<tr>
+		<th>
+			Safe mode
+		</th>
+		<td>
+			{? if(ini_get("safe_mode")) echo "ano"; else echo "ne"; }
+		</td>
+	</tr>
 
-    <tr>
-        <th>
-            {=Framework::NAME} {=Framework::VERSION} ({=Framework::PACKAGE})
-        </th>
-        <td>
-            {=Framework::REVISION}
-        </td>
-    </tr>
+	<tr>
+		<th>
+			open_basedir
+		</th>
+		<td>
+			{? $data = ini_get("open_basedir"); if($data) echo $data; else echo "<i>bez omezení</i>"; }
+		</td>
+	</tr>
 
-    <tr>
-        <th>
-            Environment name
-        </th>
-        <td>
-            {=Environment::getName()}
-        </td>
-    </tr>
+	<tr>
+		<th>
+			Maximální velikost POST požadavku
+		</th>
+		<td>
+			{? echo ini_get("post_max_size")}
+		</td>
+	</tr>
+
+	<tr>
+		<th>
+			Maximální velikost odesílaných souborů
+		</th>
+		<td>
+			{? echo ini_get("upload_max_filesize")}
+		</td>
+	</tr>
+
+	<tr>
+		<th>
+			{=Framework::NAME} {=Framework::VERSION} ({=Framework::PACKAGE})
+		</th>
+		<td>
+			{=Framework::REVISION}
+		</td>
+	</tr>
+
+	<tr>
+		<th>
+			Environment name
+		</th>
+		<td>
+			{=Environment::getName()}
+		</td>
+	</tr>
 </table>

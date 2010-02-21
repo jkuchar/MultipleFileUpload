@@ -48,10 +48,14 @@ class HomepagePresenter extends BasePresenter
             foreach($data["upload"] AS $file){
                 // $file je instance HttpUploadedFile
 		$newFilePath = APP_DIR."/uploadedData/q{".$queueId."}__f{".rand(10,99)."}__".$file->getName();
-                if(/*$file->move($newFilePath)*/true)
-                    $this->flashMessage("Soubor ".$file->getName() . " byl úspěšně přesunut!");
-                else
-                    $this->flashMessage("Při přesouvání souboru ".$file->getName() . " nastala chyba! Pro více informací se podívejte do logů.");
+
+		// V produkčním módu nepřesunujeme soubory...
+		if(!Environment::isProduction()) {
+			if($file->move($newFilePath))
+			    $this->flashMessage("Soubor ".$file->getName() . " byl úspěšně přesunut!");
+			else
+			    $this->flashMessage("Při přesouvání souboru ".$file->getName() . " nastala chyba! Pro více informací se podívejte do logů.");
+		}
 
                 //$file->contentType; // Toto zpracuje content-type, který při debug::dump potom uvidíme
 		// Vypnuto: Nalezen bug v Nette: http://forum.nettephp.com/cs/3691-httpuploadedfile-v-getcontenttype

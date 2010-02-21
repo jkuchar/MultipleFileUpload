@@ -50,6 +50,7 @@ class MultipleFileUpload extends FileUpload {
 			self::$lifeTime = $maxInputTime + 5; // Maximální čas vstupu + pár sekund
 		}
 		self::$cleanInterval = self::$lifeTime * 5;
+
 	}
 
 	public static function register() {
@@ -141,11 +142,13 @@ class MultipleFileUpload extends FileUpload {
 	 * Zpracuje soubory z Uploadify
 	 */
 	protected static function proccessFilesFromUploadify() {
+		self::getQueuesModel()->lock();
 		if(!isSet($_POST["token"])) return;
 		$token = $_POST["token"];
 		foreach(Environment::getHttpRequest()->getFiles() AS $file) {
 			self::processSingleFile($token, $file);
 		}
+		self::getQueuesModel()->unlock();
 
 		// Odpověď klientovi
 		die("1");
@@ -155,6 +158,7 @@ class MultipleFileUpload extends FileUpload {
 	 * Zpracuje soubory ze standardního HTTP požadavku
 	 */
 	protected static function proccessFilesFormStandardHttpTransfer() {
+		self::getQueuesModel()->lock();
 		foreach(Environment::getHttpRequest()->getFiles() AS $name => $controlValue) {
 			if(is_array($controlValue) and isSet($controlValue["files"]) and isSet($_POST[$name]["token"])) {
 				$token = $_POST[$name]["token"];
@@ -163,6 +167,7 @@ class MultipleFileUpload extends FileUpload {
 				}
 			}//else zpracuje si to už formulář sám (nejspíš tam bude už HTTPUploadedFile, ale odeslán z klasického FileUpload políčka)
 		}
+		self::getQueuesModel()->unlock();
 	}
 
 	/**
@@ -399,8 +404,10 @@ class MultipleFileUpload extends FileUpload {
 	}
 
 	public function getQueue($create=false){
-		return self::getQueuesModel()
-			->getQueue($this->getToken(),$create);
+		$queues = self::getQueuesModel()/*->lock()*/;
+		$queue  = $queues->getQueue($this->getToken(),$create);
+		//$queues->unlock();
+		return $queue;
 	}
 
 	/**
@@ -408,7 +415,9 @@ class MultipleFileUpload extends FileUpload {
 	 */
 	public function  __destruct() {
 		if($this->getForm()->isSubmitted()) {
+			self::getQueuesModel()->lock();
 			$this->getQueue()->delete();
+			self::getQueuesModel()->unlock();
 		}
 	}
 
