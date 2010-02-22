@@ -30,6 +30,9 @@
 					Velikost souboru
 				</th>
 				<th>
+					Mime-type
+				</th>
+				<th>
 					Cesta k souboru
 				</th>
 			</tr>
@@ -41,6 +44,9 @@
 				</th>
 				<td style="text-align: center;">
 					{$file->size|bytes}
+				</td>
+				<td>
+					{$file->contentType}
 				</td>
 				<td>
 					<i style="font-size: 60%;">{$file->temporaryFile}</i>

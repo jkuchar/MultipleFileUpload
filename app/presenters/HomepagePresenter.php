@@ -56,9 +56,6 @@ class HomepagePresenter extends BasePresenter
 			else
 			    $this->flashMessage("Při přesouvání souboru ".$file->getName() . " nastala chyba! Pro více informací se podívejte do logů.");
 		}
-
-                //$file->contentType; // Toto zpracuje content-type, který při debug::dump potom uvidíme
-		// Vypnuto: Nalezen bug v Nette: http://forum.nettephp.com/cs/3691-httpuploadedfile-v-getcontenttype
             }
         }
 
