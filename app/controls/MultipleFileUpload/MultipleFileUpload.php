@@ -44,16 +44,18 @@ class MultipleFileUpload extends FileUpload {
 
 	public static function init(){
 		// init queue model
-		self::$queuesModel = new MFUQueuesCache();
+		$qm = self::$queuesModel = new MFUQueuesSQLite();
 
 		// Auto cofing of lifeTime and cleanInterval
 		$maxInputTime = (int)ini_get("max_input_time");
-		if($maxInputTime < 0) { // Pokud není žádný maximální čas vstupu
-			self::$lifeTime = 3600;
+		if($maxInputTime < 0) { // Pokud není žádný maximální čas vstupu (-1)
+			$lifeTime = 3600;
 		}else{
-			self::$lifeTime = $maxInputTime + 5; // Maximální čas vstupu + pár sekund
+			$lifeTime = $maxInputTime + 5;// Maximální čas vstupu + pár sekund
 		}
-		self::$cleanInterval = self::$lifeTime * 5;
+
+		//self::setCleanInterval($lifeTime * 3);
+		self::setLifeTime($lifeTime);
 
 	}
 
@@ -68,31 +70,33 @@ class MultipleFileUpload extends FileUpload {
 	/* ##########  HANDLING UPLOADS  ########### */
 
 	/**
-	 * Lifetime of files in queue
-	 * When clean up is running, it is watching if there is any added file in their lifetime.
-	 *
-	 * @var int Time in seconds
-	 * @see self::init()
+	 * Setts life time of files in queue (shortcut for self::getQueuesModel()->setLifeTime)
+	 * @param int $lifeTime Time in seconds
 	 */
-	public static $lifeTime;
+	static function setLifeTime($lifeTime) {
+		self::getQueuesModel()
+			->setLifeTime((int)$lifeTime);
+	}
 
 	/**
-	 * Cleaning up interval
-	 * @var int In seconds
-	 * @see self::init()
+	 * Setts clean interval (Interval when cleanup function i called) (shortcut for self::getQueuesModel()->setLifeTime)
+	 * @param int $interval
 	 */
-	public static $cleanInterval;
+	//static function setCleanInterval($interval) {
+	//	self::getQueuesModel()
+	//		->setCleanInterval((int)$interval);
+	//}
 
 	/**
 	 * Is files handle uploads called?
 	 * @var bool
 	 * @see self::handleUploads()
 	 */
-	protected static $handleUploadsCalled = false;
+	private static $handleUploadsCalled = false;
 
 	/**
 	 * Model
-	 * @var MFUQueuesModel
+	 * @var IMFUQueuesModel
 	 * @see self::init()
 	 */
 	public static $queuesModel;
@@ -121,6 +125,8 @@ class MultipleFileUpload extends FileUpload {
 			return;
 		}
 
+		self::getQueuesModel()->initialize();
+
 		// Zpracuj soubory
 		if(self::isRequestFromFlash()) {
 			self::proccessFilesFromUploadify();
@@ -146,13 +152,11 @@ class MultipleFileUpload extends FileUpload {
 	 * Zpracuje soubory z Uploadify
 	 */
 	protected static function proccessFilesFromUploadify() {
-		self::getQueuesModel()->lock();
 		if(!isSet($_POST["token"])) return;
 		$token = $_POST["token"];
 		foreach(Environment::getHttpRequest()->getFiles() AS $file) {
 			self::processSingleFile($token, $file);
 		}
-		self::getQueuesModel()->unlock();
 
 		// Odpověď klientovi
 		die("1");
@@ -162,7 +166,6 @@ class MultipleFileUpload extends FileUpload {
 	 * Zpracuje soubory ze standardního HTTP požadavku
 	 */
 	protected static function proccessFilesFormStandardHttpTransfer() {
-		self::getQueuesModel()->lock();
 		foreach(Environment::getHttpRequest()->getFiles() AS $name => $controlValue) {
 			if(is_array($controlValue) and isSet($controlValue["files"]) and isSet($_POST[$name]["token"])) {
 				$token = $_POST[$name]["token"];
@@ -171,15 +174,15 @@ class MultipleFileUpload extends FileUpload {
 				}
 			}//else zpracuje si to už formulář sám (nejspíš tam bude už HTTPUploadedFile, ale odeslán z klasického FileUpload políčka)
 		}
-		self::getQueuesModel()->unlock();
 	}
 
 	/**
 	 * Cleans cache
-	 * @return bool
 	 */
 	public static function cleanCache() {
-		self::$queuesModel->clean(self::$lifeTime,self::$cleanInterval);
+		if(rand(1,100) == 1) {
+			self::getQueuesModel()->cleanup();
+		}
 	}
 
 	/**
@@ -191,7 +194,7 @@ class MultipleFileUpload extends FileUpload {
 	}
 
 	/**
-	 * @return MFUQueuesModel
+	 * @return IMFUQueuesModel
 	 */
 	public static function getQueuesModel(){
 		if(!self::$queuesModel instanceof IMFUQueuesModel){
@@ -246,7 +249,7 @@ class MultipleFileUpload extends FileUpload {
 		$this->maxFiles = $maxSelectedFiles;
 		$this->control = Html::el("div"); // TODO: support for prototype
 		$this->maxFileSize = self::parseIniSize(ini_get('upload_max_filesize'));
-		$this->simUploadThreads = (self::getQueuesModel()->threadSafe) ? 10 : 1;
+		$this->simUploadThreads = 5;
 
 	}
 
@@ -341,16 +344,13 @@ class MultipleFileUpload extends FileUpload {
 		$name = strtr(str_replace(']', '', $this->getHtmlName()), '.', '_');
 		$data = $this->getForm()->getHttpData();
 		if (isset($data[$name])) {
-
-			// TODO: zjistit co to přesně dělá
-			// Pokud se správně pamatuji, tak to má za úkol zjitit token, pokud je posíláno bez JS
-			// a je na stránce více MFU
+			// Zjistí token fronty souborů, kterou jsou soubory doručeny
+			//  -> Jak JS tak bez JS (akorát s JS už dorazí pouze token - nic jiného)
 			if (isset($data[$name]["token"])) {
 				$this->token = $data[$name]["token"];
-			}else
-				throw new InvalidStateException("Token has not been received! Without token MultipleFileUploader can't identify files.");
-
-			self::handleUploads();
+			}else{
+				throw new InvalidStateException("Token has not been received! Without token MultipleFileUploader can't identify which files has been received.");
+			}
 		}
 	}
 
@@ -374,6 +374,7 @@ class MultipleFileUpload extends FileUpload {
 		$data = $this->getQueue()->getFiles();
 
 		// Ořízneme soubory, kterých je více než maximální *počet* souborů
+		// TODO: Nepřesunot jako validační pravidlo?
 		$pocetPolozek = count($data);
 		if($pocetPolozek > $this->maxFiles) {
 			$rozdil = $pocetPolozek - $this->maxFiles;
@@ -392,11 +393,11 @@ class MultipleFileUpload extends FileUpload {
 	public function getToken($need=true) {
 		// Load token from request
 		if(!$this->token) {
-			$this->loadHttpData(); // Calls self::handleUploads()
+			$this->loadHttpData();
 		}
 
-		// Generate token
-		if(!$this->form->isSubmitted() and !$this->token) {
+		// If upload do not start, generate queueID
+		if(!$this->token and !$this->form->isSubmitted()) {
 			$this->token = uniqid(rand());
 		}
 
@@ -407,11 +408,12 @@ class MultipleFileUpload extends FileUpload {
 		return $this->token;
 	}
 
-	public function getQueue($create=false){
-		$queues = self::getQueuesModel()/*->lock()*/;
-		$queue  = $queues->getQueue($this->getToken(),$create);
-		//$queues->unlock();
-		return $queue;
+	/**
+	 * Getts queue model
+	 * @return IMFUQueueModel
+	 */
+	public function getQueue(){
+		return self::getQueuesModel()->getQueue($this->getToken());
 	}
 
 	/**
@@ -419,9 +421,7 @@ class MultipleFileUpload extends FileUpload {
 	 */
 	public function  __destruct() {
 		if($this->getForm()->isSubmitted()) {
-			self::getQueuesModel()->lock();
 			$this->getQueue()->delete();
-			self::getQueuesModel()->unlock();
 		}
 	}
 
@@ -463,13 +463,10 @@ class MultipleFileUpload extends FileUpload {
 	 * @return bool
 	 */
 	public static function validateMimeType(FileUpload $control, $mimeType) {
-		throw new NotSupportedException("Can't validate mime type on multiple files!");
-		return false;
+		throw new NotSupportedException("Can't validate mime type! This is MULTIPLE file upload control.");
 	}
 
 	/********************* Helpers *********************/
-
-	protected static $unitScale = array('k' => 1024, 'm' => 1048576, 'g' => 1073741824);
 
 	/**
 	 * Parses ini size
@@ -477,12 +474,14 @@ class MultipleFileUpload extends FileUpload {
 	 * @return int
 	 */
 	public static function parseIniSize($value) {
+		$units = array('k' => 1024, 'm' => 1048576, 'g' => 1073741824);
+
 		$unit = strtolower(substr($value, -1));
 
-		if (is_numeric($unit) || !isset(self::$unitScale[$unit]))
+		if (is_numeric($unit) || !isset($units[$unit]))
 			return $value;
 
-		return ((int) $value) * self::$unitScale[$unit];
+		return ((int)$value) * $units[$unit];
 	}
 }
 

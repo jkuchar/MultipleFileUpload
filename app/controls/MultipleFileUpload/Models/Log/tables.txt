@@ -1,0 +1,10 @@
+queues:
+
+id (token): string - deintifikátor fronty
+lastAccess: datum+èas=timestamp
+
+FileInfos:
+
+id: int - autoincrement
+queue: string
+data: serialized PHP object - string
