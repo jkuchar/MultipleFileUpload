@@ -76,7 +76,10 @@ class MFUQueueSQLite extends MFUBaseQueueModel {
 	 * @return int timestamp
 	 */
 	function getLastAccess() {
-		$lastAccess = (int)$this->query("SELECT lastAccess FROM queues WHERE queueID = '".sqlite_escape_string($this->getQueueID())."'")->fetchSingle();
+		$lastAccess = (int)$this->query("SELECT created
+			FROM files
+			WHERE queueID = '".sqlite_escape_string($this->getQueueID())."'
+			ORDER BY created DESC")->fetchSingle();
 		return $lastAccess;
 	}
 
