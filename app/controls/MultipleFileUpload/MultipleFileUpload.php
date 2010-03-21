@@ -180,7 +180,7 @@ class MultipleFileUpload extends FileUpload {
 	 * Cleans cache
 	 */
 	public static function cleanCache() {
-		if(!Environment::isProduction() && rand(1,100) == 1) {
+		if(!Environment::isProduction() OR rand(1,100) < 5) {
 			self::getQueuesModel()->cleanup();
 		}
 	}
