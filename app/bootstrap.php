@@ -61,5 +61,21 @@ $router[] = new Route('<presenter>/<action>/<id>', array(
 // Step 4.1: Setup MultipleFileUpload
 MultipleFileUpload::register();
 
+// When you want to use MFU dibi driver
+//if(class_exists("Dibi",true)) {
+//
+//	Dibi::connect(array(
+//		"driver"   => "postgre",
+//		"host"     => "127.0.0.1",
+//		"dbname"   => "MFU",
+//		"schema"   => "public",
+//		"user"     => "postgres",
+//		"pass"     => "toor",
+//		"charset"  => "UTF-8"
+//	));
+//
+//	MultipleFileUpload::$queuesModel = new MFUQueuesDibi();
+//}
+
 // Step 5: Run the application!
 $application->run();
