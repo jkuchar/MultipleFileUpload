@@ -63,8 +63,8 @@ class MultipleFileUpload extends FileUpload {
 		self::init();
 
 		$application = Environment::getApplication();
-		$application->onStartup[]  = "MultipleFileUpload::handleUploads";
-		$application->onShutdown[] = "MultipleFileUpload::cleanCache";
+		$application->onStartup[]  = callback("MultipleFileUpload::handleUploads");
+		$application->onShutdown[] = callback("MultipleFileUpload::cleanCache");
 	}
 
 	/* ##########  HANDLING UPLOADS  ########### */
@@ -180,7 +180,7 @@ class MultipleFileUpload extends FileUpload {
 	 * Cleans cache
 	 */
 	public static function cleanCache() {
-		if(rand(1,100) == 1) {
+		if(!Environment::isProduction() && rand(1,100) == 1) {
 			self::getQueuesModel()->cleanup();
 		}
 	}
