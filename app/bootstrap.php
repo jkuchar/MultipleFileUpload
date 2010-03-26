@@ -61,7 +61,13 @@ $router[] = new Route('<presenter>/<action>/<id>', array(
 // Step 4.1: Setup MultipleFileUpload
 MultipleFileUpload::register();
 
-// When you want to use MFU dibi driver
+// Optional step: register driver
+//
+// As default driver is used Sqlite driver
+// @see http://addons.nettephp.com/cs/multiplefileupload?_fid=3f61#toc-drivery
+//
+// When you want to use other driver use something like this:
+//
 //if(class_exists("Dibi",true)) {
 //
 //	Dibi::connect(array(
