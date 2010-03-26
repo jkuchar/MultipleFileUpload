@@ -106,7 +106,7 @@ class MultipleFileUpload extends FileUpload {
 	 */
 	public static function handleUploads() {
 
-		// Pokud už bylo voláno handleUploads - skonči
+		// Pokud už bylo voláno handleUploads -> skonči
 		if(self::$handleUploadsCalled === true) {
 			return;
 		}else {
@@ -125,13 +125,14 @@ class MultipleFileUpload extends FileUpload {
 			return;
 		}
 
-		self::getQueuesModel()->initialize();
+		self::getQueuesModel()
+			->initialize();
 
 		// Zpracuj soubory
 		if(self::isRequestFromFlash()) {
-			self::proccessFilesFromUploadify();
+			self::proccessUploadifyFiles();
 		}else {
-			self::proccessFilesFormStandardHttpTransfer();
+			self::proccessStandardPostFiles();
 		}
 
 	}
@@ -139,23 +140,39 @@ class MultipleFileUpload extends FileUpload {
 	/**
 	 * (internal) Processes sigle file
 	 */
-	protected static function processSingleFile($token, $file) {
-		if($file instanceof HttpUploadedFile and $file->isOk()) {
-			self::getQueuesModel()->getQueue($token,true)
-				->addFile($file);
-			return true;
+	protected static function processFile($token, $file) {
+		// Why not in one condition?
+		// @see http://forum.nettephp.com/cs/viewtopic.php?pid=29556#p29556
+
+		if(!$file instanceof HttpUploadedFile) {
+			return false;
 		}
-		return false;
+		
+		if($file->isOk()) {
+			self::getQueuesModel()
+				->getQueue($token)
+				->addFile($file); // Queue::addFile()
+
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	/**
 	 * Zpracuje soubory z Uploadify
+	 *  - vždy max. jeden prvek na požadavek
 	 */
-	protected static function proccessFilesFromUploadify() {
-		if(!isSet($_POST["token"])) return;
+	protected static function proccessUploadifyFiles() {
+
+		// Pokud uploadify neposlalo v POSTu token
+		if(!isset($_POST["token"])) {
+			return;
+		}
+
 		$token = $_POST["token"];
 		foreach(Environment::getHttpRequest()->getFiles() AS $file) {
-			self::processSingleFile($token, $file);
+			self::processFile($token, $file);
 		}
 
 		// Odpověď klientovi
@@ -164,15 +181,36 @@ class MultipleFileUpload extends FileUpload {
 
 	/**
 	 * Zpracuje soubory ze standardního HTTP požadavku
+	 *  - více formulářových prvků na požadavek -> iterace
 	 */
-	protected static function proccessFilesFormStandardHttpTransfer() {
+	protected static function proccessStandardPostFiles() {
+		// Iterujeme nad přijatými soubory
 		foreach(Environment::getHttpRequest()->getFiles() AS $name => $controlValue) {
-			if(is_array($controlValue) and isSet($controlValue["files"]) and isSet($_POST[$name]["token"])) {
+
+			// MFU vždy posílá soubory v této struktuře:
+			//
+			// array(
+			//	"token" => "blablabla",
+			//	"files" => array(
+			//		0 => HttpUploadedFile(...),
+			//		...
+			//	)
+			// )
+
+			$isFormMFU = (
+				is_array($controlValue) and
+				isset($controlValue["files"]) and
+				isset($_POST[$name]["token"])
+			);
+
+			if($isFormMFU) {
 				$token = $_POST[$name]["token"];
 				foreach($controlValue["files"] AS $file) {
-					self::processSingleFile($token,$file);
+					self::processFile($token,$file);
 				}
-			}//else zpracuje si to už formulář sám (nejspíš tam bude už HTTPUploadedFile, ale odeslán z klasického FileUpload políčka)
+			}
+
+			// soubory, které se netýkají MFU nezpracujeme -> zpracuje si je standardním způsobem formulář
 		}
 	}
 
