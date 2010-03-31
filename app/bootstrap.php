@@ -61,6 +61,8 @@ $router[] = new Route('<presenter>/<action>/<id>', array(
 // Step 4.1: Setup MultipleFileUpload
 MultipleFileUpload::register();
 
+
+
 // Optional step: register driver
 //
 // As default driver is used Sqlite driver
@@ -82,6 +84,16 @@ MultipleFileUpload::register();
 //
 //	MultipleFileUpload::$queuesModel = new MFUQueuesDibi();
 //}
+
+
+
+// Custom file validation function:
+//function validateMFUFile(HttpUploadedFile $file) {
+//	return $file->isOk();
+//}
+//MultipleFileUpload::$validateFileCallback = callback("validateMFUFile");
+
+
 
 // Step 5: Run the application!
 $application->run();
