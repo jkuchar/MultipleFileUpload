@@ -42,23 +42,53 @@ class MultipleFileUpload extends FileUpload {
 
 	const VERSION = '$Rev$ released on $Date$';
 
-	public static function init(){
+	/**
+	 * Is files handle uploads called?
+	 * @var bool
+	 * @see self::handleUploads()
+	 */
+	private static $handleUploadsCalled = false;
+
+	/**
+	 * Model
+	 * @var IMFUQueuesModel
+	 * @see self::init()
+	 */
+	public static $queuesModel;
+
+	/**
+	 * Validate file callback
+	 * @var Callback
+	 * @return bool
+	 * @param HttpUploadedFile File to be checked
+	 */
+	public static $validateFileCallback;
+
+	/**
+	 * Initialize MFU
+	 */
+	public static function init() {
 		// init queue model
 		$qm = self::$queuesModel = new MFUQueuesSQLite();
 
-		// Auto cofing of lifeTime and cleanInterval
+		// Set default check callback
+		self::$validateFileCallback = callback(__CLASS__,"validateFile");
+
+		// Auto cofing of lifeTime
 		$maxInputTime = (int)ini_get("max_input_time");
 		if($maxInputTime < 0) { // Pokud není žádný maximální čas vstupu (-1)
 			$lifeTime = 3600;
-		}else{
+		} else {
 			$lifeTime = $maxInputTime + 5;// Maximální čas vstupu + pár sekund
 		}
 
-		//self::setCleanInterval($lifeTime * 3);
 		self::setLifeTime($lifeTime);
 
 	}
 
+	/**
+	 * Register MFU into Nette
+	 */
 	public static function register() {
 		self::init();
 
@@ -79,29 +109,6 @@ class MultipleFileUpload extends FileUpload {
 	}
 
 	/**
-	 * Setts clean interval (Interval when cleanup function i called) (shortcut for self::getQueuesModel()->setLifeTime)
-	 * @param int $interval
-	 */
-	//static function setCleanInterval($interval) {
-	//	self::getQueuesModel()
-	//		->setCleanInterval((int)$interval);
-	//}
-
-	/**
-	 * Is files handle uploads called?
-	 * @var bool
-	 * @see self::handleUploads()
-	 */
-	private static $handleUploadsCalled = false;
-
-	/**
-	 * Model
-	 * @var IMFUQueuesModel
-	 * @see self::init()
-	 */
-	public static $queuesModel;
-
-	/**
 	 * Handles uploading files
 	 */
 	public static function handleUploads() {
@@ -120,7 +127,7 @@ class MultipleFileUpload extends FileUpload {
 		if(!$contentType AND isset($_SERVER["CONTENT_TYPE"])) {
 			$contentType = $_SERVER["CONTENT_TYPE"];
 		}
-		
+
 		if($req->getMethod() !== "POST" OR !stristr($contentType,"multipart")) {
 			return;
 		}
@@ -138,25 +145,38 @@ class MultipleFileUpload extends FileUpload {
 	}
 
 	/**
+	 * Checks file if is ok and can be processed
+	 * @param HttpUploadedFile $file
+	 * @return bool
+	 */
+	public static function validateFile(HttpUploadedFile $file) {
+		return $file->isOk();
+	}
+
+	/**
 	 * (internal) Processes sigle file
 	 */
 	protected static function processFile($token, $file) {
+
 		// Why not in one condition?
 		// @see http://forum.nettephp.com/cs/viewtopic.php?pid=29556#p29556
-
 		if(!$file instanceof HttpUploadedFile) {
 			return false;
 		}
-		
-		if($file->isOk()) {
-			self::getQueuesModel()
-				->getQueue($token)
-				->addFile($file); // Queue::addFile()
 
-			return true;
-		} else {
-			return false;
+		/* @var $validateCallback Callback */
+		$validateCallback = self::$validateFileCallback;
+
+		/* @var $isValid bool */
+		$isValid = $validateCallback->invoke($file);
+
+		if($isValid) {
+			self::getQueuesModel() // returns: IMFUQueuesModel
+				->getQueue($token) // returns: IMFUQueueModel
+					->addFile($file);
 		}
+
+		return $isValid;
 	}
 
 	/**
@@ -165,17 +185,19 @@ class MultipleFileUpload extends FileUpload {
 	 */
 	protected static function proccessUploadifyFiles() {
 
-		// Pokud uploadify neposlalo v POSTu token
 		if(!isset($_POST["token"])) {
 			return;
 		}
 
+		/* @var $token string */
 		$token = $_POST["token"];
+		
+		/* @var $file HttpUploadedFile */
 		foreach(Environment::getHttpRequest()->getFiles() AS $file) {
 			self::processFile($token, $file);
 		}
 
-		// Odpověď klientovi
+		// Response to client
 		die("1");
 	}
 
@@ -199,8 +221,8 @@ class MultipleFileUpload extends FileUpload {
 
 			$isFormMFU = (
 				is_array($controlValue) and
-				isset($controlValue["files"]) and
-				isset($_POST[$name]["token"])
+					isset($controlValue["files"]) and
+					isset($_POST[$name]["token"])
 			);
 
 			if($isFormMFU) {
@@ -234,8 +256,8 @@ class MultipleFileUpload extends FileUpload {
 	/**
 	 * @return IMFUQueuesModel
 	 */
-	public static function getQueuesModel(){
-		if(!self::$queuesModel instanceof IMFUQueuesModel){
+	public static function getQueuesModel() {
+		if(!self::$queuesModel instanceof IMFUQueuesModel) {
 			throw new InvalidStateException("Queues model is not instance of IMFUQueuesModel!");
 		}
 		return self::$queuesModel;
@@ -279,7 +301,7 @@ class MultipleFileUpload extends FileUpload {
 		//$this->monitor('Nette\Application\Presenter');
 
 		parent::__construct($label);
-		
+
 		if(!self::$handleUploadsCalled) {
 			throw new InvalidStateException("MultipleFileUpload::handleUpload() has not been called. Call `MultipleFileUpload::register();` from your bootstrap before you call Applicaton::run();");
 		};
@@ -386,7 +408,7 @@ class MultipleFileUpload extends FileUpload {
 			//  -> Jak JS tak bez JS (akorát s JS už dorazí pouze token - nic jiného)
 			if (isset($data[$name]["token"])) {
 				$this->token = $data[$name]["token"];
-			}else{
+			}else {
 				throw new InvalidStateException("Token has not been received! Without token MultipleFileUploader can't identify which files has been received.");
 			}
 		}
@@ -399,7 +421,7 @@ class MultipleFileUpload extends FileUpload {
 	public function setValue($value) {
 		if($value === null) {
 			// pole se vymaže samo v destructoru
-		}else{
+		}else {
 			throw new NotSupportedException('Value of MultiFileUpload component cannot be directly set.');
 		}
 	}
@@ -439,10 +461,10 @@ class MultipleFileUpload extends FileUpload {
 			$this->token = uniqid(rand());
 		}
 
-		if(!$this->token AND $need){
+		if(!$this->token AND $need) {
 			throw new InvalidStateException("Can't get a token!");
 		}
-		
+
 		return $this->token;
 	}
 
@@ -450,7 +472,7 @@ class MultipleFileUpload extends FileUpload {
 	 * Getts queue model
 	 * @return IMFUQueueModel
 	 */
-	public function getQueue(){
+	public function getQueue() {
 		return self::getQueuesModel()->getQueue($this->getToken());
 	}
 
