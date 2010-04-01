@@ -23,7 +23,9 @@ class MFUQueuesDibi extends MFUBaseQueuesModel {
 	/**
 	 * Initializes driver
 	 */
-	function initialize() {}
+	function initialize() {
+
+	}
 
 	// <editor-fold defaultstate="collapsed" desc="Database functions">
 
@@ -43,7 +45,7 @@ class MFUQueuesDibi extends MFUBaseQueuesModel {
 	 * @return DibiResult
 	 * @throws InvalidStateException
 	 */
-	function query(){
+	function query() {
 		return call_user_func_array(
 			array($this->getConnection(), 'query'),
 			func_get_args()
@@ -98,7 +100,7 @@ class MFUQueuesDibi extends MFUBaseQueuesModel {
 		  GROUP BY [queueID]")->fetchAll();
 
 		foreach($qs AS $row) {
-                    $queuesOut[] = $this->createQueueObj($row["queueID"]);
+			$queuesOut[] = $this->createQueueObj($row["queueID"]);
 		}
 		return $queuesOut;
 	}

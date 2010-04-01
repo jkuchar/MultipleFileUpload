@@ -13,7 +13,7 @@ class MFUQueueDibi extends MFUBaseQueueModel {
 	 * @return DibiResult
 	 */
 	function query() {
-                return call_user_func_array(
+		return call_user_func_array(
 			array($this->getQueuesModel(), 'query'), // what
 			func_get_args() // arguments
 		);
@@ -27,11 +27,11 @@ class MFUQueueDibi extends MFUBaseQueueModel {
 		$file->move($this->getUniqueFilePath());
 		//Debug::dump(serialize($file));
 		$data = array(
-                  'queueID%s' => $this->getQueueID(),
-                  'created%i' => time(),
-                  'data%s'    => base64_encode(serialize($file)) // workaround: http://forum.dibiphp.com/cs/1003-pgsql-a-znak-x00-oriznuti-zbytku-vstupu
-                );
-		
+			'queueID%s' => $this->getQueueID(),
+			'created%i' => time(),
+			'data%s'    => base64_encode(serialize($file)) // workaround: http://forum.dibiphp.com/cs/1003-pgsql-a-znak-x00-oriznuti-zbytku-vstupu
+		);
+
 		$this->query('INSERT INTO [files]', $data);
 	}
 
@@ -64,11 +64,11 @@ class MFUQueueDibi extends MFUBaseQueueModel {
 	 * @return array of HttpUploadedFile
 	 */
 	function getFiles() {
-                $files = array();
+		$files = array();
 
-                foreach($this->query('SELECT * FROM [files] WHERE [queueID] = %s', $this->getQueueID())->fetchAll() as $row){
-                    $files[] = unserialize(base64_decode($row->data)); // workaround: http://forum.dibiphp.com/cs/1003-pgsql-a-znak-x00-oriznuti-zbytku-vstupu
-                }
+		foreach($this->query('SELECT * FROM [files] WHERE [queueID] = %s', $this->getQueueID())->fetchAll() as $row) {
+			$files[] = unserialize(base64_decode($row->data)); // workaround: http://forum.dibiphp.com/cs/1003-pgsql-a-znak-x00-oriznuti-zbytku-vstupu
+		}
 
 		return $files;
 	}

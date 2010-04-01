@@ -23,7 +23,9 @@ class MFUQueuesSQLite extends MFUBaseQueuesModel {
 	/**
 	 * Initializes driver
 	 */
-	function initialize() {}
+	function initialize() {
+
+	}
 
 	// <editor-fold defaultstate="collapsed" desc="Database functions">
 
@@ -50,7 +52,7 @@ class MFUQueuesSQLite extends MFUBaseQueuesModel {
 	 * @return SQLiteResult
 	 * @throws InvalidStateException
 	 */
-	function query($sql){
+	function query($sql) {
 		$r = $this->getConnection()->query($sql,SQLITE_ASSOC, $error);
 		if($error) {
 			throw new InvalidStateException("Can't execute queury: '".$sql."'. error: ".$error);
@@ -141,7 +143,7 @@ class MFUQueuesSQLite extends MFUBaseQueuesModel {
 			"databasePath" => dirname(__FILE__)."/database.sdb",
 			"uploadsTempDir" => ""
 		));
-		
+
 		foreach($config AS $key => $val) {
 			self::$$key = $val;
 		}

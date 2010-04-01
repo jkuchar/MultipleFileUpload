@@ -173,7 +173,7 @@ class MultipleFileUpload extends FileUpload {
 		if($isValid) {
 			self::getQueuesModel() // returns: IMFUQueuesModel
 				->getQueue($token) // returns: IMFUQueueModel
-					->addFile($file);
+				->addFile($file);
 		}
 
 		return $isValid;
@@ -191,7 +191,7 @@ class MultipleFileUpload extends FileUpload {
 
 		/* @var $token string */
 		$token = $_POST["token"];
-		
+
 		/* @var $file HttpUploadedFile */
 		foreach(Environment::getHttpRequest()->getFiles() AS $file) {
 			self::processFile($token, $file);
