@@ -13,9 +13,10 @@ class MFUQueueDibi extends MFUBaseQueueModel {
 	 * @return DibiResult
 	 */
 	function query() {
+		$params = func_get_args(); // arguments
 		return call_user_func_array(
 			array($this->getQueuesModel(), 'query'), // what
-			func_get_args() // arguments
+			$params
 		);
 	}
 

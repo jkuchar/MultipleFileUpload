@@ -46,9 +46,10 @@ class MFUQueuesDibi extends MFUBaseQueuesModel {
 	 * @throws InvalidStateException
 	 */
 	function query() {
+		$params = func_get_args(); // arguments
 		return call_user_func_array(
 			array($this->getConnection(), 'query'),
-			func_get_args()
+			$params
 		);
 	}
 
