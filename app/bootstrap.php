@@ -66,7 +66,7 @@ MultipleFileUpload::register();
 // Optional step: register driver
 //
 // As default driver is used Sqlite driver
-// @see http://addons.nettephp.com/cs/multiplefileupload?_fid=3f61#toc-drivery
+// @see http://addons.nettephp.com/cs/multiplefileupload#toc-drivery
 //
 // When you want to use other driver use something like this:
 //
