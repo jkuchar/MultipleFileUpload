@@ -81,13 +81,13 @@ class MFUQueuesDibi extends MFUBaseQueuesModel {
 	 * Executes cleanup
 	 */
 	function cleanup() {
-		$this->query("BEGIN TRANSACTION");
+		$this->getConnection()->begin();
 		foreach($this->getQueues() AS $queue) {
 			if($queue->getLastAccess() < time() - $this->getLifeTime()) {
 				$queue->delete();
 			}
 		}
-		$this->query("END TRANSACTION");
+		$this->getConnection()->commit();
 	}
 
 	/**
