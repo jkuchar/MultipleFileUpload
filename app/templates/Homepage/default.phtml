@@ -20,7 +20,7 @@
 {snippet form}
 	{ifset $values}
 		<h2>Data vrácená formulářem</h2>
-		<b>{=count($values["upload"])}</b> přijatých souborů.
+		<b>{= count($values["upload"])}</b> přijatých souborů.
 		<table>
 			<tr>
 				<th>
@@ -72,7 +72,11 @@
 			Safe mode
 		</th>
 		<td>
-			{? if(ini_get("safe_mode")) echo "ano"; else echo "ne"; }
+			{if ini_get("safe_mode")}
+				ano
+			{else}
+				ne
+			{/if}
 		</td>
 	</tr>
 
@@ -81,7 +85,11 @@
 			open_basedir
 		</th>
 		<td>
-			{? $data = ini_get("open_basedir"); if($data) echo $data; else echo "<i>bez omezení</i>"; }
+			{if $data = ini_get("open_basedir")}
+				{$data}
+			{else}
+				<i>bez omezení</i>
+			{/if}
 		</td>
 	</tr>
 
@@ -90,7 +98,7 @@
 			Maximální velikost POST požadavku
 		</th>
 		<td>
-			{? echo ini_get("post_max_size")}
+			{= ini_get("post_max_size")}
 		</td>
 	</tr>
 
@@ -99,7 +107,7 @@
 			Maximální velikost odesílaných souborů
 		</th>
 		<td>
-			{? echo ini_get("upload_max_filesize")}
+			{= ini_get("upload_max_filesize")}
 		</td>
 	</tr>
 
