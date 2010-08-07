@@ -26,7 +26,8 @@ if(preg_match('/^(127.|::1)/',$_SERVER["REMOTE_ADDR"])) {
 Environment::loadConfig();
 
 // 2b) enable Nette\Debug for better exception and error visualisation
-Debug::enable();
+Debug::$strictMode = true;
+Debug::enable(/*Debug::PRODUCTION*/);
 
 // 2c) setup sessions
 $session = Environment::getSession();

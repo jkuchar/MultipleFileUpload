@@ -35,9 +35,7 @@
  * @license    New BSD License
  * @link       http://nettephp.com/cs/extras/multiplefileupload
  */
-
 class MultipleFileUpload extends FileUpload {
-
 	const NAME = "Multiple File Uploader";
 
 	const VERSION = '$Rev$ released on $Date$';
@@ -48,14 +46,12 @@ class MultipleFileUpload extends FileUpload {
 	 * @see self::handleUploads()
 	 */
 	private static $handleUploadsCalled = false;
-
 	/**
 	 * Model
 	 * @var IMFUQueuesModel
 	 * @see self::init()
 	 */
 	public static $queuesModel;
-
 	/**
 	 * Validate file callback
 	 * @var Callback
@@ -63,6 +59,11 @@ class MultipleFileUpload extends FileUpload {
 	 * @param HttpUploadedFile File to be checked
 	 */
 	public static $validateFileCallback;
+	/**
+	 * Interface registrator instance
+	 * @var MFUUIRegistrator
+	 */
+	public static $interfaceRegistrator;
 
 	/**
 	 * Initialize MFU
@@ -71,19 +72,23 @@ class MultipleFileUpload extends FileUpload {
 		// init queue model
 		$qm = self::$queuesModel = new MFUQueuesSQLite();
 
+		// Init UI registrator
+		$uiReg = self::$interfaceRegistrator = new MFUUIRegistrator();
+		$uiReg->register("MFUUIHTML4SingleUpload");
+		$uiReg->register("MFUUIUploadify");
+
 		// Set default check callback
-		self::$validateFileCallback = callback(__CLASS__,"validateFile");
+		self::$validateFileCallback = callback(__CLASS__, "validateFile");
 
 		// Auto cofing of lifeTime
-		$maxInputTime = (int)ini_get("max_input_time");
-		if($maxInputTime < 0) { // Pokud není žádný maximální čas vstupu (-1)
+		$maxInputTime = (int) ini_get("max_input_time");
+		if ($maxInputTime < 0) { // Pokud není žádný maximální čas vstupu (-1)
 			$lifeTime = 3600;
 		} else {
-			$lifeTime = $maxInputTime + 5;// Maximální čas vstupu + pár sekund
+			$lifeTime = $maxInputTime + 5; // Maximální čas vstupu + pár sekund
 		}
 
 		self::setLifeTime($lifeTime);
-
 	}
 
 	/**
@@ -93,7 +98,7 @@ class MultipleFileUpload extends FileUpload {
 		self::init();
 
 		$application = Environment::getApplication();
-		$application->onStartup[]  = callback("MultipleFileUpload::handleUploads");
+		$application->onStartup[] = callback("MultipleFileUpload::handleUploads");
 		$application->onShutdown[] = callback("MultipleFileUpload::cleanCache");
 	}
 
@@ -105,18 +110,17 @@ class MultipleFileUpload extends FileUpload {
 	 */
 	static function setLifeTime($lifeTime) {
 		self::getQueuesModel()
-			->setLifeTime((int)$lifeTime);
+			->setLifeTime((int) $lifeTime);
 	}
 
 	/**
 	 * Handles uploading files
 	 */
 	public static function handleUploads() {
-
 		// Pokud už bylo voláno handleUploads -> skonči
-		if(self::$handleUploadsCalled === true) {
+		if (self::$handleUploadsCalled === true) {
 			return;
-		}else {
+		} else {
 			self::$handleUploadsCalled = true;
 		}
 
@@ -124,24 +128,24 @@ class MultipleFileUpload extends FileUpload {
 
 		// Workaround for: http://forum.nettephp.com/cs/3680-httprequest-getheaders-a-content-type
 		$contentType = $req->getHeader("content-type");
-		if(!$contentType AND isset($_SERVER["CONTENT_TYPE"])) {
+		if (!$contentType AND isset($_SERVER["CONTENT_TYPE"])) {
 			$contentType = $_SERVER["CONTENT_TYPE"];
 		}
 
-		if($req->getMethod() !== "POST" OR !stristr($contentType,"multipart")) {
+		if ($req->getMethod() !== "POST" OR !stristr($contentType, "multipart")) {
 			return;
 		}
 
 		self::getQueuesModel()
 			->initialize();
 
-		// Zpracuj soubory
-		if(self::isRequestFromFlash()) {
-			self::proccessUploadifyFiles();
-		}else {
-			self::proccessStandardPostFiles();
+		foreach (self::getUIRegistrator()->getInterfaces() AS $interface) {
+			if ($interface->isThisYourUpload()) {
+				$ret = $interface->handleUploads();
+				if ($ret === true)
+					break;
+			}
 		}
-
 	}
 
 	/**
@@ -154,137 +158,53 @@ class MultipleFileUpload extends FileUpload {
 	}
 
 	/**
-	 * (internal) Processes sigle file
-	 */
-	protected static function processFile($token, $file) {
-
-		// Why not in one condition?
-		// @see http://forum.nettephp.com/cs/viewtopic.php?pid=29556#p29556
-		if(!$file instanceof HttpUploadedFile) {
-			return false;
-		}
-
-		/* @var $validateCallback Callback */
-		$validateCallback = self::$validateFileCallback;
-
-		/* @var $isValid bool */
-		$isValid = $validateCallback->invoke($file);
-
-		if($isValid) {
-			self::getQueuesModel() // returns: IMFUQueuesModel
-				->getQueue($token) // returns: IMFUQueueModel
-				->addFile($file);
-		}
-
-		return $isValid;
-	}
-
-	/**
-	 * Zpracuje soubory z Uploadify
-	 *  - vždy max. jeden prvek na požadavek
-	 */
-	protected static function proccessUploadifyFiles() {
-
-		if(!isset($_POST["token"])) {
-			return;
-		}
-
-		/* @var $token string */
-		$token = $_POST["token"];
-
-		/* @var $file HttpUploadedFile */
-		foreach(Environment::getHttpRequest()->getFiles() AS $file) {
-			self::processFile($token, $file);
-		}
-
-		// Response to client
-		die("1");
-	}
-
-	/**
-	 * Zpracuje soubory ze standardního HTTP požadavku
-	 *  - více formulářových prvků na požadavek -> iterace
-	 */
-	protected static function proccessStandardPostFiles() {
-		// Iterujeme nad přijatými soubory
-		foreach(Environment::getHttpRequest()->getFiles() AS $name => $controlValue) {
-
-			// MFU vždy posílá soubory v této struktuře:
-			//
-			// array(
-			//	"token" => "blablabla",
-			//	"files" => array(
-			//		0 => HttpUploadedFile(...),
-			//		...
-			//	)
-			// )
-
-			$isFormMFU = (
-				is_array($controlValue) and
-					isset($controlValue["files"]) and
-					isset($_POST[$name]["token"])
-			);
-
-			if($isFormMFU) {
-				$token = $_POST[$name]["token"];
-				foreach($controlValue["files"] AS $file) {
-					self::processFile($token,$file);
-				}
-			}
-
-			// soubory, které se netýkají MFU nezpracujeme -> zpracuje si je standardním způsobem formulář
-		}
-	}
-
-	/**
 	 * Cleans cache
 	 */
 	public static function cleanCache() {
-		if(!Environment::isProduction() OR rand(1,100) < 5) {
+		if (!Environment::isProduction() OR rand(1, 100) < 5) {
 			self::getQueuesModel()->cleanup();
 		}
-	}
-
-	/**
-	 * Is request from flash?
-	 * @return bool
-	 */
-	protected static function isRequestFromFlash() {
-		return (Environment::getHttpRequest()->getHeader('user-agent') === 'Shockwave Flash');
 	}
 
 	/**
 	 * @return IMFUQueuesModel
 	 */
 	public static function getQueuesModel() {
-		if(!self::$queuesModel instanceof IMFUQueuesModel) {
+		if (!self::$queuesModel instanceof IMFUQueuesModel) {
 			throw new InvalidStateException("Queues model is not instance of IMFUQueuesModel!");
 		}
 		return self::$queuesModel;
 	}
 
-	/*******************************************************************************
-	**************************  Form Control  **************************************
-	*******************************************************************************/
+	/**
+	 * @return MFUUIRegistrator
+	 */
+	public static function getUIRegistrator() {
+		if (!self::$interfaceRegistrator instanceof MFUUIRegistrator) {
+			throw new InvalidStateException("Interface registrator is not instance of MFUUIRegistrator!");
+		}
+		return self::$interfaceRegistrator;
+	}
+
+	/*	 * *****************************************************************************
+	 * *************************  Form Control  **************************************
+	 * ***************************************************************************** */
 
 	/**
 	 * Unique identifier
 	 * @var string
 	 */
 	public $token;
-
 	/**
 	 * Maximum selected files in one input
 	 * @var int
 	 */
 	public $maxFiles;
-
 	/**
 	 * Maximum file size of single uploaded file
 	 * @var int
 	 */
 	public $maxFileSize;
-
 	/**
 	 * How many threads will be used to upload files
 	 * @var int
@@ -295,14 +215,14 @@ class MultipleFileUpload extends FileUpload {
 	 * Constructor
 	 * @param string $label Label
 	 */
-	public function __construct($label = NULL,$maxSelectedFiles=999) {
+	public function __construct($label = NULL, $maxSelectedFiles=999) {
 		// Monitorování
 		$this->monitor('Nette\Forms\Form');
 		//$this->monitor('Nette\Application\Presenter');
 
 		parent::__construct($label);
 
-		if(!self::$handleUploadsCalled) {
+		if (!self::$handleUploadsCalled) {
 			throw new InvalidStateException("MultipleFileUpload::handleUpload() has not been called. Call `MultipleFileUpload::register();` from your bootstrap before you call Applicaton::run();");
 		};
 
@@ -310,7 +230,6 @@ class MultipleFileUpload extends FileUpload {
 		$this->control = Html::el("div"); // TODO: support for prototype
 		$this->maxFileSize = self::parseIniSize(ini_get('upload_max_filesize'));
 		$this->simUploadThreads = 5;
-
 	}
 
 	/**
@@ -320,7 +239,7 @@ class MultipleFileUpload extends FileUpload {
 	protected function attached($component) {
 		if ($component instanceof Form) {
 			$component->getElementPrototype()->enctype = 'multipart/form-data';
-			$component->getElementPrototype()->method  = 'post';
+			$component->getElementPrototype()->method = 'post';
 		}
 	}
 
@@ -333,68 +252,76 @@ class MultipleFileUpload extends FileUpload {
 
 		// Create control
 		$control = Html::el('div class=MultipleFileUpload')
-			->id($this->getHtmlId());
+				->id($this->getHtmlId());
 
 		// <section token field>
 		$tokenField = Html::el('input type=hidden')
-			->name($this->getHtmlName() . '[token]')
-			->value($this->getToken());
+				->name($this->getHtmlName() . '[token]')
+				->value($this->getToken());
 		$control->add($tokenField);
 		// </section token field>
 
-		// <section without JavaScript>
-		$withoutJS  = Html::el("div class=withoutJS");
-		$standardFileInput = Html::el("input type=file")
-			->name($this->getHtmlName() . '[files][]');
-		$withoutJS->add($this->createSectionWithoutJS($standardFileInput));
-		$control->add($withoutJS);
-		// </section without JavaScript>
+		$fallbacks = array();
 
-		// <section with JavaScript>
-		$withJS = Html::el("div class=withJS");
-		$uploadifyID = $this->getHtmlId()."-uploadifyBox";
-		$withJS->add($this->createSectionWithJS($uploadifyID,$this->getToken()));
-		$control->add($withJS);
-		// </section with JavaScript>
+		$interfaces = self::getUIRegistrator()->getInterfaces();
+		$num = count($interfaces);
+		$cnt = 1;
+		foreach ($interfaces AS $interface) {
+			$html = $interface->render($this);
+			$init = $interface->renderInitJavaScript($this);
+			$desctruct = $interface->renderDestructJavaScript($this);
+			$id = $this->getHtmlId() . "-MFUInterface-" . $interface->reflection->name;
+			
+			$fallback = (object) array(
+			    "id" => $id,
+			    "init" => $init,
+			    "destruct" => $desctruct
+			);
+			$fallbacks[] = $fallback;
+
+			$container = Html::el("div");
+			$container->setHtml($html);
+			$container->id = $id;
+
+			if ($cnt == $num) { // Last (will be rendered as JavaScript-disabled capable)
+				$container->style["display"] = "block";
+			} else {
+				$container->style["display"] = "none";
+			}
+			$cnt++;
+
+			$control->add($container);
+		}
+
+		$template = new MFUTemplate();
+		$template->setFile(dirname(__FILE__) . DIRECTORY_SEPARATOR . "RegisterJS.phtml");
+		$template->id = $this->getHtmlId();
+		$template->fallbacks = $fallbacks;
+		$control->add($template->__toString(TRUE));
+		/*
+		  // <section without JavaScript>
+		  $withoutJS = Html::el("div class=withoutJS");
+		  $standardFileInput = Html::el("input type=file")
+		  ->name($this->getHtmlName() . '[files][]');
+		  $withoutJS->add($this->createSectionWithoutJS($standardFileInput));
+		  $control->add($withoutJS);
+		  // </section without JavaScript>
+		  // <section with JavaScript>
+		  $withJS = Html::el("div class=withJS");
+		  $uploadifyID = $this->getHtmlId() . "-uploadifyBox";
+		  $withJS->add($this->createSectionWithJS($uploadifyID, $this->getToken()));
+		  $control->add($withJS);
+		  // </section with JavaScript>
+		 */
 
 		// Pokud už byla volána metoda handleUploads -
-		/*if(self::$handleUploadsCheck){
-		    $control->add(Html::el('script type=text/javascript')->add(
-			'jQuery("#' . $uploadifyID . '").uploadify(' . json_encode($this->uploaderOptions) . ');'
-		    ));
-		};*/
+		/* if(self::$handleUploadsCheck){
+		  $control->add(Html::el('script type=text/javascript')->add(
+		  'jQuery("#' . $uploadifyID . '").uploadify(' . json_encode($this->uploaderOptions) . ');'
+		  ));
+		  }; */
 
 		return $control;
-	}
-
-	/**
-	 * Creates sections withoutJS
-	 * @param Html $input
-	 * @return string
-	 */
-	protected function createSectionWithoutJS(Html $input) {
-		$template = new MFUTemplate();
-		$template->setFile(dirname(__FILE__).DIRECTORY_SEPARATOR."MultipleFileUpload-withoutJS.phtml");
-		$template->input = $input;
-		return $template->__toString();
-	}
-
-	/**
-	 * Creates section withJS
-	 * @param int $uploadifyId
-	 * @param string $token
-	 * @return string
-	 */
-	protected function createSectionWithJS($uploadifyId,$token) {
-		$template = new MFUTemplate();
-		$template->setFile(dirname(__FILE__)."/MultipleFileUpload-withJS.phtml");
-		$template->sizeLimit = $this->maxFileSize;
-		$template->token = $this->getToken();
-		$template->maxFiles = $this->maxFiles;
-		$template->backLink = (string)$this->form->action;
-		$template->uploadifyId = $uploadifyId;
-		$template->simUploadFiles = $this->simUploadThreads;
-		return $template->__toString();
 	}
 
 	/**
@@ -408,7 +335,7 @@ class MultipleFileUpload extends FileUpload {
 			//  -> Jak JS tak bez JS (akorát s JS už dorazí pouze token - nic jiného)
 			if (isset($data[$name]["token"])) {
 				$this->token = $data[$name]["token"];
-			}else {
+			} else {
 				throw new InvalidStateException("Token has not been received! Without token MultipleFileUploader can't identify which files has been received.");
 			}
 		}
@@ -419,9 +346,9 @@ class MultipleFileUpload extends FileUpload {
 	 * @param mixed $value
 	 */
 	public function setValue($value) {
-		if($value === null) {
+		if ($value === null) {
 			// pole se vymaže samo v destructoru
-		}else {
+		} else {
 			throw new NotSupportedException('Value of MultiFileUpload component cannot be directly set.');
 		}
 	}
@@ -436,9 +363,9 @@ class MultipleFileUpload extends FileUpload {
 		// Ořízneme soubory, kterých je více než maximální *počet* souborů
 		// TODO: Nepřesunot jako validační pravidlo?
 		$pocetPolozek = count($data);
-		if($pocetPolozek > $this->maxFiles) {
+		if ($pocetPolozek > $this->maxFiles) {
 			$rozdil = $pocetPolozek - $this->maxFiles;
-			for($rozdil = $pocetPolozek - $this->maxFiles; $rozdil>0; $rozdil--) {
+			for ($rozdil = $pocetPolozek - $this->maxFiles; $rozdil > 0; $rozdil--) {
 				array_pop($data);
 			}
 		}
@@ -452,16 +379,16 @@ class MultipleFileUpload extends FileUpload {
 	 */
 	public function getToken($need=true) {
 		// Load token from request
-		if(!$this->token) {
+		if (!$this->token) {
 			$this->loadHttpData();
 		}
 
 		// If upload do not start, generate queueID
-		if(!$this->token and !$this->form->isSubmitted()) {
+		if (!$this->token and !$this->form->isSubmitted()) {
 			$this->token = uniqid(rand());
 		}
 
-		if(!$this->token AND $need) {
+		if (!$this->token AND $need) {
 			throw new InvalidStateException("Can't get a token!");
 		}
 
@@ -479,15 +406,15 @@ class MultipleFileUpload extends FileUpload {
 	/**
 	 * Destructors: makes fast cleanup
 	 */
-	public function  __destruct() {
-		if($this->getForm()->isSubmitted()) {
+	public function __destruct() {
+		if ($this->getForm()->isSubmitted()) {
 			$this->getQueue()->delete();
 		}
 	}
 
-	/*******************************************************************************
-	****************************  Validators  **************************************
-	*******************************************************************************/
+	/*	 * *****************************************************************************
+	 * ***************************  Validators  **************************************
+	 * ***************************************************************************** */
 
 	/**
 	 * Filled validator: has been any file uploaded?
@@ -496,10 +423,8 @@ class MultipleFileUpload extends FileUpload {
 	 */
 	public static function validateFilled(IFormControl $control) {
 		$files = $control->getValue();
-		return (count($files)>0);
+		return (count($files) > 0);
 	}
-
-
 
 	/**
 	 * FileSize validator: is file size in limit?
@@ -509,8 +434,8 @@ class MultipleFileUpload extends FileUpload {
 	 */
 	public static function validateFileSize(FileUpload $control, $limit) {
 		$files = $control->getValue();
-		$size=0;
-		foreach($files AS $file) {
+		$size = 0;
+		foreach ($files AS $file) {
 			$size += $file->getSize();
 		}
 		return $size <= $limit;
@@ -526,7 +451,7 @@ class MultipleFileUpload extends FileUpload {
 		throw new NotSupportedException("Can't validate mime type! This is MULTIPLE file upload control.");
 	}
 
-	/********************* Helpers *********************/
+	/*	 * ******************* Helpers ******************** */
 
 	/**
 	 * Parses ini size
@@ -541,15 +466,17 @@ class MultipleFileUpload extends FileUpload {
 		if (is_numeric($unit) || !isset($units[$unit]))
 			return $value;
 
-		return ((int)$value) * $units[$unit];
+		return ((int) $value) * $units[$unit];
 	}
+
 }
 
 /**
  * Extension method for FormContainer
  */
-function FormContainer_addMultipleFileUpload(Form $_this,$name, $label = NULL,$maxFiles=999) {
-	return $_this[$name] = new MultipleFileUpload($label,$maxFiles);
+function FormContainer_addMultipleFileUpload(Form $_this, $name, $label = NULL, $maxFiles=999) {
+	return $_this[$name] = new MultipleFileUpload($label, $maxFiles);
 }
+
 FormContainer::extensionMethod("FormContainer::addMultipleFileUpload", "FormContainer_addMultipleFileUpload");
 
