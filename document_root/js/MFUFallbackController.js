@@ -3,7 +3,7 @@ var MFUFallbackController;
 (function(){
 	MFUFallbackController = function(rootEl, fallbacks) {
 
-		this.fallbackLinkText = "Nejdou vám soubory nahrát? Klikněte zde.";
+		this.fallbackLinkText = "Nejdou vám soubory nahrát? Klikněte zde."; 
 
 		this.fallbacks = fallbacks;
 		this.rootEl = rootEl;
