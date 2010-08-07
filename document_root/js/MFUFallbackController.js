@@ -3,7 +3,7 @@ var MFUFallbackController;
 (function(){
 	MFUFallbackController = function(rootEl, fallbacks) {
 
-		this.fallbackLinkText = "V případě problémů s odesláním souborů, klikněte sem. Budete poté moci odeslat vaše soubory klasickou cestou.";
+		this.fallbackLinkText = "Nejdou vám soubory nahrát? Klikněte zde.";
 
 		this.fallbacks = fallbacks;
 		this.rootEl = rootEl;
