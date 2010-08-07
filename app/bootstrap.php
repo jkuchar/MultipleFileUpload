@@ -26,7 +26,7 @@ if(preg_match('/^(127.|::1)/',$_SERVER["REMOTE_ADDR"])) {
 Environment::loadConfig();
 
 // 2b) enable Nette\Debug for better exception and error visualisation
-Debug::$strictMode = true;
+//Debug::$strictMode = true;
 Debug::enable(/*Debug::PRODUCTION*/);
 
 // 2c) setup sessions
@@ -62,7 +62,14 @@ $router[] = new Route('<presenter>/<action>/<id>', array(
 // Step 4.1: Setup MultipleFileUpload
 MultipleFileUpload::register();
 
-
+// Optional step: register custom interfaces (loaders)
+// Registrator accepts instance of class or class name
+// As defaults is used this:
+// 
+//MultipleFileUpload::getUIRegistrator()
+//	->clear()
+//	->register("MFUUIHTML4SingleUpload")
+//	->register("MFUUIUploadify");
 
 // Optional step: register driver
 //
