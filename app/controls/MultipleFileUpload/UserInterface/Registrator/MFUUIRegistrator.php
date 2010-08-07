@@ -54,6 +54,12 @@ class MFUUIRegistrator extends Object {
 		} else {
 			throw new InvalidArgumentException("Not supported interface!");
 		}
+		return $this;
+	}
+
+	public function clear() {
+		$this->interfaces = array();
+		return $this;
 	}
 
 	public function getInterfaces() {

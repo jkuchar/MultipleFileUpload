@@ -62,7 +62,7 @@ $router[] = new Route('<presenter>/<action>/<id>', array(
 // Step 4.1: Setup MultipleFileUpload
 MultipleFileUpload::register();
 
-// Optional step: register custom interfaces (loaders)
+// Optional step: register custom user interfaces
 // Registrator accepts instance of class or class name
 // As defaults is used this:
 // 
@@ -70,6 +70,8 @@ MultipleFileUpload::register();
 //	->clear()
 //	->register("MFUUIHTML4SingleUpload")
 //	->register("MFUUIUploadify");
+
+
 
 // Optional step: register driver
 //
