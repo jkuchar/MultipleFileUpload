@@ -137,4 +137,33 @@
 			{=MultipleFileUpload::VERSION}
 		</td>
 	</tr>
+
+	<tr>
+		<th>
+			Multiple File Upload: queues model
+		</th>
+		<td>
+			{=MultipleFileUpload::getQueuesModel()->reflection->name}
+		</td>
+	</tr>
+
+	<tr>
+		<th>
+			Multiple File Upload: interfaces
+		</th>
+		<td>
+			{foreach MultipleFileUpload::getUIRegistrator()->getInterfaces() AS $interface}
+				{$interface->reflection->name}{if !$iterator->isLast()},{/if}
+			{/foreach}
+		</td>
+	</tr>
+
+	<tr>
+		<th>
+			Příklad: Bude ukládat odeslané soubory?
+		</th>
+		<td>
+			{if Environment::isProduction()}ne{else}ano{/if}
+		</td>
+	</tr>
 </table>
