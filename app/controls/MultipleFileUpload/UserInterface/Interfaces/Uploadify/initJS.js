@@ -27,7 +27,8 @@
 		script: {!$backLink|escapeJS},
 		simUploadLimit: {!$simUploadFiles|escapeJS},
 		scriptData: {
-			token: {!$token|escapeJS}
+			token: {!$token|escapeJS},
+			sender: "MFU-Uploadify"
 		},
 		onInit: function(){
 			//box.parent().parent().find(".withoutJS").hide();

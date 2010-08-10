@@ -15,7 +15,11 @@ class MFUUIUploadify extends MFUUIBase {
 	 * Is this upload your upload? (upload from this interface)
 	 */
 	public function isThisYourUpload() {
-		return (Environment::getHttpRequest()->getHeader('user-agent') === 'Shockwave Flash');
+		return (
+			Environment::getHttpRequest()->getHeader('user-agent') === 'Shockwave Flash'
+			AND isSet($_POST["sender"])
+			AND $_POST["sender"] == "MFU-Uploadify"
+		);
 	}
 
     	/**
