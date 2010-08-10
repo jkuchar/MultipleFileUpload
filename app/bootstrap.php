@@ -92,7 +92,7 @@ MultipleFileUpload::register();
 //		"charset"  => "UTF-8"
 //	));
 //
-//	MultipleFileUpload::$queuesModel = new MFUQueuesDibi();
+//	MultipleFileUpload::setQueuesModel(new MFUQueuesDibi());
 //}
 
 

@@ -51,7 +51,7 @@ class MultipleFileUpload extends FileUpload {
 	 * @var IMFUQueuesModel
 	 * @see self::init()
 	 */
-	public static $queuesModel;
+	protected static $queuesModel;
 	/**
 	 * Validate file callback
 	 * @var Callback
@@ -69,8 +69,6 @@ class MultipleFileUpload extends FileUpload {
 	 * Initialize MFU
 	 */
 	public static function init() {
-		// init queue model
-		$qm = self::$queuesModel = new MFUQueuesSQLite();
 
 		// Init UI registrator
 		$uiReg = self::$interfaceRegistrator = new MFUUIRegistrator();
@@ -80,16 +78,8 @@ class MultipleFileUpload extends FileUpload {
 		// Set default check callback
 		self::$validateFileCallback = callback(__CLASS__, "validateFile");
 
-		// Auto cofing of lifeTime
-		$maxInputTime = (int) ini_get("max_input_time");
-		if ($maxInputTime < 0) { // Pokud není žádný maximální čas vstupu (-1)
-			$lifeTime = 3600;
-		} else {
-			$lifeTime = $maxInputTime + 5; // Maximální čas vstupu + pár sekund
-		}
-
-		self::setLifeTime($lifeTime);
 	}
+
 
 	/**
 	 * Register MFU into Nette
@@ -111,6 +101,18 @@ class MultipleFileUpload extends FileUpload {
 	static function setLifeTime($lifeTime) {
 		self::getQueuesModel()
 			->setLifeTime((int) $lifeTime);
+	}
+
+	protected static function _doSetLifetime() {
+		// Auto cofing of lifeTime
+		$maxInputTime = (int) ini_get("max_input_time");
+		if ($maxInputTime < 0) { // Pokud není žádný maximální čas vstupu (-1)
+			$lifeTime = 3600;
+		} else {
+			$lifeTime = $maxInputTime + 5; // Maximální čas vstupu + pár sekund
+		}
+
+		self::setLifeTime($lifeTime);
 	}
 
 	/**
@@ -170,10 +172,20 @@ class MultipleFileUpload extends FileUpload {
 	 * @return IMFUQueuesModel
 	 */
 	public static function getQueuesModel() {
+		if(!self::$queuesModel) { // if nothing is set, setup sqlite model, which should work on all systems with SQLite
+			self::setQueuesModel(new MFUQueuesSQLite());
+		}
+
 		if (!self::$queuesModel instanceof IMFUQueuesModel) {
 			throw new InvalidStateException("Queues model is not instance of IMFUQueuesModel!");
 		}
+		
 		return self::$queuesModel;
+	}
+
+	public static function setQueuesModel(IMFUQueuesModel $model) {
+		self::$queuesModel = $model;
+		self::_doSetLifetime();
 	}
 
 	/**
