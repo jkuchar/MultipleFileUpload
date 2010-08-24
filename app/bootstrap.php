@@ -70,6 +70,13 @@ MultipleFileUpload::register();
 //	->clear()
 //	->register("MFUUIHTML4SingleUpload")
 //	->register("MFUUIUploadify");
+//
+// If you want to use swfupload instead of uploadify use this setup code
+// Vyki is autor of swfupload extension: http://forum.nette.org/cs/profile.php?id=2221
+//MultipleFileUpload::getUIRegistrator()
+//	->clear()
+//	->register("MFUUIHTML4SingleUpload")
+//	->register("MFUUISwfupload");
 
 
 
