@@ -72,4 +72,9 @@ interface MFUUIInterface {
 	 */
 	public function renderDestructJavaScript(MultipleFileUpload $upload);
 
+	/**
+	 * Renders set-up tags to <head> attribute
+	 */
+	public function renderHeadSection();
+
 }

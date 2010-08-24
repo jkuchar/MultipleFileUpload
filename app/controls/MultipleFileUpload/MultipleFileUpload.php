@@ -198,6 +198,14 @@ class MultipleFileUpload extends FileUpload {
 		return self::$interfaceRegistrator;
 	}
 
+	public static function getHead() {
+		$out = "";
+		foreach(self::getUIRegistrator()->getInterfaces() AS $interface) {
+			$out .= $interface->renderHeadSection();
+		}
+		return $out;
+	}
+
 	/*	 * *****************************************************************************
 	 * *************************  Form Control  **************************************
 	 * ***************************************************************************** */

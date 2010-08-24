@@ -77,4 +77,11 @@ class MFUUIHTML4SingleUpload extends MFUUIBase {
 	public function renderDestructJavaScript(MultipleFileUpload $upload) {
 		return true;
 	}
+
+	/**
+	 * Renders set-up tags to <head> attribute
+	 */
+	public function renderHeadSection() {
+		return "";
+	}
 }

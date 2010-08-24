@@ -75,4 +75,11 @@ class MFUUIUploadify extends MFUUIBase {
 	public function renderDestructJavaScript(MultipleFileUpload $upload) {
 		return $this->createTemplate(dirname(__FILE__)."/destructJS.js")->__toString(TRUE);
 	}
+
+	/**
+	 * Renders set-up tags to <head> attribute
+	 */
+	public function renderHeadSection() {
+		return $this->createTemplate(dirname(__FILE__)."/head.phtml")->__toString(TRUE);
+	}
 }
