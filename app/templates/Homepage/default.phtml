@@ -20,7 +20,9 @@
 {snippet form}
 	{ifset $values}
 		<h2>Data vrácená formulářem</h2>
-		<b>{= count($values["upload"])}</b> přijatých souborů.
+		{? $fields = array("upload","upload2"); }
+		{foreach $fields AS $field}
+		<b>{=count($values[$field])}</b> přijatých souborů pomocí odesílacího políčka <b>{$field}</b>.
 		<table>
 			<tr>
 				<th>
@@ -36,7 +38,7 @@
 					Cesta k souboru
 				</th>
 			</tr>
-			{foreach $values["upload"] AS $file}
+			{foreach $values[$field] AS $file}
 			{* $file is instanceof HttpUploadedFile *}
 			<tr>
 				<th style="text-align: center;">
@@ -54,6 +56,7 @@
 			</tr>
 			{/foreach}
 		</table>
+		{/foreach}
 		<form class="ajax" action="{link prekresliForm!}" style="padding-top: 10px;">
 			<input type="submit" name="tlacitko" value="Zpět na formulář">
 		</form>
