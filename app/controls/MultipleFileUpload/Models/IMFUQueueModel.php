@@ -54,4 +54,9 @@ interface IMFUQueueModel {
 	 */
 	function delete();
 
-}
+	/**
+	 * Getts WRITABLE path to write temps of this upload queue
+	 */
+	function getUploadedFilesTemporaryPath();
+
+};

@@ -64,15 +64,6 @@ abstract class MFUBaseQueueModel extends Object implements IMFUQueueModel {
 	}
 
 	/**
-	 * Getts upload directory path
-	 *
-	 * Is abstract because late static binding is available since PHP 5.3
-	 *
-	 * @return string
-	 */
-	abstract function getUploadedFilesTemporaryPath();
-
-	/**
 	 * Initialization
 	 */
 	function initialize() {

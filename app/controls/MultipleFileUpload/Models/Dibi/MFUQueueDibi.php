@@ -26,14 +26,40 @@ class MFUQueueDibi extends MFUBaseQueueModel {
 	 */
 	function addFile(HttpUploadedFile $file) {
 		$file->move($this->getUniqueFilePath());
-		//Debug::dump(serialize($file));
 		$data = array(
 			'queueID%s' => $this->getQueueID(),
 			'created%i' => time(),
-			'data%s'    => base64_encode(serialize($file)) // workaround: http://forum.dibiphp.com/cs/1003-pgsql-a-znak-x00-oriznuti-zbytku-vstupu
+			'data%s'    => base64_encode(serialize($file)), // workaround: http://forum.dibiphp.com/cs/1003-pgsql-a-znak-x00-oriznuti-zbytku-vstupu
+			'name%s'    => $file->getName()
 		);
 
 		$this->query('INSERT INTO [files]', $data);
+	}
+
+	function addFileManually($name, $chunk,$chunks) {
+
+		$data = array(
+			'queueID%s' => $this->getQueueID(),
+			'created%i' => time(),
+			'name%s'    => $name,
+			'chunk%i'   => $chunk,
+			'chunks%i'  => $chunks
+		);
+
+		$this->query('INSERT INTO [files]', $data);
+	}
+
+	function updateFile($name, $chunk, HttpUploadedFile $file = null) {
+		Dibi::begin();
+		$where = array(
+		    "queueID%s" => $this->getQueueID(),
+		    "name%s"    => $name
+		);
+		$this->query('UPDATE files SET ',array("chunk"=>$chunk),'WHERE %and',$where);
+		if($file) {
+			$this->query('UPDATE files SET ',array("data"=>base64_encode(serialize($file))),'WHERE %and',$where); // workaround: http://forum.dibiphp.com/cs/1003-pgsql-a-znak-x00-oriznuti-zbytku-vstupu
+		}
+		Dibi::commit();
 	}
 
 	/**
@@ -68,7 +94,9 @@ class MFUQueueDibi extends MFUBaseQueueModel {
 		$files = array();
 
 		foreach($this->query('SELECT * FROM [files] WHERE [queueID] = %s', $this->getQueueID())->fetchAll() as $row) {
-			$files[] = unserialize(base64_decode($row->data)); // workaround: http://forum.dibiphp.com/cs/1003-pgsql-a-znak-x00-oriznuti-zbytku-vstupu
+			$f = unserialize(base64_decode($row["data"]));
+			if(!$f instanceof HttpUploadedFile) continue;
+			$files[] = $f;
 		}
 
 		return $files;

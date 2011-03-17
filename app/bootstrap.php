@@ -78,6 +78,14 @@ MultipleFileUpload::register();
 //	->register("MFUUIHTML4SingleUpload")
 //	->register("MFUUISwfupload");
 
+// Or you can you plupload
+
+MultipleFileUpload::getUIRegistrator()
+	->clear()
+	->register("MFUUIHTML4SingleUpload")
+	->register("MFUUIPlupload");
+	
+
 
 
 // Optional step: register driver
@@ -92,7 +100,7 @@ MultipleFileUpload::register();
 //	Dibi::connect(array(
 //		"driver"   => "postgre",
 //		"host"     => "127.0.0.1",
-//		"dbname"   => "MFU",
+//		"dbname"   => "mfu",
 //		"schema"   => "public",
 //		"user"     => "postgres",
 //		"pass"     => "toor",

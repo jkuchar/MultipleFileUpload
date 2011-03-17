@@ -134,7 +134,7 @@ class MultipleFileUpload extends FileUpload {
 			$contentType = $_SERVER["CONTENT_TYPE"];
 		}
 
-		if ($req->getMethod() !== "POST" OR !stristr($contentType, "multipart")) {
+		if ($req->getMethod() !== "POST") {
 			return;
 		}
 

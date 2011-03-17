@@ -17,7 +17,21 @@ class MFUQueueSQLite extends MFUBaseQueueModel {
 	 */
 	function addFile(HttpUploadedFile $file) {
 		$file->move($this->getUniqueFilePath());
-		$this->query('INSERT INTO files (queueID, created, data) VALUES ("'.sqlite_escape_string($this->getQueueID()).'",'.time().',\''.sqlite_escape_string(serialize($file)).'\')');
+		$this->query('INSERT INTO files (queueID, created, data, name) VALUES ("'.sqlite_escape_string($this->getQueueID()).'",'.time().',\''.sqlite_escape_string(serialize($file)).'\', \''.sqlite_escape_string($file->getName()).'\')');
+	}
+
+	function addFileManually($name, $chunk,$chunks) {
+		$this->query('INSERT INTO files (queueID, created, name, chunk, chunks) VALUES ("'.sqlite_escape_string($this->getQueueID()).'",'.time().',\''.sqlite_escape_string($name).'\', \''.sqlite_escape_string($chunk).'\', \''.sqlite_escape_string($chunks).'\')');
+	}
+
+	function updateFile($name, $chunk, HttpUploadedFile $file = null) {
+		$this->query("BEGIN TRANSACTION");
+		$where = 'queueID = \''.sqlite_escape_string($this->getQueueID()).'\' AND name = \''.sqlite_escape_string($name).'\'';
+		$this->query('UPDATE files SET chunk = \''.sqlite_escape_string($chunk).'\' WHERE '.$where);
+		if($file) {
+			$this->query('UPDATE files SET data = \''.sqlite_escape_string(serialize($file)).'\' WHERE '.$where);
+		}
+		$this->query("END TRANSACTION");
 	}
 
 	/**
@@ -49,12 +63,14 @@ class MFUQueueSQLite extends MFUBaseQueueModel {
 	 * @return array of HttpUploadedFile
 	 */
 	function getFiles() {
-		$out = array();
-		$files = $this->query("SELECT * FROM files WHERE queueID = '".sqlite_escape_string($this->getQueueID())."'")->fetchAll();
-		foreach($files AS $row) {
-			$out[] = unserialize($row["data"]);
+		$files = array();
+
+		foreach($this->query("SELECT * FROM files WHERE queueID = '".sqlite_escape_string($this->getQueueID())."'")->fetchAll() AS $row) {
+			$f = unserialize($row["data"]);
+			if(!$f instanceof HttpUploadedFile) continue;
+			$files[] = $f;
 		}
-		return $out;
+		return $files;
 	}
 
 	function delete() {
