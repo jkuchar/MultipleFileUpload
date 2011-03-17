@@ -3,7 +3,7 @@
 $("form").livequery("submit",function(e){
 	var form = $(this);
 	if(form[0].finito) return;
-	var multipleFileUploadFields = $("div.plupload[id]", this);
+	var multipleFileUploadFields = $("div.mfuplupload[id]", this);
 	var uploadersInQueue = multipleFileUploadFields.length;
 	if(uploadersInQueue>0){
 		multipleFileUploadFields.each(function(){
