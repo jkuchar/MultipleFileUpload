@@ -1,4 +1,5 @@
 (function($){
+// API: http://www.plupload.com/plupload/docs/api/index.html
 
 // Convert divs to queue widgets when the DOM is ready
 	$("#"+{!$id|escapeJs}).pluploadQueue({

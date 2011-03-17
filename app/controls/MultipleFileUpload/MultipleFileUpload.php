@@ -73,7 +73,7 @@ class MultipleFileUpload extends FileUpload {
 		// Init UI registrator
 		$uiReg = self::$interfaceRegistrator = new MFUUIRegistrator();
 		$uiReg->register("MFUUIHTML4SingleUpload");
-		$uiReg->register("MFUUIUploadify");
+		$uiReg->register("MFUUIPlupload");
 
 		// Set default check callback
 		self::$validateFileCallback = callback(__CLASS__, "validateFile");
