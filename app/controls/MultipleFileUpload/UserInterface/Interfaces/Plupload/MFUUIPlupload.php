@@ -103,11 +103,13 @@ class MFUUIPlupload extends MFUUIBase {
 		// Handle non multipart uploads older WebKit versions didn't support multipart in HTML5
 		if (strpos($contentType, "multipart") !== false) {
 			if (isset($_FILES['file']['tmp_name']) && is_uploaded_file($_FILES['file']['tmp_name'])) {
+				$tmpPath = $filePath."-upladTmp";
+				move_uploaded_file($_FILES['file']['tmp_name'], $tmpPath); // Open base restriction bugfix
 				// Open temp file
 				$out = fopen($filePath, $chunk == 0 ? "wb" : "ab");
 				if ($out) {
 					// Read binary input stream and append it to temp file
-					$in = fopen($_FILES['file']['tmp_name'], "rb");
+					$in = fopen($tmpPath, "rb");
 
 					if ($in) {
 						while ($buff = fread($in, 4096))
@@ -116,7 +118,7 @@ class MFUUIPlupload extends MFUUIBase {
 						die('{"jsonrpc" : "2.0", "error" : {"code": 101, "message": "Failed to open input stream."}, "id" : "id"}');
 					fclose($in);
 					fclose($out);
-					@unlink($_FILES['file']['tmp_name']);
+					@unlink($tmpPath);
 				} else
 					die('{"jsonrpc" : "2.0", "error" : {"code": 102, "message": "Failed to open output stream."}, "id" : "id"}');
 			} else
