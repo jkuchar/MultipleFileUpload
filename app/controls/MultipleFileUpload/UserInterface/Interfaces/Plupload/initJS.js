@@ -26,9 +26,9 @@ var fallbackController = this;
 			silverlight_xap_url : {!$baseUri|escapeJs}+'xap/MultipleFileUpload/plupload/plupload.silverlight.xap'
 		});
 		uploader = $(uploader).pluploadQueue();
-		uploader.bind("Error",function(){
+		/*uploader.bind("Error",function(){
 			fallbackController.fallback();
-		})
+		})*/
 	});
 
 	return true; // OK
