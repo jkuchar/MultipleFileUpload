@@ -1,37 +1,4 @@
 @{block #content}
-<form action="/01Vyvoj/Nette_MultipleFileUploader/document_root/?do=form-submit" method="post" class="ajax" enctype="multipart/form-data" name="frm-form2">
-<div id="flcontainer"></div>
-<table><tr><td>
-<div id="tes-pokust"></div>
-</td></tr></table>
-<script type="text/javascript">
-	$(function(){
-		// TODO: fallbacks
-		var uploader = $("#tes-pokust").pluploadQueue({
-			// General settings
-			runtimes : 'gears,html5,browserplus,flash,silverlight,html4',
-			//runtimes : 'gears,html5,browserplus,silverlight,html4',
-			//runtimes : 'flash,html4',
-			url : "\/01Vyvoj\/Nette_MultipleFileUploader\/document_root\/?do=form-submit",
-			max_file_size : 134217728,
-			chunk_size : '5mb',
-
-			headers: {
-				"X-Uploader": "plupload",
-				"token"     : "282094d832fd1a2a67"
-			},
-
-			// Flash settings
-			flash_swf_url : "\/01Vyvoj\/Nette_MultipleFileUploader\/document_root\/"+'swf/MultipleFileUpload/plupload/plupload.flash.swf',
-
-			// Silverlight settings
-			silverlight_xap_url : "\/01Vyvoj\/Nette_MultipleFileUploader\/document_root\/"+'xap/MultipleFileUpload/plupload/plupload.silverlight.xap'
-		});
-		uploader = $(uploader).pluploadQueue();
-	});
-</script>
-</form>
-
 <h1>MultipleFileUpload - form control</h1>
 <p>
 	Je formulářový prvek, který umožňuje v kompatibilních prohlížečích vybrat soubory při uploadu na server na 1 kliknutí.
