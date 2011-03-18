@@ -176,12 +176,16 @@ class MFUUIPlupload extends MFUUIBase {
 		  exit; */
 	}
 
+	function getHtmlIdFlashCompatible(MultipleFileUpload $upload) {
+		return str_replace("-","_",$upload->getHtmlId() . "-box");
+	}
+
 	/**
 	 * Renders interface to <div>
 	 */
 	public function render(MultipleFileUpload $upload) {
 		$template = $this->createTemplate(dirname(__FILE__) . "/html.phtml");
-		$template->id = $upload->getHtmlId() . "-box";
+		$template->id = $this->getHtmlIdFlashCompatible($upload);
 		return $template->__toString(TRUE);
 	}
 
@@ -194,7 +198,7 @@ class MFUUIPlupload extends MFUUIBase {
 		$tpl->sizeLimit = $upload->maxFileSize;
 		$tpl->maxFiles = $upload->maxFiles;
 		$tpl->backLink = (string) $upload->form->action;
-		$tpl->id = $upload->getHtmlId() . "-box";
+		$tpl->id = $this->getHtmlIdFlashCompatible($upload);
 		return $tpl->__toString(TRUE);
 	}
 
