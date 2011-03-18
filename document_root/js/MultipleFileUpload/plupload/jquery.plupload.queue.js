@@ -90,8 +90,9 @@
 				}
 
 				uploader = new plupload.Uploader($.extend({
-					dragdrop : true, 
-					container : id
+					dragdrop : true/*,
+					container : id*/
+					/* Bugfix: this blocks using flash interface when plupload is in table */
 				}, settings));
 
 				uploaders[id] = uploader;
