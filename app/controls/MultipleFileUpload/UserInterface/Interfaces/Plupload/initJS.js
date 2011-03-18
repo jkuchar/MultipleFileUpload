@@ -7,9 +7,9 @@ var fallbackController = this;
 		//setTimeout(function(){
 			var uploader = $("#"+{!$id|escapeJs}).pluploadQueue({
 				// General settings
-				runtimes : 'gears,html5,browserplus,silverlight,html4',
 				//runtimes : 'gears,html5,browserplus,silverlight,flash,html4',
-				//runtimes : 'flash',
+				//runtimes : 'gears,html5,browserplus,silverlight,html4',
+				runtimes : 'flash',
 				url : {!$backLink|escapeJs},
 				max_file_size : {!$sizeLimit},
 				chunk_size : '5mb',

@@ -1,13 +1,25 @@
 <!-- Load Queue widget CSS and jQuery -->
-<style type="text/css">@import url({$baseUri}css/MultipleFileUpload/plupload.queue.css);</style>
+<link href="{$baseUri}css/MultipleFileUpload/plupload.queue.css" rel="stylesheet" type="text/css" />
 
 <!-- Thirdparty intialization scripts, needed for the Google Gears and BrowserPlus runtimes -->
 <script type="text/javascript" src="{$baseUri}js/MultipleFileUpload/plupload/gears_init.js"></script>
 <script type="text/javascript" src="http://bp.yahooapis.com/2.4.21/browserplus-min.js"></script>
 
 <!-- Load plupload and all it's runtimes and finally the jQuery UI queue widget -->
+{if Environment::isProduction()}
 <script type="text/javascript" src="{$baseUri}js/MultipleFileUpload/plupload/plupload.full.min.js"></script>
 <script type="text/javascript" src="{$baseUri}js/MultipleFileUpload/plupload/jquery.plupload.queue.min.js"></script>
+{else}
+<script type="text/javascript" src="{$baseUri}js/MultipleFileUpload/plupload/plupload.js"></script>
+<script type="text/javascript" src="{$baseUri}js/MultipleFileUpload/plupload/plupload.gears.js"></script>
+<script type="text/javascript" src="{$baseUri}js/MultipleFileUpload/plupload/plupload.html4.js"></script>
+<script type="text/javascript" src="{$baseUri}js/MultipleFileUpload/plupload/plupload.html5.js"></script>
+<script type="text/javascript" src="{$baseUri}js/MultipleFileUpload/plupload/plupload.silverlight.js"></script>
+<script type="text/javascript" src="{$baseUri}js/MultipleFileUpload/plupload/plupload.flash.js"></script>
+<script type="text/javascript" src="{$baseUri}js/MultipleFileUpload/plupload/plupload.browserplus.js"></script>
+
+<script type="text/javascript" src="{$baseUri}js/MultipleFileUpload/plupload/jquery.plupload.queue.js"></script>
+{/if}
 <script type="text/javascript" src="{$baseUri}js/MultipleFileUpload/plupload/cs.js"></script>
 
 

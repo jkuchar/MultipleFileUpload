@@ -16,13 +16,14 @@ h1 {
 	z-index: 1000;
 }
 
-div.flash {
+/* Remove this from CSS! It doesnt work with plupload */
+/*div.flash {
 	color: black;
 	background: #FFF9D7;
 	border: 1px solid #E2C822;
 	padding: 1em;
 	margin: 1em 0;
-}
+}*/
 
 table.server th {
 	background: #FFF9D7;
