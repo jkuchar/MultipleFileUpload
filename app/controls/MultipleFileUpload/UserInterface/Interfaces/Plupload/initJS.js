@@ -4,7 +4,7 @@ var fallbackController = this;
 
 // Convert divs to queue widgets when the DOM is ready
 	$(function(){
-		setTimeout(function(){
+		//setTimeout(function(){
 			var uploader = $("#"+{!$id|escapeJs}).pluploadQueue({
 				// General settings
 				runtimes : 'gears,html5,browserplus,silverlight,html4',
@@ -31,7 +31,7 @@ var fallbackController = this;
 			uploader.bind("Error",function(){
 				fallbackController.fallback();
 			})
-		},1000);
+		//},1000);
 	});
 
 	return true; // OK
