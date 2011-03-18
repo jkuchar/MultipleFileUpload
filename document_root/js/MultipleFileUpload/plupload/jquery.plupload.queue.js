@@ -1,4 +1,14 @@
 /**
+ *
+ *    AFTER UPDATE OF ANY FILE IN THIS DIRECTORY RE-MINIFY "jquery.plupload.queue.min.js".
+ *    OTHERWISE PLUPLOAD WILL NOT WORK AS YOU WANT IN PRODUCTION MODE
+ *
+ *    You can use http://fmarcia.info/jsmin/test.html for example.
+ *
+ */
+
+
+/**
  * jquery.plupload.queue.js
  *
  * Copyright 2009, Moxiecode Systems AB
@@ -241,7 +251,7 @@
 						$('#' + id + '_filelist').append('<li class="plupload_droptext">' + _("Drag files here.") + '</li>');
 					}
 
-					$('#' + id + '_container').attr('title', 'Using runtime: ' + res.runtime);
+					$('#' + id + '_container').attr('title', _('Using runtime: ') + res.runtime);
 
 					$('a.plupload_start', target).click(function(e) {
 						if (!$(this).hasClass('plupload_disabled')) {

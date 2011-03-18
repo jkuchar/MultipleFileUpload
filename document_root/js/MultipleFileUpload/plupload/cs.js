@@ -10,5 +10,6 @@ plupload.addI18n({
 	'Start uploading queue' : 'Spustit frontu nahrávání',
 	'Drag files here.' : 'Sem přetáhněte soubory.',
 	'Start upload': 'Spustit nahrávání',
-	'Uploaded %d/%d files': 'Nahráno %d/%d souborů'
+	'Uploaded %d/%d files': 'Nahráno %d/%d souborů',
+	'Using runtime: ': 'K odeslání souborů se použije metoda '
 });

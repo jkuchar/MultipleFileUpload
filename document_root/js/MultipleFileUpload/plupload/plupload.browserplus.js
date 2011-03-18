@@ -1,4 +1,14 @@
 /**
+ *
+ *    AFTER UPDATE OF ANY FILE IN THIS DIRECTORY RE-MINIFY "jquery.plupload.queue.min.js".
+ *    OTHERWISE PLUPLOAD WILL NOT WORK AS YOU WANT IN PRODUCTION MODE
+ *
+ *    You can use http://fmarcia.info/jsmin/test.html for example.
+ *
+ */
+
+
+/**
  * plupload.browserplus.js
  *
  * Copyright 2009, Moxiecode Systems AB
