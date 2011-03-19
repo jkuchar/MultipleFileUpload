@@ -10,6 +10,7 @@ var fallbackController = this;
 			runtimes : 'gears,html5,browserplus,flash,silverlight,html4',
 			{* runtimes : 'gears,html5,browserplus,silverlight,html4', *}
 			{* runtimes : 'flash',*}
+			rename: true,
 			url : {!$backLink|escapeJs},
 			/*max_file_size : {!$sizeLimit},*/
 			chunk_size : '5mb',
@@ -29,6 +30,9 @@ var fallbackController = this;
 		/*uploader.bind("Error",function(){
 			fallbackController.fallback();
 		})*/
+		setInterval(function(){ // if plupload moves around page, good to recompute position of uploader
+			uploader.refresh();
+		},500);
 	});
 
 	return true; // OK
