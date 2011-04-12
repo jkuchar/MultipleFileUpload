@@ -7,7 +7,7 @@ var fallbackController = this;
 		// TODO: auto fallback
 		var uploader = $("#"+{!$id|escapeJs}).pluploadQueue({
 			// General settings
-			runtimes : 'gears,html5,browserplus,flash,silverlight,html4',
+			runtimes : 'gears,browserplus,silverlight,flash,html5,html4',
 			{* runtimes : 'gears,html5,browserplus,silverlight,html4', *}
 			{* runtimes : 'flash',*}
 			rename: true,
