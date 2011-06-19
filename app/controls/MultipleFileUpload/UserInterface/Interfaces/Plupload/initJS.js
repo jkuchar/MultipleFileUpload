@@ -11,14 +11,9 @@ var fallbackController = this;
 			{* runtimes : 'gears,html5,browserplus,silverlight,html4', *}
 			{* runtimes : 'flash',*}
 			rename: true,
-			url : {!$backLink|escapeJs},
+			url : {!uploadLink|escapeJs},
 			/*max_file_size : {!$sizeLimit},*/
 			chunk_size : '5mb',
-
-			headers: {
-				"X-Uploader": "plupload",
-				"token"     : {!$token|escapeJs}
-			},
 
 			// Flash settings
 			flash_swf_url : {!$baseUri|escapeJs}+'swf/MultipleFileUpload/plupload/plupload.flash.swf',

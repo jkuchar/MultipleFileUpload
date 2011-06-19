@@ -18,7 +18,9 @@ class MFUUIPlupload extends MFUUIBase {
 	public function isThisYourUpload() {
 
 		return (
-		Environment::getHttpRequest()->getHeader("X-Uploader") == "plupload"
+			Environment::getHttpRequest()->getQuery("token") !== null
+			AND 
+			Environment::getHttpRequest()->getQuery("uploader") === "plupload"
 		);
 	}
 
@@ -28,7 +30,7 @@ class MFUUIPlupload extends MFUUIBase {
 	 */
 	public function handleUploads() {
 		/* @var $token string */
-		$token = Environment::getHttpRequest()->getHeader("token");
+		$token = Environment::getHttpRequest()->getQuery("token");
 		if (empty($token)) {
 			return;
 		}
@@ -197,7 +199,7 @@ class MFUUIPlupload extends MFUUIBase {
 		$tpl->token = $upload->getToken();
 		$tpl->sizeLimit = $upload->maxFileSize;
 		$tpl->maxFiles = $upload->maxFiles;
-		$tpl->backLink = (string) $upload->form->action;
+		$tpl->uploadLink = Environment::getVariable("baseUri")."/?token=".$tpl->token."&uploader=plupload";
 		$tpl->id = $this->getHtmlIdFlashCompatible($upload);
 		return $tpl->__toString(TRUE);
 	}
