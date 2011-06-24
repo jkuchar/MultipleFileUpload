@@ -149,7 +149,8 @@ class MFUUIPlupload extends MFUUIBase {
 		}
 		$file = null;
 		$nonChunkedTransfer = ($chunk == 0 AND $chunks == 0);
-		if(($chunk+1) == $chunks OR $nonChunkedTransfer) {
+		$lastChunk = ($chunk+1) == $chunks;
+		if($lastChunk OR $nonChunkedTransfer) {
 			// Hotovo
 			$file = new HttpUploadedFile(array(
 			    'name' => $fileNameOriginal,
