@@ -199,7 +199,7 @@ class MFUUIPlupload extends MFUUIBase {
 		$tpl->token = $upload->getToken();
 		$tpl->sizeLimit = $upload->maxFileSize;
 		$tpl->maxFiles = $upload->maxFiles;
-		$tpl->uploadLink = Environment::getVariable("baseUri")."/?token=".$tpl->token."&uploader=plupload";
+		$tpl->uploadLink = Environment::getVariable("baseUri")."?token=".$tpl->token."&uploader=plupload";
 		$tpl->id = $this->getHtmlIdFlashCompatible($upload);
 		return $tpl->__toString(TRUE);
 	}
