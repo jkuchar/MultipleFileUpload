@@ -148,7 +148,8 @@ class MFUUIPlupload extends MFUUIBase {
 			$queueModel->addFileManually($fileName, $chunk+1,$chunks);
 		}
 		$file = null;
-		if(($chunk+1) == $chunks) {
+		$nonChunkedTransfer = ($chunk == 0 AND $chunks == 0);
+		if(($chunk+1) == $chunks OR $nonChunkedTransfer) {
 			// Hotovo
 			$file = new HttpUploadedFile(array(
 			    'name' => $fileNameOriginal,
