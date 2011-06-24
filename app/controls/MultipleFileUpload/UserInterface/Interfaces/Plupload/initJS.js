@@ -22,12 +22,11 @@ var fallbackController = this;
 			silverlight_xap_url : {!$baseUri|escapeJs}+'xap/MultipleFileUpload/plupload/plupload.silverlight.xap'
 		});
 		uploader = $(uploader).pluploadQueue();
-		/*uploader.bind("Error",function(){
-			fallbackController.fallback();
-		})*/
-		setInterval(function(){ // if plupload moves around page, good to recompute position of uploader
+		var refreshFn = function(){ // if plupload moves around page, good to recompute position of uploader
 			uploader.refresh();
-		},500);
+		};
+		setInterval(refreshFn,1000);
+		refreshFn();
 	});
 
 	return true; // OK
