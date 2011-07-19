@@ -11,7 +11,7 @@ var fallbackController = this;
 			{* runtimes : 'gears,html5,browserplus,silverlight,html4', *}
 			{* runtimes : 'flash',*}
 			rename: true,
-			url : {!uploadLink|escapeJs},
+			url : {!$uploadLink|escapeJs},
 			/*max_file_size : {!$sizeLimit},*/
 			chunk_size : '5mb',
 
