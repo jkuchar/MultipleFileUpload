@@ -1,14 +1,4 @@
 /**
- *
- *    AFTER UPDATE OF ANY FILE IN THIS DIRECTORY RE-MINIFY "jquery.plupload.queue.min.js".
- *    OTHERWISE PLUPLOAD WILL NOT WORK AS YOU WANT IN PRODUCTION MODE
- *
- *    You can use http://fmarcia.info/jsmin/test.html for example.
- *
- */
-
-
-/**
  * plupload.js
  *
  * Copyright 2009, Moxiecode Systems AB
@@ -68,6 +58,7 @@
 		"image/bmp,bmp," +
 		"image/gif,gif," +
 		"image/jpeg,jpeg jpg jpe," +
+		"image/photoshop,psd," +
 		"image/png,png," +
 		"image/svg+xml,svg svgz," +
 		"image/tiff,tiff tif," +
@@ -79,6 +70,7 @@
 		"video/x-m4v,m4v," +
 		"video/x-flv,flv," +
 		"video/vnd.rn-realvideo,rv," +
+		"text/csv,csv," +
 		"text/plain,asc txt text diff log," +
 		"application/octet-stream,exe"
 	);
@@ -565,12 +557,26 @@
 		 * Translates the specified string by checking for the english string in the language pack lookup.
 		 *
 		 * @param {String} str String to look for.
-		 * @reutrn {String} Translated string or the input string if it wasn't found.
+		 * @return {String} Translated string or the input string if it wasn't found.
 		 */
 		translate : function(str) {
 			return i18n[str] || str;
 		},
+		
+		/**
+		 * Checks if object is empty.
+		 *
+		 * @param {Object} obj Object to check.
+		 * @return {Boolean}
+		 */
+		isEmptyObj : function(obj) {
+			if (obj === undef) return true;
 			
+			for (var prop in obj) {
+				return false;	
+			}
+			return true;
+		},
 		
 		/**
 		 * Checks if specified DOM element has specified class.
@@ -615,7 +621,20 @@
 				return $1 === ' ' && $2 === ' ' ? ' ' : '';
 			});
 		},
-		
+    
+		/**
+		 * Returns a given computed style of a DOM element.
+		 *
+		 * @param {Object} obj DOM element like object.
+		 * @param {String} name Style you want to get from the DOM element
+		 */
+		getStyle : function(obj, name) {
+			if (obj.currentStyle) {
+				return obj.currentStyle[name];
+			} else if (window.getComputedStyle) {
+				return window.getComputedStyle(obj, null)[name];
+			}
+		},
 
 		/**
 		 * Adds an event handler to the specified object and store reference to the handler
@@ -640,7 +659,11 @@
 			}
 
 			// Add event listener
-			if (obj.attachEvent) {
+			if (obj.addEventListener) {
+				func = callback;
+				
+				obj.addEventListener(name, func, false);
+			} else if (obj.attachEvent) {
 				
 				func = function() {
 					var evt = window.event;
@@ -655,12 +678,7 @@
 					callback(evt);
 				};
 				obj.attachEvent('on' + name, func);
-				
-			} else if (obj.addEventListener) {
-				func = callback;
-				
-				obj.addEventListener(name, func, false);
-			}
+			} 
 			
 			// Log event handler to objects internal Plupload registry
 			if (obj[uid] === undef) {
@@ -694,15 +712,7 @@
 		 * @param {Function|String} (optional) might be a callback or unique key to match.
 		 */
 		removeEvent: function(obj, name) {
-			var type, callback, key,
-				
-				// check if object is empty
-				isEmptyObj = function(obj) {
-					for (var prop in obj) {
-						return false;	
-					}
-					return true;
-				};
+			var type, callback, key;
 			
 			// match the handler either by callback or by key	
 			if (typeof(arguments[2]) == "function") {
@@ -748,7 +758,7 @@
 			}
 			
 			// If Plupload registry has become empty, remove it
-			if (isEmptyObj(eventhash[obj[uid]])) {
+			if (plupload.isEmptyObj(eventhash[obj[uid]])) {
 				delete eventhash[obj[uid]];
 				
 				// IE doesn't let you remove DOM object property with - delete
@@ -988,10 +998,14 @@
 						
 						plupload.each(filters, function(filter) {
 							plupload.each(filter.extensions.split(/,/), function(ext) {
-								extensionsRegExp.push('\\.' + ext.replace(new RegExp('[' + ('/^$.*+?|()[]{}\\'.replace(/./g, '\\$&')) + ']', 'g'), '\\$&'));
+								if (/^\s*\*\s*$/.test(ext)) {
+									extensionsRegExp.push('\\.*');
+								} else {
+									extensionsRegExp.push('\\.' + ext.replace(new RegExp('[' + ('/^$.*+?|()[]{}\\'.replace(/./g, '\\$&')) + ']', 'g'), '\\$&'));
+								}
 							});
 						});
-
+						
 						extensionsRegExp = new RegExp(extensionsRegExp.join('|') + '$', 'i');
 					}
 
@@ -1061,6 +1075,15 @@
 					if (up.state == plupload.STARTED) {
 						// Get start time to calculate bps
 						startTime = (+new Date());
+						
+					} else if (up.state == plupload.STOPPED) {
+						// Reset currently uploading files
+						for (i = up.files.length - 1; i >= 0; i--) {
+							if (up.files[i].status == plupload.UPLOADING) {
+								up.files[i].status = plupload.QUEUED;
+								calc();
+							}
+						}
 					}
 				});
 
@@ -1180,9 +1203,9 @@
 			start : function() {
 				if (this.state != plupload.STARTED) {
 					this.state = plupload.STARTED;
-					this.trigger("StateChanged");
-
-					uploadNext.call(this);
+					this.trigger("StateChanged");	
+					
+					uploadNext.call(this);				
 				}
 			},
 
@@ -1193,7 +1216,7 @@
 			 */
 			stop : function() {
 				if (this.state != plupload.STOPPED) {
-					this.state = plupload.STOPPED;
+					this.state = plupload.STOPPED;					
 					this.trigger("StateChanged");
 				}
 			},

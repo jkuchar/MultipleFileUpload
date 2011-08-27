@@ -1,14 +1,4 @@
 /**
- *
- *    AFTER UPDATE OF ANY FILE IN THIS DIRECTORY RE-MINIFY "jquery.plupload.queue.min.js".
- *    OTHERWISE PLUPLOAD WILL NOT WORK AS YOU WANT IN PRODUCTION MODE
- *
- *    You can use http://fmarcia.info/jsmin/test.html for example.
- *
- */
-
-
-/**
  * plupload.html4.js
  *
  * Copyright 2010, Ryan Demmer
@@ -66,10 +56,18 @@
 					filters = up.settings.filters, i, ext, type, y;
 
 				// Convert extensions to mime types list
+				no_type_restriction:
 				for (i = 0; i < filters.length; i++) {
 					ext = filters[i].extensions.split(/,/);
 
 					for (y = 0; y < ext.length; y++) {
+						
+						// If there's an asterisk in the list, then accept attribute is not required
+						if (ext[y] === '*') {
+							mimes = [];
+							break no_type_restriction;
+						}
+						
 						type = plupload.mimeTypes[ext[y]];
 
 						if (type) {
@@ -77,7 +75,7 @@
 						}
 					}
 				}
-
+				
 				mimes = mimes.join(',');
 
 				function createForm() {
@@ -120,7 +118,7 @@
 						width : '100%',
 						height : '100%',
 						opacity : 0,
-						fontSize: '2em' // force input element to be bigger then needed to occupy whole space
+						fontSize: '99px' // force input element to be bigger then needed to occupy whole space
 					});
 					
 					plupload.extend(form.style, {
@@ -229,7 +227,9 @@
 				
 				if (up.settings.container) {
 					container = getById(up.settings.container);
-					container.style.position = 'relative';
+					if (plupload.getStyle(container, 'position') === 'static') {
+						container.style.position = 'relative';
+					}
 				}
 				
 				// Upload file
@@ -320,9 +320,14 @@
 							}
 
 							plupload.extend(browseButton.style, {
-								position : 'relative',
 								zIndex : pzIndex
 							});
+				
+							if (plupload.getStyle(browseButton, 'position') === 'static') {
+								plupload.extend(browseButton.style, {
+									position : 'relative'
+								});
+							}
 
 							plupload.extend(inputContainer.style, {
 								zIndex : pzIndex - 1
