@@ -1,0 +1,3 @@
+<FilesMatch "\.(js)$">
+	allow from all
+</FilesMatch>
