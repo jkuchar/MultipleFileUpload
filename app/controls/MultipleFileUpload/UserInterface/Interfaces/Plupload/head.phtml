@@ -1,5 +1,5 @@
 <!-- Load Queue widget CSS and jQuery -->
-<link href="{$baseUri}css/MultipleFileUpload/plupload.queue.css" rel="stylesheet" type="text/css" />
+<link href="{$baseUri}css/MultipleFileUpload/jquery.plupload.queue.css" rel="stylesheet" type="text/css" />
 
 <!-- Thirdparty intialization scripts, needed for the Google Gears and BrowserPlus runtimes -->
 <script type="text/javascript" src="{$baseUri}js/MultipleFileUpload/plupload/gears_init.js"></script>
@@ -7,20 +7,20 @@
 
 <!-- Load plupload and all it's runtimes and finally the jQuery UI queue widget -->
 {if Environment::isProduction()}
-<script type="text/javascript" src="{$baseUri}js/MultipleFileUpload/plupload/plupload.full.min.js"></script>
-<script type="text/javascript" src="{$baseUri}js/MultipleFileUpload/plupload/jquery.plupload.queue.min.js"></script>
+<script type="text/javascript" src="{$baseUri}js/MultipleFileUpload/plupload/min/plupload.full.js"></script>
+<script type="text/javascript" src="{$baseUri}js/MultipleFileUpload/plupload/min/jquery.plupload.queue.js"></script>
 {else}
-<script type="text/javascript" src="{$baseUri}js/MultipleFileUpload/plupload/plupload.js"></script>
-<script type="text/javascript" src="{$baseUri}js/MultipleFileUpload/plupload/plupload.gears.js"></script>
-<script type="text/javascript" src="{$baseUri}js/MultipleFileUpload/plupload/plupload.html4.js"></script>
-<script type="text/javascript" src="{$baseUri}js/MultipleFileUpload/plupload/plupload.html5.js"></script>
-<script type="text/javascript" src="{$baseUri}js/MultipleFileUpload/plupload/plupload.silverlight.js"></script>
-<script type="text/javascript" src="{$baseUri}js/MultipleFileUpload/plupload/plupload.flash.js"></script>
-<script type="text/javascript" src="{$baseUri}js/MultipleFileUpload/plupload/plupload.browserplus.js"></script>
+<script type="text/javascript" src="{$baseUri}js/MultipleFileUpload/plupload/dev/plupload.js"></script>
+<script type="text/javascript" src="{$baseUri}js/MultipleFileUpload/plupload/dev/plupload.gears.js"></script>
+<script type="text/javascript" src="{$baseUri}js/MultipleFileUpload/plupload/dev/plupload.html4.js"></script>
+<script type="text/javascript" src="{$baseUri}js/MultipleFileUpload/plupload/dev/plupload.html5.js"></script>
+<script type="text/javascript" src="{$baseUri}js/MultipleFileUpload/plupload/dev/plupload.silverlight.js"></script>
+<script type="text/javascript" src="{$baseUri}js/MultipleFileUpload/plupload/dev/plupload.flash.js"></script>
+<script type="text/javascript" src="{$baseUri}js/MultipleFileUpload/plupload/dev/plupload.browserplus.js"></script>
 
-<script type="text/javascript" src="{$baseUri}js/MultipleFileUpload/plupload/jquery.plupload.queue.js"></script>
+<script type="text/javascript" src="{$baseUri}js/MultipleFileUpload/plupload/dev/jquery.plupload.queue.js"></script>
 {/if}
 <script type="text/javascript" src="{$baseUri}js/MultipleFileUpload/plupload/cs.js"></script>
 
-
+{* GUI Driver *}
 <script type="text/javascript" src="{$baseUri}js/MultipleFileUpload/plupload/MultipleFileUpload.js"></script>

@@ -42,12 +42,12 @@
 		 * @param {Object} obj Parameters to be passed with event.
 		 */
 		trigger : function(id, name, obj) {
-					
+								
 			// Detach the call so that error handling in the browser is presented correctly
 			setTimeout(function() {
 				var uploader = uploadInstances[id], i, args;
-
-				if (uploader) {
+				
+				if (uploader) {				
 					uploader.trigger('Flash:' + name, obj);
 				}
 			}, 0);
@@ -76,7 +76,8 @@
 				maxHeight: 8091,
 				chunks: true,
 				progress: true,
-				multipart: true
+				multipart: true,
+				multi_selection: true
 			};
 		},
 
@@ -88,7 +89,7 @@
 		 * @param {function} callback Callback to execute when the runtime initializes or fails to initialize. If it succeeds an object with a parameter name success will be set to true.
 		 */
 		init : function(uploader, callback) {
-			var browseButton, flashContainer, flashVars, waitCount = 0, container = document.body;
+			var browseButton, flashContainer, waitCount = 0, container = document.body;
 
 			if (getFlashVersion() < 10) {
 				callback({success : false});
@@ -124,15 +125,33 @@
 			}
 
 			container.appendChild(flashContainer);
+			
+			// insert flash object
+			(function() {
+				var html, el;
+				
+				html = '<object id="' + uploader.id + '_flash" type="application/x-shockwave-flash" data="' + uploader.settings.flash_swf_url + '" ';
+				
+				if (plupload.ua.ie) {
+					html += 'classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" ';
+				}
 
-			flashVars = 'id=' + escape(uploader.id);
-
-			// Insert the Flash inide the flash container
-			flashContainer.innerHTML = '<object id="' + uploader.id + '_flash" width="100%" height="100%" style="outline:0" type="application/x-shockwave-flash" data="' + uploader.settings.flash_swf_url + '">' +
-				'<param name="movie" value="' + uploader.settings.flash_swf_url + '" />' +
-				'<param name="flashvars" value="' + flashVars + '" />' +
-				'<param name="wmode" value="transparent" />' +
-				'<param name="allowscriptaccess" value="always" /></object>';
+				html += 'width="100%" height="100%" style="outline:0">'  +
+					'<param name="movie" value="' + uploader.settings.flash_swf_url + '" />' +
+					'<param name="flashvars" value="id=' + escape(uploader.id) + '" />' +
+					'<param name="wmode" value="transparent" />' +
+					'<param name="allowscriptaccess" value="always" />' +
+				'</object>';
+					
+				if (plupload.ua.ie) {
+					el = document.createElement('div');
+					flashContainer.appendChild(el);
+					el.outerHTML = html;
+					el = null; // just in case
+				} else {
+					flashContainer.innerHTML = html;
+				}
+			}());
 
 			function getFlashObj() {
 				return document.getElementById(uploader.id + '_flash');
@@ -146,7 +165,7 @@
 					return;
 				}
 
-				if (!initialized[uploader.id]) {
+				if (initialized[uploader.id] === false) { // might also be undefined, if uploader was destroyed by that moment
 					setTimeout(waitLoad, 1);
 				}
 			}
@@ -155,6 +174,21 @@
 
 			// Fix IE memory leaks
 			browseButton = flashContainer = null;
+			
+			// destroy should always be available, after Flash:Init or before (#516)
+			uploader.bind("Destroy", function(up) {
+				var flashContainer;
+				
+				plupload.removeAllEvents(document.body, up.id);
+				
+				delete initialized[up.id];
+				delete uploadInstances[up.id];
+				
+				flashContainer = document.getElementById(up.id + '_flash_container');
+				if (flashContainer) {
+					container.removeChild(flashContainer);
+				}
+			});
 
 			// Wait for Flash to send init event
 			uploader.bind("Flash:Init", function() {	
@@ -186,6 +220,10 @@
 						urlstream_upload : settings.urlstream_upload
 					});
 				});
+				
+				uploader.bind("CancelUpload", function() {
+					getFlashObj().cancelUpload();
+				});
 
 
 				uploader.bind("Flash:UploadProcess", function(up, flash_file) {
@@ -211,7 +249,7 @@
 					up.trigger('ChunkUploaded', file, chunkArgs);
 
 					// Stop upload if file is maked as failed
-					if (file.status != plupload.FAILED) {
+					if (file.status !== plupload.FAILED && up.state !== plupload.STOPPED) {
 						getFlashObj().uploadNextChunk();
 					}
 
@@ -329,6 +367,17 @@
 						plupload.removeClass(browseButton, activeClass);
 					}
 				});
+				
+				
+				uploader.bind('Flash:ExifData', function(up, obj) {
+					uploader.trigger('ExifData', uploader.getFile(lookup[obj.id]), obj.data);
+				});
+				
+				
+				uploader.bind('Flash:GpsData', function(up, obj) {
+					uploader.trigger('GpsData', uploader.getFile(lookup[obj.id]), obj.data);
+				});
+				
 
 				uploader.bind("QueueChanged", function(up) {
 					uploader.refresh();
@@ -366,18 +415,8 @@
 					}
 				});
 				
-				uploader.bind("Destroy", function(up) {
-					var flashContainer;
-					
-					plupload.removeAllEvents(document.body, up.id);
-					
-					delete initialized[up.id];
-					delete uploadInstances[up.id];
-					
-					flashContainer = document.getElementById(up.id + '_flash_container');
-					if (flashContainer) {
-						container.removeChild(flashContainer);
-					}
+				uploader.bind("DisableBrowse", function(up, disabled) {
+					getFlashObj().disableBrowse(disabled);
 				});
 							
 				callback({success : true});

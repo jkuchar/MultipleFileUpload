@@ -17,6 +17,11 @@
 	function jsonSerialize(obj) {
 		var value, type = typeof obj, isArray, i, key;
 
+		// Treat undefined as null
+		if (obj === undef || obj === null) {
+			return 'null';
+		}
+
 		// Encode strings
 		if (type === 'string') {
 			value = '\bb\tt\nn\ff\rr\""\'\'\\\\';
@@ -64,11 +69,6 @@
 			}
 
 			return value;
-		}
-
-		// Treat undefined as null
-		if (obj === undef) {
-			return 'null';
 		}
 
 		// Convert all other types to string
@@ -167,7 +167,8 @@
 				pngresize: true,
 				chunks: true,
 				progress: true,
-				multipart: true
+				multipart: true,
+				multi_selection: true
 			};
 		},
 
@@ -315,7 +316,7 @@
 					up.trigger('ChunkUploaded', file, chunkArgs);
 
 					// Stop upload if file is maked as failed
-					if (file.status != plupload.FAILED) {
+					if (file.status != plupload.FAILED && up.state !== plupload.STOPPED) {
 						getSilverlightObj().UploadNextChunk();
 					}
 
@@ -368,7 +369,10 @@
 					);
 				});
 				
-				
+				uploader.bind("CancelUpload", function() {
+					getSilverlightObj().CancelUpload();
+				});
+
 				uploader.bind('Silverlight:MouseEnter', function(up) {
 					var browseButton, hoverClass;
 						
@@ -418,6 +422,10 @@
 					}
 				});
 				
+				uploader.bind("DisableBrowse", function(up, disabled) {
+					getSilverlightObj().DisableBrowse(disabled);
+				});
+		
 				uploader.bind("Destroy", function(up) {
 					var silverlightContainer;
 					
