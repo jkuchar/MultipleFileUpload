@@ -6,7 +6,7 @@
  */
 
 /**
- * Description of MFUUIHTML4SingleUpload
+ * Description of MFUUIUploadify
  *
  * @author Jan Kuchař
  */

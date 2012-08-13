@@ -1,82 +1,102 @@
 (function($){
 
-	var queue = $("#{!$uploadifyId}-queue");
-	var uploadify = $("#{!$uploadifyId}");
-	var box = uploadify.parents("div.withJS");
-
-	// TODO: add this to stylesheet
-	$("span.button",box)
-	.addClass("ui-state-default ui-corner-all")
-	.css("cursor","pointer")
-	.css("padding","3px")
-	.css("font-size","12px")
-	.css("font-family","Constantia,Palatino,'palatino linotype',Georgia,'New York CE',utopia,serif");
+    var uploadifyId = {!$uploadifyId|escapeJS};
+	var queue = $('#' + uploadifyId + '-queue');
+    var clearQueueButton = $('#' + uploadifyId + 'ClearQueue');
+	var uploadify = $('#' + uploadifyId);
+    var uploadedCount = 0;
 
 	uploadify.uploadify({
-		width: 70,
-		height: 22,
-		wmode: "transparent",
 		auto: false,
-		multi: true,
-		queueID: {!$uploadifyId|escapeJS}+"-queue",
-		buttonImg: {!=\Nette\Environment::expand("{$baseUrl}/images/MultipleFileUpload/uploadify/uploadifyButton.png")|escapeJS},
-		uploader: {!=\Nette\Environment::expand("{$baseUrl}/swf/MultipleFileUpload/uploadify/uploadify.allglyphs.swf")|escapeJS},
-		cancelImg: {!=\Nette\Environment::expand("{$baseUrl}/images/MultipleFileUpload/uploadify/cancel.png")|escapeJS},
-		queueSizeLimit: {!$maxFiles|escapeJS},
-		sizeLimit: {!$sizeLimit|escapeJS},
-		script: {!$backLink|escapeJS},
-		simUploadLimit: {!$simUploadFiles|escapeJS},
-		scriptData: {
+		buttonImage: {!=\Nette\Environment::expand("{$baseModulePath}/images/uploadify/uploadifyButton.png")|escapeJS},
+		fileSizeLimit: {!$sizeLimit|escapeJS},
+        formData: {
 			token: {!$token|escapeJS},
-			sender: "MFU-Uploadify"
+			sender: 'MFU-Uploadify'
 		},
-		onInit: function(){
-			//box.parent().parent().find(".withoutJS").hide();
+		height: 22,
+        method: 'post',
+		multi: true,
+        overrideEvents: ['onQueueComplete'],
+		queueID: uploadifyId + '-queue',
+		queueSizeLimit: {!$maxFiles|escapeJS},
+        removeCompleted: true,
+		swf: {!=\Nette\Environment::expand("{$baseModulePath}/swf/uploadify/uploadify.swf")|escapeJS},
+		uploader: {!$backLink|escapeJS},
+		width: 70,
+        
+        /**
+         * Triggered when all files in the queue have been processed.
+		onQueueComplete: function(queueData){
+            if (queueData.uploadsErrored > 0) {
+                showMessage('Niekoľko súborov sa nepodarilo nahrať (' + queueData.uploadsErrored + ')');
+            } else {
+                showMessage('Všetky súbory boli úspešne nahrané');
+            }
+            
+            queue.fadeOut(500);
+            clearQueueButton.fadeOut(500);
+        },
+        */
+        
+        onClearQueue: function(queueItemCount) {
+            queue.fadeOut(500);
+            clearQueueButton.fadeOut(500);
+        },
+        
+        /**
+         * Triggered for each file that successfully uploads.
+         */
+		onUploadSuccess: function(fileObj, data, response){
+            uploadedCount++;
+			$('#' + uploadifyId + 'Count').text('Počet nahraných súborov:' + uploadedCount);
 		},
-		onComplete: function(event, ID, fileObj, response, data){
-			jQuery("#" + {!$uploadifyId|escapeJS} + ID).hide();
-			return false;
-		},
-		onSelect: function(event,queueID,fileObj){
-			if(fileObj.size > uploadify.uploadifySettings("sizeLimit")) {
+        
+        /**
+         * Triggered for each file that is selected from the browse files dialog and added to the queue.
+         */
+		onSelect: function(fileObj){
+            
+            if(fileObj.size > uploadify.uploadify('settings' , 'sizeLimit')) {
 				uploadify.trigger({
-					type: "sizeLimitExcessed",
+					type: "sizeLimitExceeded",
 					fileObj: fileObj,
-					queueID: queueID
 				});
-				uploadify.uploadifyCancel(queueID);
+				uploadify.uploadify('cancel');
 				return false;
 			}
 			if(fileObj.size == 0) {
 				uploadify.trigger({
 					type: "emptyFile",
 					fileObj: fileObj,
-					queueID: queueID
 				});
-				uploadify.uploadifyCancel(queueID);
+				uploadify.uploadify('cancel');
 				return false;
 			}
-		},
-		onSelectOnce: function(){
-			var queue = $("#"+$(this).attr("id")+"-queue");
-			$("#"+$(this).attr("id")+"ClearQueue").fadeIn(500);
-			queue.slideDown(1000,function(){
-				$("div.uploadifyQueueItem:first",queue).livequery(function(){
-					$(this).animate({ marginTop:"0px"},200);
-				});
-			});
-			$("#"+$(this).attr("id")+"Count").text(uploadify.uploadifySettings("queueSize")+" vybraných souborů");
-			return false;
+            
+            queue.fadeIn(500);
+            clearQueueButton.fadeIn(500);
+//			$("#"+uploadifyId+"Count").text(uploadify.uploadify('settings', 'queueSize')+" vybraných souborů");
+//			return false;
 		}
 	});
 
-	uploadify.bind("sizeLimitExcessed",function(event){
-		alert("soubor '"+event.fileObj.name+"' je moc velký! Bude přeskočen.");
+	uploadify.bind("sizeLimitExceeded",function(event){
+		showMessage("soubor '" + event.fileObj.name + "' je moc velký! Bude přeskočen.");
 	});
 
 	uploadify.bind("emptyFile",function(event){
-		alert("soubor '"+event.fileObj.name+"' je prázdný! Bude přeskočen.");
+		showMessage("soubor '" + event.fileObj.name + "' je prázdný! Bude přeskočen.");
 	});
+    
+    /**
+     * Show info message to user.
+     * @param string
+     */
+    function showMessage(msg)
+    {
+        $.Nette.showInfo(msg);
+    }
 
 	return true; // OK
 
