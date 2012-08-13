@@ -11,13 +11,13 @@ $("form").livequery("submit",function(e){
 			queueSize = 0;
 			
 			try{
-				queueSize = uploadify.uploadifySettings("queueSize");
+				queueSize = uploadify.uploadify('settings', 'queueSize');
 			}catch(ex) {}
 			
 			if(queueSize>0){
 				e.stopImmediatePropagation();
 				e.preventDefault();
-				uploadify.uploadifyUpload();
+				uploadify.uploadify('upload');
 				uploadify.bind("uploadifyAllComplete",function(){
 					uploadersInQueue--;
 					if(uploadersInQueue===0){
