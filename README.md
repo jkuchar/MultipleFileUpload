@@ -10,3 +10,7 @@ Full documentation
 - Czech: http://addons.nette.org/cs/multiplefileupload
 - English: http://addons.nette.org/en/multiplefileupload (machine translation)
 
+Forks
+-----
+
+Because this repo is imported from SVN, there were no way how to create real forks on github. So there are more than one repo containing MultipleFileUpload. Other forks is here: https://github.com/Ciki/MFU
