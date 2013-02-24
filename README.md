@@ -13,4 +13,4 @@ Full documentation
 Forks
 -----
 
-Because this repo is imported from SVN, there were no way how to create real forks on github. So there are more than one repo containing MultipleFileUpload. Other forks is here: https://github.com/Ciki/MFU
+Because this repo is imported from SVN, there were no way how to create real forks on github. So there are more than one repo containing MultipleFileUpload. Other forks are here: https://github.com/Ciki/MFU
