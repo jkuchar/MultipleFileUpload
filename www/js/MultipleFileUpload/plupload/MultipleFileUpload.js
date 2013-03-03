@@ -7,7 +7,8 @@ $("form").livequery("submit",function(e){
 	var uploadersInQueue = multipleFileUploadFields.length;
 	if(uploadersInQueue>0){
 		multipleFileUploadFields.each(function(){
-			var uploader = $(this).pluploadQueue();
+			console.log(jQuery(this));
+			var uploader = jQuery(this).pluploadQueue();
 
 			if(uploader.state == plupload.STARTED) {
 				e.preventDefault();

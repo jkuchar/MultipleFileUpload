@@ -24,7 +24,7 @@ var fallbackController = this;
 			silverlight_xap_url : {!$baseUrl|escapeJs}+'/xap/MultipleFileUpload/plupload/plupload.silverlight.xap'
 		});
 		uploader = $(uploader).pluploadQueue();
-		
+		console.log(uploader);
 		var refreshFn = function(){ // if plupload moves around page, good to recompute position of uploader
 			uploader.refresh();
 		};
