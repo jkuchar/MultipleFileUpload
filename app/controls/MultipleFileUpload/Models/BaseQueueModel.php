@@ -1,11 +1,10 @@
 <?php
 
-
 /**
  * @property IMFUQueuesModel $queuesModel
  * @property string $queueID
  */
-abstract class MFUBaseQueueModel extends Object implements IMFUQueueModel {
+abstract class MFUBaseQueueModel extends Nette\Object implements IMFUQueueModel {
 
 	/**
 	 * Queues model
@@ -14,17 +13,17 @@ abstract class MFUBaseQueueModel extends Object implements IMFUQueueModel {
 	private $queuesModel;
 
 	/**
-	 * getts queues model
+	 * gets queues model
 	 * @return IMFUQueuesModel
 	 */
 	function getQueuesModel() {
-		if(!$this->queuesModel)
+		if (!$this->queuesModel)
 			throw new InvalidStateException("Queues model is not set!");
 		return $this->queuesModel;
 	}
 
 	/**
-	 *setts queues model
+	 * sets queues model
 	 * @param IMFUQueuesModel $model
 	 */
 	function setQueuesModel(IMFUQueuesModel $model) {
@@ -60,14 +59,21 @@ abstract class MFUBaseQueueModel extends Object implements IMFUQueueModel {
 	 * @return string
 	 */
 	protected function getUniqueFilePath() {
-		return $this->getUploadedFilesTemporaryPath() . DIRECTORY_SEPARATOR . "upload-" . $this->getQueueID()  ."-" . uniqid() . ".tmp";
+		return 
+			$this->getUploadedFilesTemporaryPath()
+			.DIRECTORY_SEPARATOR
+			."upload-"
+			.$this->getQueueID()
+			."-"
+			.uniqid()
+			.".tmp";
 	}
 
 	/**
 	 * Initialization
 	 */
 	function initialize() {
-		if(!$this->queueID or !$this->queuesModel) {
+		if (!$this->queueID or !$this->queuesModel) {
 			throw new InvalidStateException("queueID and queuesModel must be setup before call initialize()!");
 		}
 	}

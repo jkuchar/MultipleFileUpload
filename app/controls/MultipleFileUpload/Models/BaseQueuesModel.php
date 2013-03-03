@@ -1,11 +1,10 @@
 <?php
 
-
 /**
  * @property int $lifeTime Life time
  * @property int $cleanInterval Clean interval
  */
-abstract class MFUBaseQueuesModel extends Object implements IMFUQueuesModel {
+abstract class MFUBaseQueuesModel extends Nette\Object implements IMFUQueuesModel {
 
 	/**
 	 * Life time

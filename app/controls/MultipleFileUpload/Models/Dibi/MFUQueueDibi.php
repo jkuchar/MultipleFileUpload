@@ -24,7 +24,7 @@ class MFUQueueDibi extends MFUBaseQueueModel {
 	 * Adds file to queue
 	 * @param HttpUploadedFile $file
 	 */
-	function addFile(HttpUploadedFile $file) {
+	function addFile(Nette\Http\FileUpload $file) {
 		$file->move($this->getUniqueFilePath());
 		$data = array(
 			'queueID%s' => $this->getQueueID(),
@@ -49,8 +49,8 @@ class MFUQueueDibi extends MFUBaseQueueModel {
 		$this->query('INSERT INTO [files]', $data);
 	}
 
-	function updateFile($name, $chunk, HttpUploadedFile $file = null) {
-		Dibi::begin();
+	function updateFile($name, $chunk, Nette\Http\FileUpload $file = null) {
+        dibi::begin();
 		$where = array(
 		    "queueID%s" => $this->getQueueID(),
 		    "name%s"    => $name
@@ -59,7 +59,7 @@ class MFUQueueDibi extends MFUBaseQueueModel {
 		if($file) {
 			$this->query('UPDATE files SET ',array("data"=>base64_encode(serialize($file))),'WHERE %and',$where); // workaround: http://forum.dibiphp.com/cs/1003-pgsql-a-znak-x00-oriznuti-zbytku-vstupu
 		}
-		Dibi::commit();
+		dibi::commit();
 	}
 
 	/**
@@ -68,7 +68,7 @@ class MFUQueueDibi extends MFUBaseQueueModel {
 	 */
 	function getUploadedFilesTemporaryPath() {
 		if(!MFUQueuesDibi::$uploadsTempDir) {
-			MFUQueuesDibi::$uploadsTempDir = Environment::expand("%tempDir%".DIRECTORY_SEPARATOR."uploads-MFU");
+			MFUQueuesDibi::$uploadsTempDir =\Nette\Environment::expand("%tempDir%".DIRECTORY_SEPARATOR."uploads-MFU");
 		}
 
 		if(!file_exists(MFUQueuesDibi::$uploadsTempDir)) {
@@ -76,7 +76,7 @@ class MFUQueueDibi extends MFUBaseQueueModel {
 		}
 
 		if(!is_writable(MFUQueuesDibi::$uploadsTempDir)) {
-			MFUQueuesDibi::$uploadsTempDir = Environment::expand("%tempDir%");
+			MFUQueuesDibi::$uploadsTempDir =\Nette\Environment::expand("%tempDir%");
 		}
 
 		if(!is_writable(MFUQueuesDibi::$uploadsTempDir)) {
@@ -95,7 +95,7 @@ class MFUQueueDibi extends MFUBaseQueueModel {
 
 		foreach($this->query('SELECT * FROM [files] WHERE [queueID] = %s', $this->getQueueID())->fetchAll() as $row) {
 			$f = unserialize(base64_decode($row["data"]));
-			if(!$f instanceof HttpUploadedFile) continue;
+			if(!$f instanceof Nette\Http\FileUpload) continue;
 			$files[] = $f;
 		}
 

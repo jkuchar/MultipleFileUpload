@@ -16,14 +16,16 @@
 
 	<title>MultipleFileUpload - form control</title>
 
-	<link rel="stylesheet" media="screen,projection,tv" href="{$baseUri}css/screen.css" type="text/css" />
-	<link rel="stylesheet" media="print" href="{$baseUri}css/print.css" type="text/css" />
-	<link rel="shortcut icon" href="{$baseUri}favicon.ico" type="image/x-icon" />
-        <script type="text/JavaScript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
-        <script type="text/JavaScript" src="{$baseUri}js/jquery.livequery.js"></script>
-        <script type="text/JavaScript" src="{$baseUri}js/nette-ajax-driver.js"></script>
-        <script type="text/JavaScript" src="{$baseUri}js/nette-ajax-form.js"></script>
-        <script type="text/JavaScript" src="{$baseUri}js/MFUFallbackController.js"></script>
+	<link rel="stylesheet" media="screen,projection,tv" href="{$baseUri}/css/screen.css" type="text/css" />
+	<link rel="stylesheet" media="print" href="{$baseUri}/css/print.css" type="text/css" />
+	
+	<link rel="shortcut icon" href="{$baseUri}/favicon.ico" type="image/x-icon" />
+	
+        <script type="text/JavaScript" src="{$baseUri}/js/jquery.js"></script>
+        <script type="text/JavaScript" src="{$baseUri}/js/jquery.livequery.js"></script>
+        <script type="text/JavaScript" src="{$baseUri}/js/jquery.nette.js"></script>
+        <script type="text/JavaScript" src="{$baseUri}/js/netteForms.js"></script>
+        <script type="text/JavaScript" src="{$baseUri}/js/MultipleFileUpload/MFUFallbackController.js"></script>
 	{!=MultipleFileUpload::getHead()}
 	{block head}{/block}
 </head>

@@ -16,7 +16,7 @@
 class HomepagePresenter extends BasePresenter {
 
 	public function createComponentForm($name) {
-		$form = new AppForm($this, $name);
+		$form = new Nette\Application\UI\Form($this, $name);
 		$form->getElementPrototype()->class[] = "ajax";
 
 		/*$form->addText("test","Textové políčko")
@@ -29,14 +29,14 @@ class HomepagePresenter extends BasePresenter {
 		$form->addMultipleFileUpload("upload2","Druhý balíček souborů");
 
 		$form->addSubmit("odeslat", "Odeslat");
-		$form->onSubmit[] = array($this,"onSubmit");
-
+		$form->onSuccess[] = array($this,"zpracujFormular");
+		
 		// Invalidace snippetů
-		$form->onInvalidSubmit[] = array($this,"handlePrekresliForm");
-		$form->onSubmit[] = array($this,"handlePrekresliForm");
+		$form->onError[] = array($this,"handlePrekresliForm");
+		$form->onSuccess[] = array($this,"handlePrekresliForm");
 	}
 
-	public function onSubmit(Form $form) {
+	public function zpracujFormular(\Nette\Application\UI\Form $form) {
 		$data = $form->getValues();
 
 		// Předáme data do šablony

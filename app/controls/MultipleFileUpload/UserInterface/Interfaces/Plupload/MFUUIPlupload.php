@@ -16,11 +16,10 @@ class MFUUIPlupload extends MFUUIBase {
 	 * Is this upload your upload? (upload from this interface)
 	 */
 	public function isThisYourUpload() {
-
 		return (
-			Environment::getHttpRequest()->getQuery("token") !== null
+			\Nette\Environment::getHttpRequest()->getQuery("token") !== null
 			AND 
-			Environment::getHttpRequest()->getQuery("uploader") === "plupload"
+			\Nette\Environment::getHttpRequest()->getQuery("uploader") === "plupload"
 		);
 	}
 
@@ -30,7 +29,8 @@ class MFUUIPlupload extends MFUUIBase {
 	 */
 	public function handleUploads() {
 		/* @var $token string */
-		$token = Environment::getHttpRequest()->getQuery("token");
+		$token = \Nette\Environment::getHttpRequest()
+			->getQuery("token");
 		if (empty($token)) {
 			return;
 		}
@@ -44,8 +44,8 @@ class MFUUIPlupload extends MFUUIBase {
 
 		// Settings
 		$queueModel = MultipleFileUpload::getQueuesModel() // returns: IMFUQueuesModel
-				->getQueue($token);
-		$targetDir =  $queueModel->getUploadedFilesTemporaryPath();
+			->getQueue($token);
+		$targetDir = $queueModel->getUploadedFilesTemporaryPath();
 		$cleanupTargetDir = false; // Remove old files
 		$maxFileAge = 60 * 60; // Temp file age in seconds
 		// 5 minutes execution time
@@ -58,7 +58,7 @@ class MFUUIPlupload extends MFUUIBase {
 		$chunks = isset($_REQUEST["chunks"]) ? $_REQUEST["chunks"] : 0;
 		$fileName = isset($_REQUEST["name"]) ? $_REQUEST["name"] : '';
 		$fileNameOriginal = $fileName;
-		$fileName = sha1($token.$chunks.$fileNameOriginal);
+		$fileName = sha1($token . $chunks . $fileNameOriginal);
 		$filePath = $targetDir . DIRECTORY_SEPARATOR . $fileName;
 
 		// Clean the fileName for security reasons
@@ -73,7 +73,6 @@ class MFUUIPlupload extends MFUUIBase {
 			$count = 1;
 			while (file_exists($targetDir . DIRECTORY_SEPARATOR . $fileName_a . '_' . $count . $fileName_b))
 				$count++;
-
 			$fileName = $fileName_a . '_' . $count . $fileName_b;
 		}
 
@@ -105,7 +104,7 @@ class MFUUIPlupload extends MFUUIBase {
 		// Handle non multipart uploads older WebKit versions didn't support multipart in HTML5
 		if (strpos($contentType, "multipart") !== false) {
 			if (isset($_FILES['file']['tmp_name']) && is_uploaded_file($_FILES['file']['tmp_name'])) {
-				$tmpPath = $filePath."-upladTmp";
+				$tmpPath = $filePath . "-upladTmp";
 				move_uploaded_file($_FILES['file']['tmp_name'], $tmpPath); // Open base restriction bugfix
 				// Open temp file
 				$out = fopen($filePath, $chunk == 0 ? "wb" : "ab");
@@ -152,23 +151,22 @@ class MFUUIPlupload extends MFUUIBase {
 		$lastChunk = ($chunk+1) == $chunks;
 		if($lastChunk OR $nonChunkedTransfer) {
 			// Hotovo
-			$file = new HttpUploadedFile(array(
-			    'name' => $fileNameOriginal,
-			    'type' => "",
-			    'size' => filesize($filePath),
-			    'tmp_name' => $filePath,
-			    'error' => UPLOAD_ERR_OK
-			));
+			$file = new Nette\Http\FileUpload(array(
+				    'name' => $fileNameOriginal,
+				    'type' => "",
+				    'size' => filesize($filePath),
+				    'tmp_name' => $filePath,
+				    'error' => UPLOAD_ERR_OK
+				));
 		}
-		if($file OR $chunk>0) {
-			$queueModel->updateFile($fileName, $chunk+1, $file);
+		if ($file OR $chunk > 0) {
+			$queueModel->updateFile($fileName, $chunk + 1, $file);
 		}
 
 		// Return JSON-RPC response
 		die('{"jsonrpc" : "2.0", "result" : null, "id" : "id"}');
 
-
-		/* @var $file HttpUploadedFile */
+		/* @var $file Nette\Http\FileUpload */
 		/* foreach(Environment::getHttpRequest()->getFiles() AS $file) {
 		  self::processFile($token, $file);
 		  }
@@ -181,14 +179,14 @@ class MFUUIPlupload extends MFUUIBase {
 	}
 
 	function getHtmlIdFlashCompatible(MultipleFileUpload $upload) {
-		return str_replace("-","_",$upload->getHtmlId() . "-box");
+		return str_replace("-", "_", $upload->getHtmlId() . "-box");
 	}
 
 	/**
 	 * Renders interface to <div>
 	 */
 	public function render(MultipleFileUpload $upload) {
-		$template = $this->createTemplate(dirname(__FILE__) . "/html.phtml");
+		$template = $this->createTemplate(dirname(__FILE__) . "/html.latte");
 		$template->id = $this->getHtmlIdFlashCompatible($upload);
 		return $template->__toString(TRUE);
 	}
@@ -201,7 +199,11 @@ class MFUUIPlupload extends MFUUIBase {
 		$tpl->token = $upload->getToken();
 		$tpl->sizeLimit = $upload->maxFileSize;
 		$tpl->maxFiles = $upload->maxFiles;
-		$tpl->uploadLink = Environment::getVariable("baseUri")."?token=".$tpl->token."&uploader=plupload";
+		
+		
+		// TODO: make creation of link nicer!
+		$baseUrl = \Nette\Environment::getContext()->httpRequest->url->baseUrl;
+		$tpl->uploadLink = $baseUrl."?token=".$tpl->token."&uploader=plupload";
 		$tpl->id = $this->getHtmlIdFlashCompatible($upload);
 		return $tpl->__toString(TRUE);
 	}
@@ -217,7 +219,7 @@ class MFUUIPlupload extends MFUUIBase {
 	 * Renders set-up tags to <head> attribute
 	 */
 	public function renderHeadSection() {
-		return $this->createTemplate(dirname(__FILE__) . "/head.phtml")->__toString(TRUE);
+		return $this->createTemplate(dirname(__FILE__) . "/head.latte")->__toString(TRUE);
 	}
 
 }

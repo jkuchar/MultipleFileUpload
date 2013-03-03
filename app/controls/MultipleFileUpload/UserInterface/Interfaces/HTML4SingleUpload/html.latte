@@ -35,7 +35,7 @@
 *}
 
 {?
-$input =  Html::el("input type=file")->name($mfu->getHtmlName().'[files][]');
+$input =  \Nette\Utils\Html::el("input type=file")->name($mfu->getHtmlName().'[files][]');
 }
 
 <div class="ui-widget ui-widget-content ui-corner-all" style="padding: 5px;">

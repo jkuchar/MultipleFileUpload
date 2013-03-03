@@ -35,14 +35,13 @@
  * @license    New BSD License
  * @link       http://nettephp.com/cs/extras/multiplefileupload
  */
-
 use Nette\Environment;
 use Nette\Utils\Html;
 
 class MultipleFileUpload extends \Nette\Forms\Controls\UploadControl {
-	const NAME = "Multiple File Uploader";
 
-	const VERSION = '$Rev$ released on $Date$';
+	const NAME = "Multiple File Uploader";
+	const VERSION = '$Rev: 77 $ released on $Date: 2011-03-17 23:52:31 +0100 (čt, 17 3 2011) $';
 
 	/**
 	 * Is files handle uploads called?
@@ -50,12 +49,14 @@ class MultipleFileUpload extends \Nette\Forms\Controls\UploadControl {
 	 * @see self::handleUploads()
 	 */
 	private static $handleUploadsCalled = false;
+
 	/**
 	 * Model
 	 * @var IMFUQueuesModel
 	 * @see self::init()
 	 */
 	protected static $queuesModel;
+
 	/**
 	 * Validate file callback
 	 * @var Callback
@@ -63,6 +64,7 @@ class MultipleFileUpload extends \Nette\Forms\Controls\UploadControl {
 	 * @param HttpUploadedFile File to be checked
 	 */
 	public static $validateFileCallback;
+
 	/**
 	 * Interface registrator instance
 	 * @var MFUUIRegistrator
@@ -81,9 +83,7 @@ class MultipleFileUpload extends \Nette\Forms\Controls\UploadControl {
 
 		// Set default check callback
 		self::$validateFileCallback = callback(__CLASS__, "validateFile");
-
 	}
-
 
 	/**
 	 * Register MFU into Nette
@@ -134,7 +134,7 @@ class MultipleFileUpload extends \Nette\Forms\Controls\UploadControl {
 
 		// Workaround for: http://forum.nettephp.com/cs/3680-httprequest-getheaders-a-content-type
 		$contentType = $req->getHeader("content-type");
-		if (!$contentType AND isset($_SERVER["CONTENT_TYPE"])) {
+		if (!$contentType and isset($_SERVER["CONTENT_TYPE"])) {
 			$contentType = $_SERVER["CONTENT_TYPE"];
 		}
 
@@ -142,8 +142,7 @@ class MultipleFileUpload extends \Nette\Forms\Controls\UploadControl {
 			return;
 		}
 
-		self::getQueuesModel()
-			->initialize();
+		self::getQueuesModel()->initialize();
 
 		foreach (self::getUIRegistrator()->getInterfaces() AS $interface) {
 			if ($interface->isThisYourUpload()) {
@@ -156,10 +155,10 @@ class MultipleFileUpload extends \Nette\Forms\Controls\UploadControl {
 
 	/**
 	 * Checks file if is ok and can be processed
-	 * @param HttpUploadedFile $file
+	 * @param \Nette\Http\FileUpload $file
 	 * @return bool
 	 */
-	public static function validateFile(Nette\Http\FileUpload $file) {
+	public static function validateFile(\Nette\Http\FileUpload $file) {
 		return $file->isOk();
 	}
 
@@ -167,7 +166,7 @@ class MultipleFileUpload extends \Nette\Forms\Controls\UploadControl {
 	 * Cleans cache
 	 */
 	public static function cleanCache() {
-		if (!Environment::isProduction() OR rand(1, 100) < 5) {
+		if (!Environment::isProduction() or rand(1, 100) < 5) {
 			self::getQueuesModel()->cleanup();
 		}
 	}
@@ -176,14 +175,13 @@ class MultipleFileUpload extends \Nette\Forms\Controls\UploadControl {
 	 * @return IMFUQueuesModel
 	 */
 	public static function getQueuesModel() {
-		if(!self::$queuesModel) { // if nothing is set, setup sqlite model, which should work on all systems with SQLite
+		if (!self::$queuesModel) { // if nothing is set, setup sqlite model, which should work on all systems with SQLite
 			self::setQueuesModel(new MFUQueuesSQLite());
 		}
 
 		if (!self::$queuesModel instanceof IMFUQueuesModel) {
-			throw new \Nette\InvalidStateException("Queues model is not instance of IMFUQueuesModel!");
+			throw new InvalidStateException("Queues model is not instance of IMFUQueuesModel!");
 		}
-		
 		return self::$queuesModel;
 	}
 
@@ -197,14 +195,14 @@ class MultipleFileUpload extends \Nette\Forms\Controls\UploadControl {
 	 */
 	public static function getUIRegistrator() {
 		if (!self::$interfaceRegistrator instanceof MFUUIRegistrator) {
-			throw new \Nette\InvalidStateException("Interface registrator is not instance of MFUUIRegistrator!");
+			throw new InvalidStateException("Interface registrator is not instance of MFUUIRegistrator!");
 		}
 		return self::$interfaceRegistrator;
 	}
 
 	public static function getHead() {
 		$out = "";
-		foreach(self::getUIRegistrator()->getInterfaces() AS $interface) {
+		foreach (self::getUIRegistrator()->getInterfaces() AS $interface) {
 			$out .= $interface->renderHeadSection();
 		}
 		return $out;
@@ -219,16 +217,19 @@ class MultipleFileUpload extends \Nette\Forms\Controls\UploadControl {
 	 * @var string
 	 */
 	public $token;
+
 	/**
 	 * Maximum selected files in one input
 	 * @var int
 	 */
 	public $maxFiles;
+
 	/**
 	 * Maximum file size of single uploaded file
 	 * @var int
 	 */
 	public $maxFileSize;
+
 	/**
 	 * How many threads will be used to upload files
 	 * @var int
@@ -239,7 +240,7 @@ class MultipleFileUpload extends \Nette\Forms\Controls\UploadControl {
 	 * Constructor
 	 * @param string $label Label
 	 */
-	public function __construct($label = NULL, $maxSelectedFiles=999) {
+	public function __construct($label = NULL, $maxSelectedFiles = 999) {
 		// Monitorování
 		$this->monitor('Nette\Forms\Form');
 		//$this->monitor('Nette\Application\Presenter');
@@ -247,7 +248,7 @@ class MultipleFileUpload extends \Nette\Forms\Controls\UploadControl {
 		parent::__construct($label);
 
 		if (!self::$handleUploadsCalled) {
-			throw new \Nette\InvalidStateException("MultipleFileUpload::handleUpload() has not been called. Call `MultipleFileUpload::register();` from your bootstrap before you call Applicaton::run();");
+			throw new InvalidStateException("MultipleFileUpload::handleUpload() has not been called. Call `MultipleFileUpload::register();` from your bootstrap before you call Applicaton::run();");
 		};
 
 		$this->maxFiles = $maxSelectedFiles;
@@ -275,13 +276,10 @@ class MultipleFileUpload extends \Nette\Forms\Controls\UploadControl {
 		$this->setOption('rendered', TRUE);
 
 		// Create control
-		$control = Html::el('div class=MultipleFileUpload')
-				->id($this->getHtmlId());
+		$control = Html::el('div class=MultipleFileUpload')->id($this->getHtmlId());
 
 		// <section token field>
-		$tokenField = Html::el('input type=hidden')
-				->name($this->getHtmlName() . '[token]')
-				->value($this->getToken());
+		$tokenField = Html::el('input type=hidden')->name($this->getHtmlName() . '[token]')->value($this->getToken());
 		$control->add($tokenField);
 		// </section token field>
 
@@ -295,11 +293,11 @@ class MultipleFileUpload extends \Nette\Forms\Controls\UploadControl {
 			$init = $interface->renderInitJavaScript($this);
 			$desctruct = $interface->renderDestructJavaScript($this);
 			$id = $this->getHtmlId() . "-MFUInterface-" . $interface->reflection->name;
-			
+
 			$fallback = (object) array(
-			    "id" => $id,
-			    "init" => $init,
-			    "destruct" => $desctruct
+				    "id" => $id,
+				    "init" => $init,
+				    "destruct" => $desctruct
 			);
 			$fallbacks[] = $fallback;
 
@@ -360,7 +358,7 @@ class MultipleFileUpload extends \Nette\Forms\Controls\UploadControl {
 			if (isset($data[$name]["token"])) {
 				$this->token = $data[$name]["token"];
 			} else {
-				throw new \Nette\InvalidStateException("Token has not been received! Without token MultipleFileUploader can't identify which files has been received.");
+				throw new InvalidStateException("Token has not been received! Without token MultipleFileUploader can't identify which files has been received.");
 			}
 		}
 	}
@@ -373,7 +371,7 @@ class MultipleFileUpload extends \Nette\Forms\Controls\UploadControl {
 		if ($value === null) {
 			// pole se vymaže samo v destructoru
 		} else {
-			throw new \Nette\NotSupportedException('Value of MultiFileUpload component cannot be directly set.');
+			throw new NotSupportedException('Value of MultiFileUpload component cannot be directly set.');
 		}
 	}
 
@@ -393,7 +391,6 @@ class MultipleFileUpload extends \Nette\Forms\Controls\UploadControl {
 				array_pop($data);
 			}
 		}
-
 		return $data;
 	}
 
@@ -401,7 +398,7 @@ class MultipleFileUpload extends \Nette\Forms\Controls\UploadControl {
 	 * Returns token
 	 * @return string|null
 	 */
-	public function getToken($need=true) {
+	public function getToken($need = true) {
 		// Load token from request
 		if (!$this->token) {
 			$this->loadHttpData();
@@ -413,7 +410,7 @@ class MultipleFileUpload extends \Nette\Forms\Controls\UploadControl {
 		}
 
 		if (!$this->token AND $need) {
-			throw new \Nette\InvalidStateException("Can't get a token!");
+			throw new InvalidStateException("Can't get a token!");
 		}
 
 		return $this->token;
@@ -433,10 +430,6 @@ class MultipleFileUpload extends \Nette\Forms\Controls\UploadControl {
 	public function __destruct() {
 		if ($this->getForm()->isSubmitted()) {
 			$this->getQueue()->delete();
-			
-			// To discuss:
-			// we want to keep files after form submission as well, for cases of server errors so F5 can be used to refresh
-			//      $this->getQueue()->delete();
 		}
 	}
 
@@ -449,7 +442,7 @@ class MultipleFileUpload extends \Nette\Forms\Controls\UploadControl {
 	 * @param  IFormControl
 	 * @return bool
 	 */
-	public static function validateFilled(\Nette\Forms\IControl $control) {
+	public static function validateFilled(Nette\Forms\IControl $control) {
 		$files = $control->getValue();
 		return (count($files) > 0);
 	}
@@ -460,7 +453,7 @@ class MultipleFileUpload extends \Nette\Forms\Controls\UploadControl {
 	 * @param  int  file size limit
 	 * @return bool
 	 */
-		public static function validateFileSize(\Nette\Forms\Controls\UploadControl $control, $limit) {
+	public static function validateFileSize(\Nette\Forms\Controls\UploadControl $control, $limit) {
 		$files = $control->getValue();
 		$size = 0;
 		foreach ($files AS $file) {
@@ -471,12 +464,12 @@ class MultipleFileUpload extends \Nette\Forms\Controls\UploadControl {
 
 	/**
 	 * MimeType validator: has file specified mime type?
-	 * @param  UploadControl
+	 * @param  FileUpload
 	 * @param  array|string  mime type
 	 * @return bool
 	 */
 	public static function validateMimeType(\Nette\Forms\Controls\UploadControl $control, $mimeType) {
-		throw new \Nette\NotSupportedException("Can't validate mime type! This is MULTIPLE file upload control.");
+		throw new NotSupportedException("Can't validate mime type! This is MULTIPLE file upload control.");
 	}
 
 	/*	 * ******************* Helpers ******************** */
@@ -488,12 +481,12 @@ class MultipleFileUpload extends \Nette\Forms\Controls\UploadControl {
 	 */
 	public static function parseIniSize($value) {
 		$units = array('k' => 1024, 'm' => 1048576, 'g' => 1073741824);
-
+		
 		$unit = strtolower(substr($value, -1));
-
+		
 		if (is_numeric($unit) || !isset($units[$unit]))
 			return $value;
-
+		
 		return ((int) $value) * $units[$unit];
 	}
 
@@ -502,8 +495,8 @@ class MultipleFileUpload extends \Nette\Forms\Controls\UploadControl {
 /**
  * Extension method for FormContainer
  */
-function FormContainer_addMultipleFileUpload(\Nette\Application\UI\Form $_this, $name, $label = NULL, $maxFiles=999) {
+function FormContainer_addMultipleFileUpload(Nette\Application\UI\Form $_this, $name, $label = NULL, $maxFiles = 999) {
 	return $_this[$name] = new MultipleFileUpload($label, $maxFiles);
 }
 
-\Nette\Forms\Container::extensionMethod("Nette\Forms\Container::addMultipleFileUpload", "FormContainer_addMultipleFileUpload");
+\Nette\Forms\Container::extensionMethod("\Nette\Forms\Container::addMultipleFileUpload", "FormContainer_addMultipleFileUpload");

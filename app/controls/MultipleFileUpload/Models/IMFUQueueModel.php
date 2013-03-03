@@ -39,9 +39,9 @@ interface IMFUQueueModel {
 
 	/**
 	 * Adds file to queue
-	 * @param HttpUploadedFile $file
+	 * @param Nette\Http\FileUpload $file
 	 */
-	function addFile(HttpUploadedFile $file);
+	function addFile(Nette\Http\FileUpload $file);
 
 	/**
 	 * Getts all files in queue

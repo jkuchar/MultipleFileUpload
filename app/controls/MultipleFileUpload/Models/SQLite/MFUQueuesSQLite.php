@@ -139,7 +139,7 @@ class MFUQueuesSQLite extends MFUBaseQueuesModel {
 	}
 
 	static function init() {
-		$config = Environment::getConfig("MultipleFileUploader",array(
+		$config =\Nette\Environment::getConfig("MultipleFileUploader",array(
 			"databasePath" => dirname(__FILE__)."/database.sdb",
 			"uploadsTempDir" => ""
 		));

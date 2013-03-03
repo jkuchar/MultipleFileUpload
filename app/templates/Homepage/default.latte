@@ -115,10 +115,10 @@
 
 	<tr>
 		<th>
-			{=Framework::NAME} {=Framework::VERSION}{* ({=Framework::PACKAGE}) *}
+			{=\Nette\Framework::NAME} {=\Nette\Framework::VERSION}{* ({=Framework::PACKAGE}) *}
 		</th>
 		<td>
-			{=Framework::REVISION}
+			{=\Nette\Framework::REVISION}
 		</td>
 	</tr>
 
@@ -127,7 +127,7 @@
 			Environment name
 		</th>
 		<td>
-			{=Environment::getName()}
+			TODO
 		</td>
 	</tr>
 
@@ -165,7 +165,7 @@
 			Příklad: Bude ukládat odeslané soubory?
 		</th>
 		<td>
-			{if Environment::isProduction()}ne{else}ano{/if}
+			{if \Nette\Environment::isProduction()}ne{else}ano{/if}
 		</td>
 	</tr>
 </table>

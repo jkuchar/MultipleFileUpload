@@ -1,15 +1,15 @@
 
 Queue::initialize(), Queues::initialize()
- - voláno pøi inicializaci driveru
+ - volÃ¡no pÅ™i inicializaci driveru
 
 
 Queues::getQueue($token)
- - Vrátí objekt implementující interfae IMFUQueue
- - pokud fronta ještì neexistuje, tak ji vytvoøí
- - musí bıt thread-safe!
+ - VrÃ¡tÃ­ objekt implementujÃ­cÃ­ interfae IMFUQueue
+ - pokud fronta jeÅ¡tÄ› neexistuje, tak ji vytvoÅ™Ã­
+ - musÃ­ bÃ½t thread-safe!
 
 
 Queues::cleanup($lifeTime,$cleanInterval)
- - Provede proèistìní starıch souborù a front
+ - Provede proÄistÄ›nÃ­ starÃ½ch souborÅ¯ a front
 
 Queue::addFile(Http)

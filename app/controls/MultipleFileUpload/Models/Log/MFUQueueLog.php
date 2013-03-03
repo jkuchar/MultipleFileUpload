@@ -1,5 +1,7 @@
 <?php
 
+use Nette\Environment;
+
 class MFUQueueLog extends MFUBaseQueueModel {
 
 	/**

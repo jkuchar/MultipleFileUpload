@@ -1,5 +1,6 @@
 <?php
-/* 
+
+/*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
@@ -15,20 +16,20 @@ class MFUUIHTML4SingleUpload extends MFUUIBase {
 	 * Is this upload your upload? (upload from this interface)
 	 */
 	public function isThisYourUpload() {
-		return !(Environment::getHttpRequest()->getHeader('user-agent') === 'Shockwave Flash');
+		return !(\Nette\Environment::getHttpRequest()->getHeader('user-agent') === 'Shockwave Flash');
 	}
 
-    	/**
+	/**
 	 * Handles uploaded files
 	 * forwards it to model
 	 */
 	public function handleUploads() {
 		// Iterujeme nad přijatými soubory
-		foreach(Environment::getHttpRequest()->getFiles() AS $name => $controlValue) {
+		foreach (\Nette\Environment::getHttpRequest()->getFiles() AS $name => $controlValue) {
 
 			// MFU vždy posílá soubory v této struktuře:
 			//
-			// array(
+      // array(
 			//	"token" => "blablabla",
 			//	"files" => array(
 			//		0 => HttpUploadedFile(...),
@@ -44,14 +45,12 @@ class MFUUIHTML4SingleUpload extends MFUUIBase {
 
 			if($isFormMFU) {
 				$token = $_POST[$name]["token"];
-				foreach($controlValue["files"] AS $file) {
-					self::processFile($token,$file);
+				foreach ($controlValue["files"] AS $file) {
+					self::processFile($token, $file);
 				}
 			}
-
 			// soubory, které se netýkají MFU nezpracujeme -> zpracuje si je standardním způsobem formulář
 		}
-
 		return true; // Skip all next
 	}
 
@@ -59,7 +58,7 @@ class MFUUIHTML4SingleUpload extends MFUUIBase {
 	 * Renders interface to <div>
 	 */
 	public function render(MultipleFileUpload $upload) {
-		$template = $this->createTemplate(dirname(__FILE__)."/html.phtml");
+		$template = $this->createTemplate(dirname(__FILE__) . "/html.latte");
 		$template->mfu = $upload;
 		return $template->__toString(TRUE);
 	}
@@ -68,7 +67,7 @@ class MFUUIHTML4SingleUpload extends MFUUIBase {
 	 * Renders JavaScript body of function.
 	 */
 	public function renderInitJavaScript(MultipleFileUpload $upload) {
-		return $this->createTemplate(dirname(__FILE__)."/initJS.js")->__toString(TRUE);
+		return $this->createTemplate(dirname(__FILE__) . "/initJS.js")->__toString(TRUE);
 	}
 
 	/**
@@ -84,4 +83,5 @@ class MFUUIHTML4SingleUpload extends MFUUIBase {
 	public function renderHeadSection() {
 		return "";
 	}
+
 }

@@ -13,9 +13,9 @@ class MFUQueueSQLite extends MFUBaseQueueModel {
 
 	/**
 	 * Adds file to queue
-	 * @param HttpUploadedFile $file
+	 * @param Nette\Http\FileUpload $file
 	 */
-	function addFile(HttpUploadedFile $file) {
+	function addFile(Nette\Http\FileUpload $file) {
 		$file->move($this->getUniqueFilePath());
 		$this->query('INSERT INTO files (queueID, created, data, name) VALUES ("'.sqlite_escape_string($this->getQueueID()).'",'.time().',\''.sqlite_escape_string(serialize($file)).'\', \''.sqlite_escape_string($file->getName()).'\')');
 	}
@@ -24,7 +24,7 @@ class MFUQueueSQLite extends MFUBaseQueueModel {
 		$this->query('INSERT INTO files (queueID, created, name, chunk, chunks) VALUES ("'.sqlite_escape_string($this->getQueueID()).'",'.time().',\''.sqlite_escape_string($name).'\', \''.sqlite_escape_string($chunk).'\', \''.sqlite_escape_string($chunks).'\')');
 	}
 
-	function updateFile($name, $chunk, HttpUploadedFile $file = null) {
+	function updateFile($name, $chunk,Nette\Http\FileUpload $file = null) {
 		$this->query("BEGIN TRANSACTION");
 		$where = 'queueID = \''.sqlite_escape_string($this->getQueueID()).'\' AND name = \''.sqlite_escape_string($name).'\'';
 		$this->query('UPDATE files SET chunk = \''.sqlite_escape_string($chunk).'\' WHERE '.$where);
@@ -40,7 +40,7 @@ class MFUQueueSQLite extends MFUBaseQueueModel {
 	 */
 	function getUploadedFilesTemporaryPath() {
 		if(!MFUQueuesSQLite::$uploadsTempDir) {
-			MFUQueuesSQLite::$uploadsTempDir = Environment::expand("%tempDir%".DIRECTORY_SEPARATOR."uploads-MFU");
+			MFUQueuesSQLite::$uploadsTempDir = \Nette\Environment::expand("%tempDir%".DIRECTORY_SEPARATOR."uploads-MFU");
 		}
 
 		if(!file_exists(MFUQueuesSQLite::$uploadsTempDir)) {
@@ -48,7 +48,7 @@ class MFUQueueSQLite extends MFUBaseQueueModel {
 		}
 
 		if(!is_writable(MFUQueuesSQLite::$uploadsTempDir)) {
-			MFUQueuesSQLite::$uploadsTempDir = Environment::expand("%tempDir%");
+			MFUQueuesSQLite::$uploadsTempDir = \Nette\Environment::expand("%tempDir%");
 		}
 
 		if(!is_writable(MFUQueuesSQLite::$uploadsTempDir)) {
@@ -67,7 +67,7 @@ class MFUQueueSQLite extends MFUBaseQueueModel {
 
 		foreach($this->query("SELECT * FROM files WHERE queueID = '".sqlite_escape_string($this->getQueueID())."'")->fetchAll() AS $row) {
 			$f = unserialize($row["data"]);
-			if(!$f instanceof HttpUploadedFile) continue;
+			if(!$f instanceof Nette\Http\FileUpload) continue;
 			$files[] = $f;
 		}
 		return $files;

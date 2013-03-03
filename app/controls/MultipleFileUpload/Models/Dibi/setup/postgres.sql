@@ -12,7 +12,4 @@ CREATE TABLE public.files (
   "name"     varchar(255) NOT NULL
 ) WITH (
     OIDS = FALSE
-  );
-
-ALTER TABLE public.files
-  OWNER TO postgres;
+);

@@ -21,7 +21,7 @@ abstract class MFUUIBase extends Nette\Object implements MFUUIInterface {
 	function processFile($token, $file) {
 		// Why not in one condition?
 		// @see http://forum.nettephp.com/cs/viewtopic.php?pid=29556#p29556
-		if (!$file instanceof HttpUploadedFile) {
+		if (!$file instanceof Nette\Http\FileUpload) {
 			return false;
 		}
 
@@ -36,16 +36,14 @@ abstract class MFUUIBase extends Nette\Object implements MFUUIInterface {
 				->getQueue($token) // returns: IMFUQueueModel
 				->addFile($file);
 		}
-
 		return $isValid;
 	}
 
 	/**
 	 * @return ITemplate
 	 */
-	protected function createTemplate($file = null)
-	{
-		$template = new Template($file);
+	protected function createTemplate($file = null) {
+		$template = new Nette\Templating\FileTemplate($file);
 		//$presenter = Environment::getApplication()->getPresenter();
 		$template->onPrepareFilters[] = array($this, 'templatePrepareFilters');
 
@@ -53,28 +51,28 @@ abstract class MFUUIBase extends Nette\Object implements MFUUIInterface {
 		//$template->component = $this; // DEPRECATED!
 		//$template->control = $this;
 		//$template->presenter = $presenter;
-		$template->baseUri = Environment::getVariable('baseUri');
-		$template->basePath = rtrim($template->baseUri, '/');
+		$template->baseUrl = \Nette\Environment::getHttpRequest()->url->baseUrl;
+		$template->basePath = rtrim($template->baseUrl, '/');
 
 		// flash message
-		/*if ($presenter !== NULL && $presenter->hasFlashSession()) {
-			$id = $this->getParamId('flash');
-			$template->flashes = $presenter->getFlashSession()->$id;
-		}
-		if (!isset($template->flashes) || !is_array($template->flashes)) {
-			$template->flashes = array();
-		}*/
+		/* if ($presenter !== NULL && $presenter->hasFlashSession()) {
+		  $id = $this->getParamId('flash');
+		  $template->flashes = $presenter->getFlashSession()->$id;
+		  }
+		  if (!isset($template->flashes) || !is_array($template->flashes)) {
+		  $template->flashes = array();
+		  } */
 
 		// default helpers
-		/*$template->registerHelper('escape', 'Nette\Templates\TemplateHelpers::escapeHtml');
-		$template->registerHelper('escapeUrl', 'rawurlencode');
-		$template->registerHelper('stripTags', 'strip_tags');
-		$template->registerHelper('nl2br', 'nl2br');
-		$template->registerHelper('substr', 'iconv_substr');
-		$template->registerHelper('repeat', 'str_repeat');
-		$template->registerHelper('implode', 'implode');
-		$template->registerHelper('number', 'number_format');*/
-		$template->registerHelperLoader('Nette\Templates\TemplateHelpers::loader');
+		/* $template->registerHelper('escape', 'Nette\Templates\TemplateHelpers::escapeHtml');
+		  $template->registerHelper('escapeUrl', 'rawurlencode');
+		  $template->registerHelper('stripTags', 'strip_tags');
+		  $template->registerHelper('nl2br', 'nl2br');
+		  $template->registerHelper('substr', 'iconv_substr');
+		  $template->registerHelper('repeat', 'str_repeat');
+		  $template->registerHelper('implode', 'implode');
+		  $template->registerHelper('number', 'number_format'); */
+		$template->registerHelperLoader('Nette\Templating\Helpers::loader');
 
 		return $template;
 	}
@@ -84,10 +82,9 @@ abstract class MFUUIBase extends Nette\Object implements MFUUIInterface {
 	 * @param  Template
 	 * @return void
 	 */
-	public function templatePrepareFilters($template)
-	{
+	public function templatePrepareFilters($template) {
 		// default filters
-		$template->registerFilter(new LatteFilter);
+		$template->registerFilter(new \Nette\Latte\Engine());
 	}
 
 }

@@ -1,11 +1,12 @@
 <?php
-/* 
+
+/*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 
 /**
- * Description of MFUUIHTML4SingleUpload
+ * Description of MFUUISwfupload
  *
  * @author Jan Kuchař, Roman Vykuka
  */
@@ -16,18 +17,18 @@ class MFUUISwfupload extends MFUUIBase {
 	 */
 	public function isThisYourUpload() {
 		return (
-			Environment::getHttpRequest()->getHeader('user-agent') === 'Shockwave Flash'
+			Nette\Environment::getHttpRequest()->getHeader('user-agent') === 'Shockwave Flash'
 			AND isSet($_POST["sender"])
 			AND $_POST["sender"] == "MFU-Swfupload"
 		);
 	}
 
-    	/**
+	/**
 	 * Handles uploaded files
 	 * forwards it to model
 	 */
 	public function handleUploads() {
-		if(!isset($_POST["token"])) {
+		if (!isset($_POST["token"])) {
 			return;
 		}
 
@@ -35,7 +36,7 @@ class MFUUISwfupload extends MFUUIBase {
 		$token = $_POST["token"];
 
 		/* @var $file HttpUploadedFile */
-		foreach(Environment::getHttpRequest()->getFiles() AS $file) {
+		foreach (\Nette\Environment::getHttpRequest()->getFiles() AS $file) {
 			self::processFile($token, $file);
 		}
 
@@ -50,7 +51,7 @@ class MFUUISwfupload extends MFUUIBase {
 	 * Renders interface to <div>
 	 */
 	public function render(MultipleFileUpload $upload) {
-		$template = $this->createTemplate(dirname(__FILE__)."/html.phtml");
+		$template = $this->createTemplate(dirname(__FILE__) . "/html.latte");
 		$template->swfuId = $upload->getHtmlId() . "-swfuBox";
 		return $template->__toString(TRUE);
 	}
@@ -59,8 +60,8 @@ class MFUUISwfupload extends MFUUIBase {
 	 * Renders JavaScript body of function.
 	 */
 	public function renderInitJavaScript(MultipleFileUpload $upload) {
-		$tpl = $this->createTemplate(dirname(__FILE__)."/initJS.js");
-		$tpl->sizeLimit = ini_get('upload_max_filesize').'B';
+		$tpl = $this->createTemplate(dirname(__FILE__) . "/initJS.js");
+		$tpl->sizeLimit = ini_get('upload_max_filesize') . 'B';
 		$tpl->token = $upload->getToken();
 		$tpl->maxFiles = $upload->maxFiles;
 		$tpl->backLink = (string) $upload->form->action;
@@ -73,13 +74,14 @@ class MFUUISwfupload extends MFUUIBase {
 	 * Renders JavaScript body of function.
 	 */
 	public function renderDestructJavaScript(MultipleFileUpload $upload) {
-		return $this->createTemplate(dirname(__FILE__)."/destructJS.js")->__toString(TRUE);
+		return $this->createTemplate(dirname(__FILE__) . "/destructJS.js")->__toString(TRUE);
 	}
 
 	/**
 	 * Renders set-up tags to <head> attribute
 	 */
 	public function renderHeadSection() {
-		return $this->createTemplate(dirname(__FILE__)."/head.phtml")->__toString(TRUE);
+		return $this->createTemplate(dirname(__FILE__) . "/head.latte")->__toString(TRUE);
 	}
+
 }
