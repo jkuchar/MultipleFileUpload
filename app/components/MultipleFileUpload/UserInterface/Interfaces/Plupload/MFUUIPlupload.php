@@ -104,7 +104,7 @@ class MFUUIPlupload extends MFUUIBase {
 		// Handle non multipart uploads older WebKit versions didn't support multipart in HTML5
 		if (strpos($contentType, "multipart") !== false) {
 			if (isset($_FILES['file']['tmp_name']) && is_uploaded_file($_FILES['file']['tmp_name'])) {
-				$tmpPath = $filePath . "-upladTmp";
+				$tmpPath = $filePath . "-uploadTmp";
 				move_uploaded_file($_FILES['file']['tmp_name'], $tmpPath); // Open base restriction bugfix
 				// Open temp file
 				$out = fopen($filePath, $chunk == 0 ? "wb" : "ab");
