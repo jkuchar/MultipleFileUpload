@@ -10,7 +10,7 @@
  *
  * @author Honza
  */
-abstract class MFUUIBase extends Object implements MFUUIInterface {
+abstract class MFUUIBase extends Nette\Object implements MFUUIInterface {
 
 	/**
 	 * Process single file

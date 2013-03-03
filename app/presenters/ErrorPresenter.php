@@ -1,19 +1,11 @@
 <?php
 
-/**
- * My Application
- *
- * @copyright  Copyright (c) 2009 John Doe
- * @package    MyApplication
- */
+use Nette\Diagnostics\Debugger;
 
 
 
 /**
  * Error presenter.
- *
- * @author     John Doe
- * @package    MyApplication
  */
 class ErrorPresenter extends BasePresenter
 {
@@ -25,17 +17,19 @@ class ErrorPresenter extends BasePresenter
 	public function renderDefault($exception)
 	{
 		if ($this->isAjax()) { // AJAX request? Just note this error in payload.
-			$this->getPayload()->error = TRUE;
+			$this->payload->error = TRUE;
 			$this->terminate();
 
-		} elseif ($exception instanceof BadRequestException) {
-			$this->template->title = '404 Not Found';
-			$this->setView('404'); // load template 404.phtml
+		} elseif ($exception instanceof Nette\Application\BadRequestException) {
+			$code = $exception->getCode();
+			// load template 403.latte or 404.latte or ... 4xx.latte
+			$this->setView(in_array($code, array(403, 404, 405, 410, 500)) ? $code : '4xx');
+			// log to access.log
+			Debugger::log("HTTP code $code: {$exception->getMessage()} in {$exception->getFile()}:{$exception->getLine()}", 'access');
 
 		} else {
-			$this->template->title = '500 Internal Server Error';
-			$this->setView('500'); // load template 500.phtml
-			Debug::processException($exception); // and handle error by Nette\Debug
+			$this->setView('500'); // load template 500.latte
+			Debugger::log($exception, Debugger::ERROR); // and log exception
 		}
 	}
 

@@ -39,7 +39,7 @@
 /**
  * Registrator of user interfaces
  */
-class MFUUIRegistrator extends Object {
+class MFUUIRegistrator extends Nette\Object {
 
 	public $interfaces = array();
 

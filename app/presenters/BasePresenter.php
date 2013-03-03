@@ -1,32 +1,9 @@
 <?php
 
 /**
- * My Application
- *
- * @copyright  Copyright (c) 2009 John Doe
- * @package    MyApplication
+ * Base presenter for all application presenters.
  */
-
-
-
-/**
- * Base class for all application presenters.
- *
- * @author     John Doe
- * @package    MyApplication
- */
-abstract class BasePresenter extends Presenter
+abstract class BasePresenter extends Nette\Application\UI\Presenter
 {
-	public $oldLayoutMode = FALSE;
-
-        public function startup() {
-            parent::startup();
-            $this->invalidateControl("flashes");
-        }
-
-        public function flashMessage($message,$type="info") {
-            $this->invalidateControl("flashes");
-            parent::flashMessage($message, $type);
-        }
 
 }
