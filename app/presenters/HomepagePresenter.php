@@ -20,12 +20,12 @@ class HomepagePresenter extends BasePresenter {
 		$form->getElementPrototype()->class[] = "ajax";
 
 		/*$form->addText("test","Textové políčko")
-              ->addRule(Form::FILLED, "Textové políčko test musí být vyplněno!");*/
+			->addRule(Form::FILLED, "Textové políčko test musí být vyplněno!");*/
 
 		// Uploadů můžete do formuláře samozdřejmě přidat více, ale zatím je docela nepříjemná validace a jedna chybka v JS
-		$form->addMultipleFileUpload("upload","První balíček souborů")
-			/*->addRule("MultipleFileUpload::validateFilled","Musíte odeslat alespoň jeden soubor!")
-                ->addRule("MultipleFileUpload::validateFileSize","Soubory jsou dohromady moc veliké!",100*1024)*/;
+		$form->addMultipleFileUpload("upload","První balíček souborů");
+			//->addRule("MultipleFileUpload::validateFilled","Musíte odeslat alespoň jeden soubor!")
+			//->addRule("MultipleFileUpload::validateFileSize","Soubory jsou dohromady moc veliké!",100*1024);
 		$form->addMultipleFileUpload("upload2","Druhý balíček souborů");
 
 		$form->addSubmit("odeslat", "Odeslat");
@@ -47,10 +47,10 @@ class HomepagePresenter extends BasePresenter {
 		// Přesumene uploadované soubory
 		foreach($data["upload"] AS $file) {
 			// $file je instance HttpUploadedFile
-			$newFilePath = APP_DIR."/uploadedData/q{".$queueId."}__f{".rand(10,99)."}__".$file->getName();
+			$newFilePath = \Nette\Environment::expand("%appDir%")."/../uploadedFilesDemo/q{".$queueId."}__f{".rand(10,99)."}__".$file->getName();
 
 			// V produkčním módu nepřesunujeme soubory...
-			if(!Environment::isProduction()) {
+			if(!\Nette\Environment::isProduction()) {
 				if($file->move($newFilePath))
 					$this->flashMessage("Soubor ".$file->getName() . " byl úspěšně přesunut!");
 				else
