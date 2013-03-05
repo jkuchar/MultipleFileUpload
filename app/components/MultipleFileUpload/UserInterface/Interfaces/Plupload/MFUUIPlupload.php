@@ -16,10 +16,11 @@ class MFUUIPlupload extends MFUUIBase {
 	 * Is this upload your upload? (upload from this interface)
 	 */
 	public function isThisYourUpload() {
+		$req = \Nette\Environment::getHttpRequest();
 		return (
-			\Nette\Environment::getHttpRequest()->getQuery("token") !== null
+			$req->getQuery("token") !== null
 			AND 
-			\Nette\Environment::getHttpRequest()->getQuery("uploader") === "plupload"
+			$req->getQuery("uploader") === "plupload"
 		);
 	}
 
@@ -31,6 +32,7 @@ class MFUUIPlupload extends MFUUIBase {
 		/* @var $token string */
 		$token = \Nette\Environment::getHttpRequest()
 			->getQuery("token");
+		
 		if (empty($token)) {
 			return;
 		}
@@ -152,12 +154,12 @@ class MFUUIPlupload extends MFUUIBase {
 		if($lastChunk OR $nonChunkedTransfer) {
 			// Hotovo
 			$file = new Nette\Http\FileUpload(array(
-				    'name' => $fileNameOriginal,
-				    'type' => "",
-				    'size' => filesize($filePath),
-				    'tmp_name' => $filePath,
-				    'error' => UPLOAD_ERR_OK
-				));
+			    'name' => $fileNameOriginal,
+			    'type' => "",
+			    'size' => filesize($filePath),
+			    'tmp_name' => $filePath,
+			    'error' => UPLOAD_ERR_OK
+			));
 		}
 		if ($file OR $chunk > 0) {
 			$queueModel->updateFile($fileName, $chunk + 1, $file);
@@ -178,6 +180,14 @@ class MFUUIPlupload extends MFUUIBase {
 		  exit; */
 	}
 
+	/**
+	 * This is reaction to flash related bug.
+	 * Flash has problems with "-" in ids. So
+	 * solution is simple, replace "-" with "_"
+	 * 
+	 * @param MultipleFileUpload $upload
+	 * @return type
+	 */
 	function getHtmlIdFlashCompatible(MultipleFileUpload $upload) {
 		return str_replace("-", "_", $upload->getHtmlId() . "-box");
 	}
