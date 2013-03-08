@@ -70,6 +70,12 @@ class MultipleFileUpload extends \Nette\Forms\Controls\UploadControl {
 	 * @var MFUUIRegistrator
 	 */
 	public static $interfaceRegistrator;
+	
+	/**
+	 * Root of mfu directory in public folder (used for serving js, css, ...)
+	 * @var type string
+	 */
+	public static $baseWWWRoot = null;
 
 	/**
 	 * Initialize MFU
@@ -83,6 +89,8 @@ class MultipleFileUpload extends \Nette\Forms\Controls\UploadControl {
 
 		// Set default check callback
 		self::$validateFileCallback = callback(__CLASS__, "validateFile");
+		
+		self::$baseWWWRoot = Environment::getHttpRequest()->url->baseUrl . "MultipleFileUpload/";
 	}
 
 	/**
@@ -201,6 +209,7 @@ class MultipleFileUpload extends \Nette\Forms\Controls\UploadControl {
 	}
 
 	public static function getHead() {
+		// TODO: Add MFUFallbackController?
 		$out = "";
 		foreach (self::getUIRegistrator()->getInterfaces() AS $interface) {
 			$out .= $interface->renderHeadSection();

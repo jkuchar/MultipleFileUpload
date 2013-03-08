@@ -13,6 +13,14 @@
 class MFUUIPlupload extends MFUUIBase {
 
 	/**
+	 * Getts interface base url
+	 * @return type string
+	 */
+	function getBaseUrl() {
+		return parent::getBaseUrl()."plupload";
+	}
+	
+	/**
 	 * Is this upload your upload? (upload from this interface)
 	 */
 	public function isThisYourUpload() {

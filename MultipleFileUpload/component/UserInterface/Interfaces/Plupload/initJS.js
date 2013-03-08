@@ -18,10 +18,10 @@ var fallbackController = this;
 			// insted using parameters in URL or POST
 			
 			// Flash settings
-			flash_swf_url : {!$baseUrl|escapeJs}+'/swf/MultipleFileUpload/plupload/plupload.flash.swf',
+			flash_swf_url : {!$interface->baseUrl|escapeJs}+'/swf/plupload.flash.swf',
 
 			// Silverlight settings
-			silverlight_xap_url : {!$baseUrl|escapeJs}+'/xap/MultipleFileUpload/plupload/plupload.silverlight.xap'
+			silverlight_xap_url : {!$interface->baseUrl|escapeJs}+'/xap/plupload.silverlight.xap'
 		});
 		uploader = $(uploader).pluploadQueue();
 		console.log(uploader);

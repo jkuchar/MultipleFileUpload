@@ -11,7 +11,15 @@
  * @author Honza
  */
 abstract class MFUUIBase extends Nette\Object implements MFUUIInterface {
-
+	
+	/**
+	 * Getts interface base url
+	 * @return type string
+	 */
+	function getBaseUrl() {
+		return MultipleFileUpload::$baseWWWRoot;
+	}
+	
 	/**
 	 * Process single file
 	 * @param string $token
@@ -53,6 +61,7 @@ abstract class MFUUIBase extends Nette\Object implements MFUUIInterface {
 		//$template->presenter = $presenter;
 		$template->baseUrl = \Nette\Environment::getHttpRequest()->url->baseUrl;
 		$template->basePath = rtrim($template->baseUrl, '/');
+		$template->interface = $this;
 
 		// flash message
 		/* if ($presenter !== NULL && $presenter->hasFlashSession()) {

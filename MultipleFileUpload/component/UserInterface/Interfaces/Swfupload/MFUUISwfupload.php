@@ -13,6 +13,14 @@
 class MFUUISwfupload extends MFUUIBase {
 
 	/**
+	 * Getts interface base url
+	 * @return type string
+	 */
+	function getBaseUrl() {
+		return parent::getBaseUrl()."swfupload";
+	}
+	
+	/**
 	 * Is this upload your upload? (upload from this interface)
 	 */
 	public function isThisYourUpload() {
