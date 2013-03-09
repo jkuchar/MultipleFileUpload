@@ -12,7 +12,7 @@
 
 namespace MultipleFileUpload\Model\Dibi;
 
-use \MultipleFileUpload\Model\BaseQueuesModel;
+use \MultipleFileUpload\Model\BaseQueues;
 
 /**
  * Multiple File Uploader driver for Dibi
@@ -20,7 +20,7 @@ use \MultipleFileUpload\Model\BaseQueuesModel;
  * @author  Martin Sadový (SodaE), Jan Kuchař (honzakuchar)
  * @license New BSD License
  */
-class Queues extends BaseQueuesModel {
+class Queues extends BaseQueues {
 
 	/**
 	 * Path to director of uploaded files (temp)

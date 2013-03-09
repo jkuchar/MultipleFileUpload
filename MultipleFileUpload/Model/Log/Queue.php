@@ -13,9 +13,9 @@
 namespace MultipleFileUpload\Model\Log;
 
 use Nette\Environment;
-use \MultipleFileUpload\Model\BaseQueueModel;
+use \MultipleFileUpload\Model\BaseQueue;
 
-class Queue extends BaseQueueModel {
+class Queue extends BaseQueue {
 
 	/**
 	 * Initializes driver
@@ -28,7 +28,7 @@ class Queue extends BaseQueueModel {
 	 * Adds file to queue
 	 * @param HttpUploadedFile $file
 	 */
-	function addFile(HttpUploadedFile $file) {
+	function addFile(\Nette\Http\FileUpload $file) {
 		Environment::getService('Nette\Logger')->logMessage("addFile");
 	}
 

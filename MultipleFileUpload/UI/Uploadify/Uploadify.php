@@ -65,7 +65,7 @@ class Uploadify extends AbstractInterface {
 	/**
 	 * Renders interface to <div>
 	 */
-	public function render(MultipleFileUpload $upload) {
+	public function render(\MultipleFileUpload\MultipleFileUpload $upload) {
 		$template = $this->createTemplate(dirname(__FILE__) . "/html.latte");
 		$template->uploadifyId = $upload->getHtmlId() . "-uploadifyBox";
 		return $template->__toString(TRUE);
@@ -74,7 +74,7 @@ class Uploadify extends AbstractInterface {
 	/**
 	 * Renders JavaScript body of function.
 	 */
-	public function renderInitJavaScript(MultipleFileUpload $upload) {
+	public function renderInitJavaScript(\MultipleFileUpload\MultipleFileUpload $upload) {
 		$tpl = $this->createTemplate(dirname(__FILE__) . "/initJS.js");
 		$tpl->sizeLimit = $upload->maxFileSize;
 		$tpl->token = $upload->getToken();
@@ -88,7 +88,7 @@ class Uploadify extends AbstractInterface {
 	/**
 	 * Renders JavaScript body of function.
 	 */
-	public function renderDestructJavaScript(MultipleFileUpload $upload) {
+	public function renderDestructJavaScript(\MultipleFileUpload\MultipleFileUpload $upload) {
 		return $this->createTemplate(dirname(__FILE__) . "/destructJS.js")->__toString(TRUE);
 	}
 

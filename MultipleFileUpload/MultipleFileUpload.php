@@ -29,7 +29,7 @@ class MultipleFileUpload extends \Nette\Forms\Controls\UploadControl {
 
 	/**
 	 * Model
-	 * @var IQueuesModel
+	 * @var Model\IQueues
 	 * @see self::init()
 	 */
 	protected static $queuesModel;
@@ -60,13 +60,14 @@ class MultipleFileUpload extends \Nette\Forms\Controls\UploadControl {
 	public static function init() {
 
 		// Init UI registrator
-		$uiReg = self::$interfaceRegistrator = new Registrator();
-		$uiReg->register("MFUUIHTML4SingleUpload");
-		$uiReg->register("MFUUIPlupload");
+		$uiReg = self::$interfaceRegistrator = new UI\Registrator();
+		$uiReg->register("MultipleFileUpload\\UI\\HTML4SingleUpload");
+		$uiReg->register("MultipleFileUpload\\UI\\Plupload");
 
 		// Set default check callback
 		self::$validateFileCallback = callback(__CLASS__, "validateFile");
 		
+		// TODO: remove this magic
 		self::$baseWWWRoot = Environment::getHttpRequest()->url->baseUrl . "MultipleFileUpload/";
 	}
 
@@ -77,8 +78,8 @@ class MultipleFileUpload extends \Nette\Forms\Controls\UploadControl {
 		self::init();
 
 		$application = Environment::getApplication();
-		$application->onStartup[] = callback("MultipleFileUpload::handleUploads");
-		$application->onShutdown[] = callback("MultipleFileUpload::cleanCache");
+		$application->onStartup[]  = callback(__CLASS__,"handleUploads");
+		$application->onShutdown[] = callback(__CLASS__,"cleanCache");
 	}
 
 	/* ##########  HANDLING UPLOADS  ########### */
@@ -157,20 +158,20 @@ class MultipleFileUpload extends \Nette\Forms\Controls\UploadControl {
 	}
 
 	/**
-	 * @return IQueuesModel
+	 * @return Model\IQueues
 	 */
 	public static function getQueuesModel() {
 		if (!self::$queuesModel) { // if nothing is set, setup sqlite model, which should work on all systems with SQLite
-			self::setQueuesModel(new QueuesSQLite());
+			self::setQueuesModel(new Model\SQLite\Queues());
 		}
 
-		if (!self::$queuesModel instanceof IQueuesModel) {
-      throw new \Nette\InvalidStateException("Queues model is not instance of IMFUQueuesModel!");
+		if (!self::$queuesModel instanceof Model\IQueues) {
+			throw new \Nette\InvalidStateException("Queues model is not instance of Model\IQueues!");
 		}
 		return self::$queuesModel;
 	}
 
-	public static function setQueuesModel(IQueuesModel $model) {
+	public static function setQueuesModel(Model\IQueues $model) {
 		self::$queuesModel = $model;
 		self::_doSetLifetime();
 	}
@@ -179,8 +180,8 @@ class MultipleFileUpload extends \Nette\Forms\Controls\UploadControl {
 	 * @return Registrator
 	 */
 	public static function getUIRegistrator() {
-		if (!self::$interfaceRegistrator instanceof Registrator) {
-      throw new \Nette\InvalidStateException("Interface registrator is not instance of MFUUIRegistrator!");
+		if (!self::$interfaceRegistrator instanceof UI\Registrator) {
+			throw new \Nette\InvalidStateException("Interface registrator is not instance of MFUUIRegistrator!");
 		}
 		return self::$interfaceRegistrator;
 	}
@@ -194,7 +195,7 @@ class MultipleFileUpload extends \Nette\Forms\Controls\UploadControl {
 		return $out;
 	}
 
-	/*	 * *****************************************************************************
+	/* *****************************************************************************
 	 * *************************  Form Control  **************************************
 	 * ***************************************************************************** */
 
@@ -234,7 +235,7 @@ class MultipleFileUpload extends \Nette\Forms\Controls\UploadControl {
 		parent::__construct($label);
 
 		if (!self::$handleUploadsCalled) {
-      throw new \Nette\InvalidStateException("MultipleFileUpload::handleUpload() has not been called. Call `MultipleFileUpload::register();` from your bootstrap before you call Applicaton::run();");
+			throw new \Nette\InvalidStateException("MultipleFileUpload::handleUpload() has not been called. Call `MultipleFileUpload::register();` from your bootstrap before you call Applicaton::run();");
 		};
 
 		$this->maxFiles = $maxSelectedFiles;
@@ -301,7 +302,7 @@ class MultipleFileUpload extends \Nette\Forms\Controls\UploadControl {
 			$control->add($container);
 		}
 
-		$template = new Template();
+		$template = new UI\Template();
 		$template->setFile(dirname(__FILE__) . DIRECTORY_SEPARATOR . "RegisterJS.latte");
 		$template->id = $this->getHtmlId();
 		$template->fallbacks = $fallbacks;
@@ -344,7 +345,7 @@ class MultipleFileUpload extends \Nette\Forms\Controls\UploadControl {
 			if (isset($data[$name]["token"])) {
 				$this->token = $data[$name]["token"];
 			} else {
-        throw new \Nette\InvalidStateException("Token has not been received! Without token MultipleFileUploader can't identify which files has been received.");
+				throw new \Nette\InvalidStateException("Token has not been received! Without token MultipleFileUploader can't identify which files has been received.");
 			}
 		}
 	}
@@ -357,7 +358,7 @@ class MultipleFileUpload extends \Nette\Forms\Controls\UploadControl {
 		if ($value === null) {
 			// pole se vymaže samo v destructoru
 		} else {
-      throw new \Nette\NotSupportedException('Value of MultiFileUpload component cannot be directly set.');
+			throw new \Nette\NotSupportedException('Value of MultiFileUpload component cannot be directly set.');
 		}
 	}
 
@@ -396,7 +397,7 @@ class MultipleFileUpload extends \Nette\Forms\Controls\UploadControl {
 		}
 
 		if (!$this->token AND $need) {
-      throw new \Nette\InvalidStateException("Can't get a token!");
+			throw new \Nette\InvalidStateException("Can't get a token!");
 		}
 
 		return $this->token;
@@ -404,7 +405,7 @@ class MultipleFileUpload extends \Nette\Forms\Controls\UploadControl {
 
 	/**
 	 * Getts queue model
-	 * @return IQueueModel
+	 * @return Model\IQueue
 	 */
 	public function getQueue() {
 		return self::getQueuesModel()->getQueue($this->getToken());
@@ -415,12 +416,12 @@ class MultipleFileUpload extends \Nette\Forms\Controls\UploadControl {
 	 */
 	public function __destruct() {
 		if ($this->getForm()->isSubmitted()) {
-        // we want to keep files after form submission as well, for cases of server errors so F5 can be used to refresh
-//      $this->getQueue()->delete();
+			$this->getQueue()->delete();
+			// or comment out if you want to keep files after form submission as well, for cases of server errors so F5 can be used to refresh
 		}
 	}
 
-	/*	 * *****************************************************************************
+	/* *****************************************************************************
 	 * ***************************  Validators  **************************************
 	 * ***************************************************************************** */
 
@@ -429,7 +430,7 @@ class MultipleFileUpload extends \Nette\Forms\Controls\UploadControl {
 	 * @param  IFormControl
 	 * @return bool
 	 */
-  public static function validateFilled(\Nette\Forms\IControl $control) {
+	public static function validateFilled(\Nette\Forms\IControl $control) {
 		$files = $control->getValue();
 		return (count($files) > 0);
 	}
@@ -482,8 +483,8 @@ class MultipleFileUpload extends \Nette\Forms\Controls\UploadControl {
 /**
  * Extension method for FormContainer
  */
-function FormContainer_addMultipleFileUpload(Nette\Application\UI\Form $_this, $name, $label = NULL, $maxFiles = 999) {
+function FormContainer_addMultipleFileUpload(\Nette\Application\UI\Form $_this, $name, $label = NULL, $maxFiles = 999) {
 	return $_this[$name] = new MultipleFileUpload($label, $maxFiles);
 }
 
-\Nette\Forms\Container::extensionMethod("\Nette\Forms\Container::addMultipleFileUpload", "FormContainer_addMultipleFileUpload");
+\Nette\Forms\Container::extensionMethod("\Nette\Forms\Container::addMultipleFileUpload", "MultipleFileUpload\FormContainer_addMultipleFileUpload");

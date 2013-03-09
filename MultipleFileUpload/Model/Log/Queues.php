@@ -13,9 +13,9 @@
 namespace MultipleFileUpload\Model\Log;
 
 use \Nette\Environment;
-use \MultipleFileUpload\Model\BaseQueuesModel;
+use \MultipleFileUpload\Model\BaseQueues;
 
-class Queues extends BaseQueuesModel {
+class Queues extends BaseQueues {
 
 	/**
 	 * Initializes driver

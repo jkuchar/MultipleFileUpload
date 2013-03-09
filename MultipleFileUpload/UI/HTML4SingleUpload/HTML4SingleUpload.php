@@ -64,7 +64,7 @@ class HTML4SingleUpload extends AbstractInterface {
 	/**
 	 * Renders interface to <div>
 	 */
-	public function render(MultipleFileUpload $upload) {
+	public function render(\MultipleFileUpload\MultipleFileUpload $upload) {
 		$template = $this->createTemplate(dirname(__FILE__) . "/html.latte");
 		$template->maxFiles = $upload->maxFiles;
 		$template->mfu = $upload;
@@ -74,14 +74,14 @@ class HTML4SingleUpload extends AbstractInterface {
 	/**
 	 * Renders JavaScript body of function.
 	 */
-	public function renderInitJavaScript(MultipleFileUpload $upload) {
+	public function renderInitJavaScript(\MultipleFileUpload\MultipleFileUpload $upload) {
 		return $this->createTemplate(dirname(__FILE__) . "/initJS.js")->__toString(TRUE);
 	}
 
 	/**
 	 * Renders JavaScript body of function.
 	 */
-	public function renderDestructJavaScript(MultipleFileUpload $upload) {
+	public function renderDestructJavaScript(\MultipleFileUpload\MultipleFileUpload $upload) {
 		return true;
 	}
 

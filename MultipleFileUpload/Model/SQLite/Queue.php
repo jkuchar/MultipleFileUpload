@@ -12,9 +12,9 @@
 
 namespace MultipleFileUpload\Model\SQLite;
 
-use \MultipleFileUpload\Model\BaseQueueModel;
+use \MultipleFileUpload\Model\BaseQueue;
 
-class Queue extends BaseQueueModel {
+class Queue extends BaseQueue {
 
 	/**
 	 * Executes query
@@ -29,7 +29,7 @@ class Queue extends BaseQueueModel {
 	 * Adds file to queue
 	 * @param Nette\Http\FileUpload $file
 	 */
-	function addFile(Nette\Http\FileUpload $file) {
+	function addFile(\Nette\Http\FileUpload $file) {
 		$file->move($this->getUniqueFilePath());
 		$this->query('INSERT INTO files (queueID, created, data, name) VALUES ("'.sqlite_escape_string($this->getQueueID()).'",'.time().',\''.sqlite_escape_string(serialize($file)).'\', \''.sqlite_escape_string($file->getName()).'\')');
 	}

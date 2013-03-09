@@ -12,19 +12,21 @@
 
 namespace MultipleFileUpload\UI;
 
+use \MultipleFileUpload\MultipleFileUpload;
+
 /**
  * Description of AbstractInterface
  *
  * @author Honza
  */
-abstract class AbstractInterface extends Nette\Object implements IUserInterface {
+abstract class AbstractInterface extends \Nette\Object implements IUserInterface {
 	
 	/**
 	 * Getts interface base url
 	 * @return type string
 	 */
 	function getBaseUrl() {
-		return MultipleFileUpload::$baseWWWRoot;
+		return \MultipleFileUpload\MultipleFileUpload::$baseWWWRoot;
 	}
 	
 	/**
@@ -58,9 +60,8 @@ abstract class AbstractInterface extends Nette\Object implements IUserInterface 
 	 * @return ITemplate
 	 */
 	protected function createTemplate($file = null) {
-		$template = new Nette\Templating\FileTemplate($file);
+		$template = new Template($file);
 		//$presenter = Environment::getApplication()->getPresenter();
-		$template->onPrepareFilters[] = array($this, 'templatePrepareFilters');
 
 		// default parameters
 		//$template->component = $this; // DEPRECATED!
@@ -91,16 +92,6 @@ abstract class AbstractInterface extends Nette\Object implements IUserInterface 
 		$template->registerHelperLoader('Nette\Templating\Helpers::loader');
 
 		return $template;
-	}
-
-	/**
-	 * Descendant can override this method to customize template compile-time filters.
-	 * @param  Template
-	 * @return void
-	 */
-	public function templatePrepareFilters($template) {
-		// default filters
-		$template->registerFilter(new \Nette\Latte\Engine());
 	}
 
 }

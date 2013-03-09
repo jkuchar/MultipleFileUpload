@@ -12,9 +12,10 @@
 
 namespace MultipleFileUpload\Model\SQLite;
 
-use \MultipleFileUpload\Model\BaseQueuesModel;
+use MultipleFileUpload\Model\BaseQueues;
+use Nette\InvalidStateException;
 
-class Queues extends BaseQueuesModel {
+class Queues extends BaseQueues {
 
 	/**
 	 * @var SQLiteDatabase
@@ -88,7 +89,7 @@ class Queues extends BaseQueuesModel {
 	 */
 	function openDB() {
 
-		if(!($connection = new SQLiteDatabase(self::$databasePath, 0777, $error))) {
+		if(!($connection = new \SQLiteDatabase(self::$databasePath, 0777, $error))) {
 			throw new InvalidStateException("Can't create sqlite database: ".$error);
 		}
 
@@ -152,6 +153,7 @@ class Queues extends BaseQueuesModel {
 	}
 
 	static function init() {
+		// TODO: remove this magic
 		$config =\Nette\Environment::getConfig("MultipleFileUploader",array(
 			"databasePath" => dirname(__FILE__)."/database.sdb",
 			"uploadsTempDir" => ""

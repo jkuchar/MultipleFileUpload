@@ -66,7 +66,7 @@ class Swfupload extends AbstractInterface {
 	/**
 	 * Renders interface to <div>
 	 */
-	public function render(MultipleFileUpload $upload) {
+	public function render(\MultipleFileUpload\MultipleFileUpload $upload) {
 		$template = $this->createTemplate(dirname(__FILE__) . "/html.latte");
 		$template->swfuId = $upload->getHtmlId() . "-swfuBox";
 		return $template->__toString(TRUE);
@@ -75,7 +75,7 @@ class Swfupload extends AbstractInterface {
 	/**
 	 * Renders JavaScript body of function.
 	 */
-	public function renderInitJavaScript(MultipleFileUpload $upload) {
+	public function renderInitJavaScript(\MultipleFileUpload\MultipleFileUpload $upload) {
 		$tpl = $this->createTemplate(dirname(__FILE__) . "/initJS.js");
 		$tpl->sizeLimit = ini_get('upload_max_filesize') . 'B';
 		$tpl->token = $upload->getToken();
@@ -89,7 +89,7 @@ class Swfupload extends AbstractInterface {
 	/**
 	 * Renders JavaScript body of function.
 	 */
-	public function renderDestructJavaScript(MultipleFileUpload $upload) {
+	public function renderDestructJavaScript(\MultipleFileUpload\MultipleFileUpload $upload) {
 		return $this->createTemplate(dirname(__FILE__) . "/destructJS.js")->__toString(TRUE);
 	}
 

@@ -16,17 +16,17 @@ namespace MultipleFileUpload\Model;
  * @property IMFUQueuesModel $queuesModel
  * @property string $queueID
  */
-abstract class BaseQueueModel extends Nette\Object implements IQueueModel {
+abstract class BaseQueue extends \Nette\Object implements IQueue {
 
 	/**
 	 * Queues model
-	 * @var IQueuesModel
+	 * @var IQueues
 	 */
 	private $queuesModel;
 
 	/**
 	 * gets queues model
-	 * @return IQueuesModel
+	 * @return IQueues
 	 */
 	function getQueuesModel() {
 		if (!$this->queuesModel)
@@ -36,9 +36,9 @@ abstract class BaseQueueModel extends Nette\Object implements IQueueModel {
 
 	/**
 	 * sets queues model
-	 * @param IQueuesModel $model
+	 * @param IQueues $model
 	 */
-	function setQueuesModel(IQueuesModel $model) {
+	function setQueuesModel(IQueues $model) {
 		$this->queuesModel = $model;
 		return $this;
 	}

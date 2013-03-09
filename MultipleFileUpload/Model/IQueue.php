@@ -12,19 +12,19 @@
 
 namespace MultipleFileUpload\Model;
 
-interface IQueueModel {
+interface IQueue {
 
 	/**
 	 * getts queues model
-	 * @return IQueuesModel
+	 * @return IQueues
 	 */
 	function getQueuesModel();
 
 	/**
 	 *setts queues model
-	 * @param IQueuesModel $model
+	 * @param IQueues $model
 	 */
-	function setQueuesModel(IQueuesModel $model);
+	function setQueuesModel(IQueues $model);
 
 	/**
 	 * Getts queue ID
@@ -53,7 +53,7 @@ interface IQueueModel {
 	 * Adds file to queue
 	 * @param Nette\Http\FileUpload $file
 	 */
-	function addFile(Nette\Http\FileUpload $file);
+	function addFile(\Nette\Http\FileUpload $file);
 
 	/**
 	 * Getts all files in queue

@@ -10,12 +10,12 @@
  */
 
 
-namespace MultipleFileUpload;
+namespace MultipleFileUpload\UI;
 
-class Template extends Nette\Templating\FileTemplate {
+class Template extends \Nette\Templating\FileTemplate {
 
-	function __construct() {
-		parent::__construct();
+	function __construct($file = NULL) {
+		parent::__construct($file);
 		$this->onPrepareFilters[] = callback($this, "registerFilters");
 	}
 

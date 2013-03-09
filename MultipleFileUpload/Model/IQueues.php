@@ -12,7 +12,7 @@
 
 namespace MultipleFileUpload\Model;
 
-interface IQueuesModel {
+interface IQueues {
 
 	/**
 	 * getts life time of file
@@ -46,7 +46,7 @@ interface IQueuesModel {
 	/**
 	 * Getts queue (if needed create)
 	 * @param string $token
-	 * @return IQueueModel
+	 * @return IQueue
 	 */
 	function getQueue($id);
 

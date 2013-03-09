@@ -12,6 +12,8 @@
 
 namespace MultipleFileUpload\UI;
 
+use \MultipleFileUpload\MultipleFileUpload;
+
 /**
  * Description of MFUUIHTML4SingleUpload
  *
@@ -210,7 +212,7 @@ class Plupload extends AbstractInterface {
 	/**
 	 * Renders interface to <div>
 	 */
-	public function render(MultipleFileUpload $upload) {
+	public function render(\MultipleFileUpload\MultipleFileUpload $upload) {
 		$template = $this->createTemplate(dirname(__FILE__) . "/html.latte");
 		$template->id = $this->getHtmlIdFlashCompatible($upload);
 		return $template->__toString(TRUE);
@@ -219,7 +221,7 @@ class Plupload extends AbstractInterface {
 	/**
 	 * Renders JavaScript body of function.
 	 */
-	public function renderInitJavaScript(MultipleFileUpload $upload) {
+	public function renderInitJavaScript(\MultipleFileUpload\MultipleFileUpload $upload) {
 		$tpl = $this->createTemplate(dirname(__FILE__) . "/initJS.js");
 		$tpl->token = $upload->getToken();
 		$tpl->sizeLimit = $upload->maxFileSize;
@@ -236,7 +238,7 @@ class Plupload extends AbstractInterface {
 	/**
 	 * Renders JavaScript body of function.
 	 */
-	public function renderDestructJavaScript(MultipleFileUpload $upload) {
+	public function renderDestructJavaScript(\MultipleFileUpload\MultipleFileUpload $upload) {
 		return $this->createTemplate(dirname(__FILE__) . "/destructJS.js")->__toString(TRUE);
 	}
 
