@@ -2,7 +2,7 @@
 
 namespace MultipleFileUpload;
 
-class MFUTemplate extends Nette\Templating\FileTemplate {
+class Template extends Nette\Templating\FileTemplate {
 
 	function __construct() {
 		parent::__construct();

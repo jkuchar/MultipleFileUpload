@@ -1,18 +1,20 @@
 <?php
 
-interface IMFUQueueModel {
+namespace MultipleFileUpload;
+
+interface IQueueModel {
 
 	/**
 	 * getts queues model
-	 * @return IMFUQueuesModel
+	 * @return IQueuesModel
 	 */
 	function getQueuesModel();
 
 	/**
 	 *setts queues model
-	 * @param IMFUQueuesModel $model
+	 * @param IQueuesModel $model
 	 */
-	function setQueuesModel(IMFUQueuesModel $model);
+	function setQueuesModel(IQueuesModel $model);
 
 	/**
 	 * Getts queue ID

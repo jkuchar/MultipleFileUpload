@@ -1,16 +1,13 @@
 <?php
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+namespace MultipleFileUpload;
 
 /**
- * Description of MFUUIBase
+ * Description of AbstractInterface
  *
  * @author Honza
  */
-abstract class MFUUIBase extends Nette\Object implements MFUUIInterface {
+abstract class AbstractInterface extends Nette\Object implements IInterface {
 	
 	/**
 	 * Getts interface base url

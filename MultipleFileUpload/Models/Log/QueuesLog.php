@@ -2,7 +2,9 @@
 
 use Nette\Environment;
 
-class MFUQueuesLog extends MFUBaseQueuesModel {
+namespace MultipleFileUpload;
+
+class QueuesLog extends BaseQueuesModel {
 
 	/**
 	 * Initializes driver
@@ -14,11 +16,11 @@ class MFUQueuesLog extends MFUBaseQueuesModel {
 	/**
 	 * Getts queue
 	 * @param string $token
-	 * @return MFUQueueSQLite
+	 * @return QueueSQLite
 	 */
 	function getQueue($token) {
 		Environment::getService('Nette\Logger')->logMessage("getQueue");
-		$q = new MFUQueueLog();
+		$q = new QueueLog();
 		$q->setQueueID($token);
 		$q->setQueuesModel($this);
 		return $q;

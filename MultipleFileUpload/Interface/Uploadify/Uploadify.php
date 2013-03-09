@@ -1,23 +1,20 @@
 <?php
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+namespace MultipleFileUpload;
 
 /**
- * Description of MFUUISwfupload
+ * Description of MFUUIUploadify
  *
- * @author Jan Kuchař, Roman Vykuka
+ * @author Jan Kuchař
  */
-class MFUUISwfupload extends MFUUIBase {
+class UploadifyInterface extends AbstractInterface {
 
 	/**
 	 * Getts interface base url
 	 * @return type string
 	 */
 	function getBaseUrl() {
-		return parent::getBaseUrl()."swfupload";
+		return parent::getBaseUrl()."uploadify";
 	}
 	
 	/**
@@ -25,10 +22,10 @@ class MFUUISwfupload extends MFUUIBase {
 	 */
 	public function isThisYourUpload() {
 		return (
-			Nette\Environment::getHttpRequest()->getHeader('user-agent') === 'Shockwave Flash'
+			\Nette\Environment::getHttpRequest()->getHeader('user-agent') === 'Shockwave Flash'
 			AND isSet($_POST["sender"])
-			AND $_POST["sender"] == "MFU-Swfupload"
-		);
+			AND $_POST["sender"] == "MFU-Uploadify"
+			);
 	}
 
 	/**
@@ -60,7 +57,7 @@ class MFUUISwfupload extends MFUUIBase {
 	 */
 	public function render(MultipleFileUpload $upload) {
 		$template = $this->createTemplate(dirname(__FILE__) . "/html.latte");
-		$template->swfuId = $upload->getHtmlId() . "-swfuBox";
+		$template->uploadifyId = $upload->getHtmlId() . "-uploadifyBox";
 		return $template->__toString(TRUE);
 	}
 
@@ -69,11 +66,11 @@ class MFUUISwfupload extends MFUUIBase {
 	 */
 	public function renderInitJavaScript(MultipleFileUpload $upload) {
 		$tpl = $this->createTemplate(dirname(__FILE__) . "/initJS.js");
-		$tpl->sizeLimit = ini_get('upload_max_filesize') . 'B';
+		$tpl->sizeLimit = $upload->maxFileSize;
 		$tpl->token = $upload->getToken();
 		$tpl->maxFiles = $upload->maxFiles;
 		$tpl->backLink = (string) $upload->form->action;
-		$tpl->swfuId = $upload->getHtmlId() . "-swfuBox";
+		$tpl->uploadifyId = $upload->getHtmlId() . "-uploadifyBox";
 		$tpl->simUploadFiles = $upload->simUploadThreads;
 		return $tpl->__toString(TRUE);
 	}

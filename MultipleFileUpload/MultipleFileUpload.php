@@ -54,7 +54,7 @@ class MultipleFileUpload extends \Nette\Forms\Controls\UploadControl {
 
 	/**
 	 * Model
-	 * @var IMFUQueuesModel
+	 * @var IQueuesModel
 	 * @see self::init()
 	 */
 	protected static $queuesModel;
@@ -69,7 +69,7 @@ class MultipleFileUpload extends \Nette\Forms\Controls\UploadControl {
 
 	/**
 	 * Interface registrator instance
-	 * @var MFUUIRegistrator
+	 * @var Registrator
 	 */
 	public static $interfaceRegistrator;
 	
@@ -85,7 +85,7 @@ class MultipleFileUpload extends \Nette\Forms\Controls\UploadControl {
 	public static function init() {
 
 		// Init UI registrator
-		$uiReg = self::$interfaceRegistrator = new MFUUIRegistrator();
+		$uiReg = self::$interfaceRegistrator = new Registrator();
 		$uiReg->register("MFUUIHTML4SingleUpload");
 		$uiReg->register("MFUUIPlupload");
 
@@ -182,29 +182,29 @@ class MultipleFileUpload extends \Nette\Forms\Controls\UploadControl {
 	}
 
 	/**
-	 * @return IMFUQueuesModel
+	 * @return IQueuesModel
 	 */
 	public static function getQueuesModel() {
 		if (!self::$queuesModel) { // if nothing is set, setup sqlite model, which should work on all systems with SQLite
-			self::setQueuesModel(new MFUQueuesSQLite());
+			self::setQueuesModel(new QueuesSQLite());
 		}
 
-		if (!self::$queuesModel instanceof IMFUQueuesModel) {
+		if (!self::$queuesModel instanceof IQueuesModel) {
       throw new \Nette\InvalidStateException("Queues model is not instance of IMFUQueuesModel!");
 		}
 		return self::$queuesModel;
 	}
 
-	public static function setQueuesModel(IMFUQueuesModel $model) {
+	public static function setQueuesModel(IQueuesModel $model) {
 		self::$queuesModel = $model;
 		self::_doSetLifetime();
 	}
 
 	/**
-	 * @return MFUUIRegistrator
+	 * @return Registrator
 	 */
 	public static function getUIRegistrator() {
-		if (!self::$interfaceRegistrator instanceof MFUUIRegistrator) {
+		if (!self::$interfaceRegistrator instanceof Registrator) {
       throw new \Nette\InvalidStateException("Interface registrator is not instance of MFUUIRegistrator!");
 		}
 		return self::$interfaceRegistrator;
@@ -326,7 +326,7 @@ class MultipleFileUpload extends \Nette\Forms\Controls\UploadControl {
 			$control->add($container);
 		}
 
-		$template = new MFUTemplate();
+		$template = new Template();
 		$template->setFile(dirname(__FILE__) . DIRECTORY_SEPARATOR . "RegisterJS.latte");
 		$template->id = $this->getHtmlId();
 		$template->fallbacks = $fallbacks;
@@ -429,7 +429,7 @@ class MultipleFileUpload extends \Nette\Forms\Controls\UploadControl {
 
 	/**
 	 * Getts queue model
-	 * @return IMFUQueueModel
+	 * @return IQueueModel
 	 */
 	public function getQueue() {
 		return self::getQueuesModel()->getQueue($this->getToken());

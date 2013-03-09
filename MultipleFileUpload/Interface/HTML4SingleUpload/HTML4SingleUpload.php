@@ -7,7 +7,7 @@ namespace MultipleFileUpload;
  *
  * @author Jan Kuchař
  */
-class MFUUIHTML4SingleUpload extends MFUUIBase {
+class HTML4SingleUploadInterface extends AbstractInterface {
 
 	/**
 	 * Is this upload your upload? (upload from this interface)

@@ -1,7 +1,8 @@
 <?php
 
+namespace MultipleFileUpload;
 
-class MFUQueuesSQLite extends MFUBaseQueuesModel {
+class QueuesSQLite extends BaseQueuesModel {
 
 	/**
 	 * @var SQLiteDatabase
@@ -86,7 +87,7 @@ class MFUQueuesSQLite extends MFUBaseQueuesModel {
 	/**
 	 * Getts queue (if needed create)
 	 * @param string $id
-	 * @return MFUQueueSQLite
+	 * @return QueueSQLite
 	 */
 	function getQueue($id) {
 		return $this->createQueueObj($id);
@@ -95,10 +96,10 @@ class MFUQueuesSQLite extends MFUBaseQueuesModel {
 	/**
 	 * Factory for MFUQueueSQLite
 	 * @param string $queueID
-	 * @return MFUQueueSQLite
+	 * @return QueueSQLite
 	 */
 	function createQueueObj($queueID) {
-		$queue = new MFUQueueSQLite();
+		$queue = new QueueSQLite();
 		$queue->setQueuesModel($this);
 		$queue->setQueueID($queueID);
 		$queue->initialize();
@@ -151,4 +152,4 @@ class MFUQueuesSQLite extends MFUBaseQueuesModel {
 
 }
 
-MFUQueuesSQLite::init();
+QueuesSQLite::init();

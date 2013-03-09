@@ -1,6 +1,8 @@
 <?php
 
-class MFUQueueSQLite extends MFUBaseQueueModel {
+namespace MultipleFileUpload;
+
+class QueueSQLite extends BaseQueueModel {
 
 	/**
 	 * Executes query
@@ -39,23 +41,23 @@ class MFUQueueSQLite extends MFUBaseQueueModel {
 	 * @return string
 	 */
 	function getUploadedFilesTemporaryPath() {
-		if(!MFUQueuesSQLite::$uploadsTempDir) {
-			MFUQueuesSQLite::$uploadsTempDir = \Nette\Environment::expand("%tempDir%".DIRECTORY_SEPARATOR."uploads-MFU");
+		if(!QueuesSQLite::$uploadsTempDir) {
+			QueuesSQLite::$uploadsTempDir = \Nette\Environment::expand("%tempDir%".DIRECTORY_SEPARATOR."uploads-MFU");
 		}
 
-		if(!file_exists(MFUQueuesSQLite::$uploadsTempDir)) {
-			mkdir(MFUQueuesSQLite::$uploadsTempDir,0777,true);
+		if(!file_exists(QueuesSQLite::$uploadsTempDir)) {
+			mkdir(QueuesSQLite::$uploadsTempDir,0777,true);
 		}
 
-		if(!is_writable(MFUQueuesSQLite::$uploadsTempDir)) {
-			MFUQueuesSQLite::$uploadsTempDir = \Nette\Environment::expand("%tempDir%");
+		if(!is_writable(QueuesSQLite::$uploadsTempDir)) {
+			QueuesSQLite::$uploadsTempDir = \Nette\Environment::expand("%tempDir%");
 		}
 
-		if(!is_writable(MFUQueuesSQLite::$uploadsTempDir)) {
+		if(!is_writable(QueuesSQLite::$uploadsTempDir)) {
 			throw new InvalidStateException("Directory for temp files is not writable!");
 		}
 
-		return MFUQueuesSQLite::$uploadsTempDir;
+		return QueuesSQLite::$uploadsTempDir;
 	}
 
 	/**

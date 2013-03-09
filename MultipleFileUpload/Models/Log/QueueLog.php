@@ -2,7 +2,9 @@
 
 use Nette\Environment;
 
-class MFUQueueLog extends MFUBaseQueueModel {
+namespace MultipleFileUpload;
+
+class QueueLog extends BaseQueueModel {
 
 	/**
 	 * Initializes driver

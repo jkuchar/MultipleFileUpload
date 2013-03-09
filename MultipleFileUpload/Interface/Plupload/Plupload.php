@@ -1,16 +1,13 @@
 <?php
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+namespace MultipleFileUpload;
 
 /**
  * Description of MFUUIHTML4SingleUpload
  *
  * @author Jan Kuchař
  */
-class MFUUIPlupload extends MFUUIBase {
+class PluploadInterface extends AbstractInterface {
 
 	/**
 	 * Getts interface base url

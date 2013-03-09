@@ -1,18 +1,20 @@
 <?php
 
+namespace MultipleFileUpload;
+
 /**
- * Description of MFUUIUploadify
+ * Description of MFUUISwfupload
  *
- * @author Jan Kuchař
+ * @author Jan Kuchař, Roman Vykuka
  */
-class MFUUIUploadify extends MFUUIBase {
+class SwfuploadInterface extends AbstractInterface {
 
 	/**
 	 * Getts interface base url
 	 * @return type string
 	 */
 	function getBaseUrl() {
-		return parent::getBaseUrl()."uploadify";
+		return parent::getBaseUrl()."swfupload";
 	}
 	
 	/**
@@ -20,10 +22,10 @@ class MFUUIUploadify extends MFUUIBase {
 	 */
 	public function isThisYourUpload() {
 		return (
-			\Nette\Environment::getHttpRequest()->getHeader('user-agent') === 'Shockwave Flash'
+			Nette\Environment::getHttpRequest()->getHeader('user-agent') === 'Shockwave Flash'
 			AND isSet($_POST["sender"])
-			AND $_POST["sender"] == "MFU-Uploadify"
-			);
+			AND $_POST["sender"] == "MFU-Swfupload"
+		);
 	}
 
 	/**
@@ -55,7 +57,7 @@ class MFUUIUploadify extends MFUUIBase {
 	 */
 	public function render(MultipleFileUpload $upload) {
 		$template = $this->createTemplate(dirname(__FILE__) . "/html.latte");
-		$template->uploadifyId = $upload->getHtmlId() . "-uploadifyBox";
+		$template->swfuId = $upload->getHtmlId() . "-swfuBox";
 		return $template->__toString(TRUE);
 	}
 
@@ -64,11 +66,11 @@ class MFUUIUploadify extends MFUUIBase {
 	 */
 	public function renderInitJavaScript(MultipleFileUpload $upload) {
 		$tpl = $this->createTemplate(dirname(__FILE__) . "/initJS.js");
-		$tpl->sizeLimit = $upload->maxFileSize;
+		$tpl->sizeLimit = ini_get('upload_max_filesize') . 'B';
 		$tpl->token = $upload->getToken();
 		$tpl->maxFiles = $upload->maxFiles;
 		$tpl->backLink = (string) $upload->form->action;
-		$tpl->uploadifyId = $upload->getHtmlId() . "-uploadifyBox";
+		$tpl->swfuId = $upload->getHtmlId() . "-swfuBox";
 		$tpl->simUploadFiles = $upload->simUploadThreads;
 		return $tpl->__toString(TRUE);
 	}

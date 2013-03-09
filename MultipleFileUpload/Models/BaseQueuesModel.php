@@ -1,10 +1,12 @@
 <?php
 
+namespace MultipleFileUpload;
+
 /**
  * @property int $lifeTime Life time
  * @property int $cleanInterval Clean interval
  */
-abstract class MFUBaseQueuesModel extends Nette\Object implements IMFUQueuesModel {
+abstract class BaseQueuesModel extends Nette\Object implements IQueuesModel {
 
 	/**
 	 * Life time
