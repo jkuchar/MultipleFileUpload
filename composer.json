@@ -9,7 +9,9 @@
 		}
 	],
 	"autoload": {
-		"classmap": ["/"]
+		"psr-0": {
+			"MultipleFileUpload": ""
+		}
 	},
 	"require": {
 		"php": ">= 5.3.0",
