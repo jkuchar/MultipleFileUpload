@@ -78,8 +78,8 @@ class MultipleFileUpload extends \Nette\Forms\Controls\UploadControl {
 		self::init();
 
 		$application = Environment::getApplication();
-		$application->onStartup[]  = callback(__CLASS__,"handleUploads");
-		$application->onShutdown[] = callback(__CLASS__,"cleanCache");
+		$application->onStartup[]  = callback(__CLASS__, "handleUploads");
+		$application->onShutdown[] = callback(__CLASS__, "cleanCache");
 	}
 
 	/* ##########  HANDLING UPLOADS  ########### */
@@ -127,10 +127,11 @@ class MultipleFileUpload extends \Nette\Forms\Controls\UploadControl {
 		if ($req->getMethod() !== "POST") {
 			return;
 		}
-
+				
 		self::getQueuesModel()->initialize();
 
 		foreach (self::getUIRegistrator()->getInterfaces() AS $interface) {
+//			\Nette\Diagnostics\Debugger::log($interface->getReflection()->getName().": is this your upload? ".$interface->isThisYourUpload());
 			if ($interface->isThisYourUpload()) {
 				$ret = $interface->handleUploads();
 				if ($ret === true)
@@ -368,7 +369,7 @@ class MultipleFileUpload extends \Nette\Forms\Controls\UploadControl {
 	 */
 	public function getValue() {
 		$data = $this->getQueue()->getFiles();
-
+		
 		// Ořízneme soubory, kterých je více než maximální *počet* souborů
 		// TODO: Nepřesunot jako validační pravidlo?
 		$pocetPolozek = count($data);
