@@ -3,6 +3,7 @@
 /**
  * This file is part of the MultipleFileUpload (https://github.com/jkuchar/MultipleFileUpload/)
  *
+ * Copyright (c) 2013 Roman Vykuka (http://forum.nette.org/cs/profile.php?id=2221)
  * Copyright (c) 2013 Jan Kuchař (http://www.jankuchar.cz)
  *
  * For the full copyright and license information, please view
@@ -15,9 +16,9 @@ namespace MultipleFileUpload\UI;
 /**
  * Description of MFUUISwfupload
  *
- * @author Jan Kuchař, Roman Vykuka
+ * @author Roman Vykuka, Jan Kuchař
  */
-class SwfuploadInterface extends AbstractInterface {
+class Swfupload extends AbstractInterface {
 
 	/**
 	 * Getts interface base url

@@ -17,7 +17,7 @@ namespace MultipleFileUpload\UI;
  *
  * @author Jan Kuchař
  */
-class PluploadInterface extends AbstractInterface {
+class Plupload extends AbstractInterface {
 
 	/**
 	 * Getts interface base url

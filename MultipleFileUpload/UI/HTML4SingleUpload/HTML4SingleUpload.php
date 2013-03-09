@@ -17,7 +17,7 @@ namespace MultipleFileUpload\UI;
  *
  * @author Jan Kuchař
  */
-class HTML4SingleUploadInterface extends AbstractInterface {
+class HTML4SingleUpload extends AbstractInterface {
 
 	/**
 	 * Is this upload your upload? (upload from this interface)
