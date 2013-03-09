@@ -12,28 +12,30 @@
 
 namespace MultipleFileUpload\UI\Plupload;
 
-use \MultipleFileUpload\MultipleFileUpload;
+use MultipleFileUpload\MultipleFileUpload;
+use MultipleFileUpload\UI\AbstractInterface;
+use Nette\Environment;
 
 /**
  * Description of MFUUIHTML4SingleUpload
  *
  * @author Jan Kuchař
  */
-class Controller extends \MultipleFileUpload\UI\AbstractInterface {
+class Controller extends AbstractInterface {
 
 	/**
 	 * Getts interface base url
 	 * @return type string
 	 */
 	function getBaseUrl() {
-		return parent::getBaseUrl()."plupload";
+		return parent::getBaseUrl() . "plupload";
 	}
 	
 	/**
 	 * Is this upload your upload? (upload from this interface)
 	 */
 	public function isThisYourUpload() {
-		$req = \Nette\Environment::getHttpRequest();
+		$req = Environment::getHttpRequest();
 		return (
 			$req->getQuery("token") !== null
 			AND 
@@ -47,7 +49,7 @@ class Controller extends \MultipleFileUpload\UI\AbstractInterface {
 	 */
 	public function handleUploads() {
 		/* @var $token string */
-		$token = \Nette\Environment::getHttpRequest()
+		$token = Environment::getHttpRequest()
 			->getQuery("token");
 		
 		if (empty($token)) {
@@ -212,7 +214,7 @@ class Controller extends \MultipleFileUpload\UI\AbstractInterface {
 	/**
 	 * Renders interface to <div>
 	 */
-	public function render(\MultipleFileUpload\MultipleFileUpload $upload) {
+	public function render(MultipleFileUpload $upload) {
 		$template = $this->createTemplate(dirname(__FILE__) . "/html.latte");
 		$template->id = $this->getHtmlIdFlashCompatible($upload);
 		return $template->__toString(TRUE);
@@ -221,15 +223,14 @@ class Controller extends \MultipleFileUpload\UI\AbstractInterface {
 	/**
 	 * Renders JavaScript body of function.
 	 */
-	public function renderInitJavaScript(\MultipleFileUpload\MultipleFileUpload $upload) {
+	public function renderInitJavaScript(MultipleFileUpload $upload) {
 		$tpl = $this->createTemplate(dirname(__FILE__) . "/initJS.js");
 		$tpl->token = $upload->getToken();
 		$tpl->sizeLimit = $upload->maxFileSize;
 		$tpl->maxFiles = $upload->maxFiles;
 		
-		
 		// TODO: make creation of link nicer!
-		$baseUrl = \Nette\Environment::getContext()->httpRequest->url->baseUrl;
+		$baseUrl = Environment::getContext()->httpRequest->url->baseUrl;
 		$tpl->uploadLink = $baseUrl."?token=".$tpl->token."&uploader=plupload";
 		$tpl->id = $this->getHtmlIdFlashCompatible($upload);
 		return $tpl->__toString(TRUE);
@@ -238,7 +239,7 @@ class Controller extends \MultipleFileUpload\UI\AbstractInterface {
 	/**
 	 * Renders JavaScript body of function.
 	 */
-	public function renderDestructJavaScript(\MultipleFileUpload\MultipleFileUpload $upload) {
+	public function renderDestructJavaScript(MultipleFileUpload $upload) {
 		return $this->createTemplate(dirname(__FILE__) . "/destructJS.js")->__toString(TRUE);
 	}
 

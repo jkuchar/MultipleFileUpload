@@ -12,6 +12,9 @@
 
 namespace MultipleFileUpload\UI\Uploadify;
 
+use MultipleFileUpload\MultipleFileUpload;
+use Nette\Environment;
+
 /**
  * Description of MFUUIUploadify
  *
@@ -32,7 +35,7 @@ class Controller extends \MultipleFileUpload\UI\AbstractInterface {
 	 */
 	public function isThisYourUpload() {
 		return (
-			\Nette\Environment::getHttpRequest()->getHeader('user-agent') === 'Shockwave Flash'
+			Environment::getHttpRequest()->getHeader('user-agent') === 'Shockwave Flash'
 			AND isSet($_POST["sender"])
 			AND $_POST["sender"] == "MFU-Uploadify"
 			);
@@ -50,8 +53,8 @@ class Controller extends \MultipleFileUpload\UI\AbstractInterface {
 		/* @var $token string */
 		$token = $_POST["token"];
 
-		/* @var $file HttpUploadedFile */
-		foreach (\Nette\Environment::getHttpRequest()->getFiles() AS $file) {
+		/* @var $file FileUpload */
+		foreach (Environment::getHttpRequest()->getFiles() AS $file) {
 			self::processFile($token, $file);
 		}
 
@@ -65,7 +68,7 @@ class Controller extends \MultipleFileUpload\UI\AbstractInterface {
 	/**
 	 * Renders interface to <div>
 	 */
-	public function render(\MultipleFileUpload\MultipleFileUpload $upload) {
+	public function render(MultipleFileUpload $upload) {
 		$template = $this->createTemplate(dirname(__FILE__) . "/html.latte");
 		$template->uploadifyId = $upload->getHtmlId() . "-uploadifyBox";
 		return $template->__toString(TRUE);
@@ -74,7 +77,7 @@ class Controller extends \MultipleFileUpload\UI\AbstractInterface {
 	/**
 	 * Renders JavaScript body of function.
 	 */
-	public function renderInitJavaScript(\MultipleFileUpload\MultipleFileUpload $upload) {
+	public function renderInitJavaScript(MultipleFileUpload $upload) {
 		$tpl = $this->createTemplate(dirname(__FILE__) . "/initJS.js");
 		$tpl->sizeLimit = $upload->maxFileSize;
 		$tpl->token = $upload->getToken();
@@ -88,7 +91,7 @@ class Controller extends \MultipleFileUpload\UI\AbstractInterface {
 	/**
 	 * Renders JavaScript body of function.
 	 */
-	public function renderDestructJavaScript(\MultipleFileUpload\MultipleFileUpload $upload) {
+	public function renderDestructJavaScript(MultipleFileUpload $upload) {
 		return $this->createTemplate(dirname(__FILE__) . "/destructJS.js")->__toString(TRUE);
 	}
 

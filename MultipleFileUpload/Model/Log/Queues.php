@@ -12,8 +12,8 @@
 
 namespace MultipleFileUpload\Model\Log;
 
-use \Nette\Environment;
-use \MultipleFileUpload\Model\BaseQueues;
+use Nette\Environment;
+use MultipleFileUpload\Model\BaseQueues;
 
 class Queues extends BaseQueues {
 
@@ -21,7 +21,8 @@ class Queues extends BaseQueues {
 	 * Initializes driver
 	 */
 	function initialize() {
-		Environment::getService('Nette\Logger')->logMessage("initialize");
+		$a = func_get_args();
+		Debugger::log(__CLASS__.": ".__METHOD__."; args: ".print_r($a, true));
 	}
 
 	/**
@@ -30,7 +31,9 @@ class Queues extends BaseQueues {
 	 * @return Queue
 	 */
 	function getQueue($token) {
-		Environment::getService('Nette\Logger')->logMessage("getQueue");
+		$a = func_get_args();
+		Debugger::log(__CLASS__.": ".__METHOD__."; args: ".print_r($a, true));
+		
 		$q = new Queue();
 		$q->setQueueID($token);
 		$q->setQueuesModel($this);
@@ -38,14 +41,16 @@ class Queues extends BaseQueues {
 	}
 
 	function getQueues() {
-		Environment::getService('Nette\Logger')->logMessage("getQueues");
+		$a = func_get_args();
+		Debugger::log(__CLASS__.": ".__METHOD__."; args: ".print_r($a, true));
 	}
 
 	/**
 	 * Executes cleanup
 	 */
 	function cleanup() {
-		Environment::getService('Nette\Logger')->logMessage("cleanup");
+		$a = func_get_args();
+		Debugger::log(__CLASS__.": ".__METHOD__."; args: ".print_r($a, true));
 	}
 
 }

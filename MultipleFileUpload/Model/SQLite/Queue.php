@@ -12,7 +12,11 @@
 
 namespace MultipleFileUpload\Model\SQLite;
 
-use \MultipleFileUpload\Model\BaseQueue;
+use MultipleFileUpload\Model\BaseQueue;
+use Nette\Http\FileUpload;
+use Nette\Environment;
+
+use Nette\InvalidStateException;
 
 class Queue extends BaseQueue {
 
@@ -27,18 +31,19 @@ class Queue extends BaseQueue {
 
 	/**
 	 * Adds file to queue
-	 * @param Nette\Http\FileUpload $file
+	 * @param FileUpload $file
 	 */
-	function addFile(\Nette\Http\FileUpload $file) {
+	function addFile(FileUpload $file) {
 		$file->move($this->getUniqueFilePath());
 		$this->query('INSERT INTO files (queueID, created, data, name) VALUES ("'.sqlite_escape_string($this->getQueueID()).'",'.time().',\''.sqlite_escape_string(serialize($file)).'\', \''.sqlite_escape_string($file->getName()).'\')');
 	}
 
+	// TODO: rename!!!
 	function addFileManually($name, $chunk,$chunks) {
 		$this->query('INSERT INTO files (queueID, created, name, chunk, chunks) VALUES ("'.sqlite_escape_string($this->getQueueID()).'",'.time().',\''.sqlite_escape_string($name).'\', \''.sqlite_escape_string($chunk).'\', \''.sqlite_escape_string($chunks).'\')');
 	}
 
-	function updateFile($name, $chunk,Nette\Http\FileUpload $file = null) {
+	function updateFile($name, $chunk, FileUpload $file = null) {
 		$this->query("BEGIN TRANSACTION");
 		$where = 'queueID = \''.sqlite_escape_string($this->getQueueID()).'\' AND name = \''.sqlite_escape_string($name).'\'';
 		$this->query('UPDATE files SET chunk = \''.sqlite_escape_string($chunk).'\' WHERE '.$where);
@@ -54,15 +59,15 @@ class Queue extends BaseQueue {
 	 */
 	function getUploadedFilesTemporaryPath() {
 		if(!Queues::$uploadsTempDir) {
-			Queues::$uploadsTempDir = \Nette\Environment::expand("%tempDir%".DIRECTORY_SEPARATOR."uploads-MFU");
+			Queues::$uploadsTempDir = Environment::expand("%tempDir%" . DIRECTORY_SEPARATOR . "uploads-MFU");
 		}
 
 		if(!file_exists(Queues::$uploadsTempDir)) {
-			mkdir(Queues::$uploadsTempDir,0777,true);
+			mkdir(Queues::$uploadsTempDir, 0777, true);
 		}
 
 		if(!is_writable(Queues::$uploadsTempDir)) {
-			Queues::$uploadsTempDir = \Nette\Environment::expand("%tempDir%");
+			Queues::$uploadsTempDir = Environment::expand("%tempDir%");
 		}
 
 		if(!is_writable(Queues::$uploadsTempDir)) {
@@ -74,14 +79,14 @@ class Queue extends BaseQueue {
 
 	/**
 	 * Getts files
-	 * @return array of HttpUploadedFile
+	 * @return array of FileUpload
 	 */
 	function getFiles() {
 		$files = array();
 
 		foreach($this->query("SELECT * FROM files WHERE queueID = '".sqlite_escape_string($this->getQueueID())."'")->fetchAll() AS $row) {
 			$f = unserialize($row["data"]);
-			if(!$f instanceof \Nette\Http\FileUpload) continue;
+			if(!$f instanceof FileUpload) continue;
 			$files[] = $f;
 		}
 		return $files;
@@ -98,7 +103,7 @@ class Queue extends BaseQueue {
 			}
 		}
 
-		$this->query("DELETE FROM files  WHERE queueID = '".sqlite_escape_string($this->getQueueID())."'");
+		$this->query("DELETE FROM files  WHERE queueID = '" . sqlite_escape_string($this->getQueueID()) . "'");
 	}
 
 	/**

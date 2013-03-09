@@ -12,8 +12,9 @@
 
 namespace MultipleFileUpload\Model\Dibi;
 
-use \MultipleFileUpload\Model\BaseQueues;
-use \dibi;
+use MultipleFileUpload\Model\BaseQueues;
+use dibi;
+use Nette\InvalidStateException;
 
 /**
  * Multiple File Uploader driver for Dibi
@@ -31,7 +32,7 @@ class Queues extends BaseQueues {
 
 	/**
 	 * Connection
-	 * @var DibiConnection
+	 * @var \DibiConnection
 	 */
 	public static $dibiConnection;
 
@@ -46,7 +47,7 @@ class Queues extends BaseQueues {
 
 	/**
 	 * Getts dibi connection
-	 * @return DibiConnection
+	 * @return \DibiConnection
 	 */
 	function getConnection() {
 		if(!self::$dibiConnection) {
@@ -57,7 +58,7 @@ class Queues extends BaseQueues {
 
 	/**
 	 * Executes query
-	 * @return DibiResult
+	 * @return \DibiResult
 	 * @throws InvalidStateException
 	 */
 	function query() {
@@ -107,7 +108,7 @@ class Queues extends BaseQueues {
 
 	/**
 	 * Getts all queues
-	 * @return array of IMFUQueueModel
+	 * @return \MultipleFileUpload\Model\IQueue[]
 	 */
 	function getQueues() {
 		$queuesOut = array();

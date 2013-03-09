@@ -12,6 +12,10 @@
 
 namespace MultipleFileUpload\UI\HTML4SingleUpload;
 
+use Nette\Environment;
+use MultipleFileUpload\MultipleFileUpload;
+
+
 /**
  * Description of MFUUIHTML4SingleUpload
  *
@@ -23,7 +27,7 @@ class Controller extends \MultipleFileUpload\UI\AbstractInterface {
 	 * Is this upload your upload? (upload from this interface)
 	 */
 	public function isThisYourUpload() {
-		return !(\Nette\Environment::getHttpRequest()->getHeader('user-agent') === 'Shockwave Flash');
+		return !(Environment::getHttpRequest()->getHeader('user-agent') === 'Shockwave Flash');
 	}
 
 	/**
@@ -32,14 +36,14 @@ class Controller extends \MultipleFileUpload\UI\AbstractInterface {
 	 */
 	public function handleUploads() {
 		// Iterujeme nad přijatými soubory
-		foreach (\Nette\Environment::getHttpRequest()->getFiles() AS $name => $controlValue) {
+		foreach (Environment::getHttpRequest()->getFiles() AS $name => $controlValue) {
 
 			// MFU vždy posílá soubory v této struktuře:
 			//
 			// array(
 			//	"token" => "blablabla",
 			//	"files" => array(
-			//		0 => HttpUploadedFile(...),
+			//		0 => FileUpload(...),
 			//		...
 			//	)
 			// )
@@ -64,7 +68,7 @@ class Controller extends \MultipleFileUpload\UI\AbstractInterface {
 	/**
 	 * Renders interface to <div>
 	 */
-	public function render(\MultipleFileUpload\MultipleFileUpload $upload) {
+	public function render(MultipleFileUpload $upload) {
 		$template = $this->createTemplate(dirname(__FILE__) . "/html.latte");
 		$template->maxFiles = $upload->maxFiles;
 		$template->mfu = $upload;
@@ -74,14 +78,14 @@ class Controller extends \MultipleFileUpload\UI\AbstractInterface {
 	/**
 	 * Renders JavaScript body of function.
 	 */
-	public function renderInitJavaScript(\MultipleFileUpload\MultipleFileUpload $upload) {
+	public function renderInitJavaScript(MultipleFileUpload $upload) {
 		return $this->createTemplate(dirname(__FILE__) . "/initJS.js")->__toString(TRUE);
 	}
 
 	/**
 	 * Renders JavaScript body of function.
 	 */
-	public function renderDestructJavaScript(\MultipleFileUpload\MultipleFileUpload $upload) {
+	public function renderDestructJavaScript(MultipleFileUpload $upload) {
 		return true;
 	}
 

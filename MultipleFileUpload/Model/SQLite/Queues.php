@@ -14,11 +14,12 @@ namespace MultipleFileUpload\Model\SQLite;
 
 use MultipleFileUpload\Model\BaseQueues;
 use Nette\InvalidStateException;
+use Nette\Environment;
 
 class Queues extends BaseQueues {
 
 	/**
-	 * @var SQLiteDatabase
+	 * @var \SQLiteDatabase
 	 */
 	private $connection;
 
@@ -146,7 +147,7 @@ class Queues extends BaseQueues {
 		  GROUP BY queueID")->fetchAll();
 
 		foreach($qs AS $row) {
-			$obj = $queuesOut[] = $this->createQueueObj($row["queueID"]);
+			$queuesOut[] = $this->createQueueObj($row["queueID"]);
 		}
 
 		return $queuesOut;
@@ -154,7 +155,7 @@ class Queues extends BaseQueues {
 
 	static function init() {
 		// TODO: remove this magic
-		$config =\Nette\Environment::getConfig("MultipleFileUploader",array(
+		$config = Environment::getConfig("MultipleFileUploader",array(
 			"databasePath" => dirname(__FILE__)."/database.sdb",
 			"uploadsTempDir" => ""
 		));

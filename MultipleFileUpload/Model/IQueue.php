@@ -12,6 +12,8 @@
 
 namespace MultipleFileUpload\Model;
 
+use Nette\Http\FileUpload;
+
 interface IQueue {
 
 	/**
@@ -51,13 +53,29 @@ interface IQueue {
 
 	/**
 	 * Adds file to queue
-	 * @param Nette\Http\FileUpload $file
+	 * @param FileUpload $file
 	 */
-	function addFile(\Nette\Http\FileUpload $file);
+	function addFile(FileUpload $file);
+	
+	/**
+	 * TODO
+	 * @param type $name
+	 * @param type $chunk
+	 * @param type $chunks
+	 */
+	function addFileManually($name, $chunk,$chunks);
+	
+	/**
+	 * Updates file information (useful when processing chunked upload)
+	 * @param type $name
+	 * @param type $chunk
+	 * @param FileUpload $file
+	 */
+	function updateFile($name, $chunk, FileUpload $file = null);
 
 	/**
 	 * Getts all files in queue
-	 * @return array of HttpUploadedFile
+	 * @return array of FileUpload
 	 */
 	function getFiles();
 

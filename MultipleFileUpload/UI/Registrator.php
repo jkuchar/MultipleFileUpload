@@ -12,10 +12,13 @@
 
 namespace MultipleFileUpload\UI;
 
+use Nette\InvalidArgumentException;
+use Nette\Object;
+
 /**
  * Registrator of user interfaces
  */
-class Registrator extends \Nette\Object {
+class Registrator extends Object {
 
 	public $interfaces = array();
 

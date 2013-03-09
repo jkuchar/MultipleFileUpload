@@ -12,11 +12,15 @@
 
 namespace MultipleFileUpload\Model;
 
+use Nette\Object;
+use Nette\InvalidStateException;
+
+
 /**
  * @property IMFUQueuesModel $queuesModel
  * @property string $queueID
  */
-abstract class BaseQueue extends \Nette\Object implements IQueue {
+abstract class BaseQueue extends Object implements IQueue {
 
 	/**
 	 * Queues model
@@ -71,14 +75,8 @@ abstract class BaseQueue extends \Nette\Object implements IQueue {
 	 * @return string
 	 */
 	protected function getUniqueFilePath() {
-		return 
-			$this->getUploadedFilesTemporaryPath()
-			.DIRECTORY_SEPARATOR
-			."upload-"
-			.$this->getQueueID()
-			."-"
-			.uniqid()
-			.".tmp";
+		return	$this->getUploadedFilesTemporaryPath() . DIRECTORY_SEPARATOR
+			. "upload-" . $this->getQueueID() . "-" . uniqid() . ".tmp";
 	}
 
 	/**

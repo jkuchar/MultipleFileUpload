@@ -13,7 +13,9 @@
 namespace MultipleFileUpload\Model\Log;
 
 use Nette\Environment;
-use \MultipleFileUpload\Model\BaseQueue;
+use MultipleFileUpload\Model\BaseQueue;
+
+use Nette\Diagnostics\Debugger;
 
 class Queue extends BaseQueue {
 
@@ -21,38 +23,54 @@ class Queue extends BaseQueue {
 	 * Initializes driver
 	 */
 	function initialize() {
-		Environment::getService('Nette\Logger')->logMessage("queues: initialize");
+		$a = func_get_args();
+		Debugger::log(__CLASS__.": ".__METHOD__."; args: ".print_r($a, true));
 	}
 
 	/**
 	 * Adds file to queue
-	 * @param HttpUploadedFile $file
+	 * @param FileUpload $file
 	 */
 	function addFile(\Nette\Http\FileUpload $file) {
-		Environment::getService('Nette\Logger')->logMessage("addFile");
+		$a = func_get_args();
+		Debugger::log(__CLASS__.": ".__METHOD__."; args: ".print_r($a, true));
+	}
+
+	function updateFile($name, $chunk, \Nette\Http\FileUpload $file = null) {
+		$a = func_get_args();
+		Debugger::log(__CLASS__.": ".__METHOD__."; args: ".print_r($a, true));
+	}
+
+	function addFileManually($name, $chunk, $chunks) {
+		$a = func_get_args();
+		Debugger::log(__CLASS__.": ".__METHOD__."; args: ".print_r($a, true));
 	}
 
 	function getUploadedFilesTemporaryPath() {
-		Environment::getService('Nette\Logger')->logMessage("getUploadedFilesTemporaryPath");
+		$a = func_get_args();
+		Debugger::log(__CLASS__.": ".__METHOD__."; args: ".print_r($a, true));
 		return " ";
 	}
 
 	function getLastAccess() {
-		Environment::getService('Nette\Logger')->logMessage("getLastAccess");
+		$a = func_get_args();
+		Debugger::log(__CLASS__.": ".__METHOD__."; args: ".print_r($a, true));
 		return time();
 	}
 
 	/**
 	 * Getts files
-	 * @return array of HttpUploadedFile
+	 * @return array of FileUpload
 	 */
 	function getFiles() {
-		Environment::getService('Nette\Logger')->logMessage("getFiles");
+		$a = func_get_args();
+		Debugger::log(__CLASS__.": ".__METHOD__."; args: ".print_r($a, true));
 		return array();
 	}
 
 	function delete() {
-		Environment::getService('Nette\Logger')->logMessage("deletes queue");
+		$a = func_get_args();
+		Debugger::log(__CLASS__.": ".__METHOD__."; args: ".print_r($a, true));
 	}
 
 }

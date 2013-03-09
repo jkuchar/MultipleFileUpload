@@ -12,11 +12,14 @@
 
 namespace MultipleFileUpload\Model;
 
+use Nette\Object;
+
+
 /**
  * @property int $lifeTime Life time
  * @property int $cleanInterval Clean interval
  */
-abstract class BaseQueues extends \Nette\Object implements IQueues {
+abstract class BaseQueues extends Object implements IQueues {
 
 	/**
 	 * Life time

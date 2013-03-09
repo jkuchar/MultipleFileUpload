@@ -12,7 +12,7 @@
 
 namespace MultipleFileUpload\UI;
 
-use \MultipleFileUpload\MultipleFileUpload;
+use MultipleFileUpload\MultipleFileUpload;
 
 /**
  *
