@@ -496,7 +496,7 @@ class MultipleFileUpload extends Forms\Controls\UploadControl {
 /**
  * Extension method for FormContainer
  */
-function FormContainer_addMultipleFileUpload(\Nette\Application\UI\Form $_this, $name, $label = NULL, $maxFiles = 999) {
+function FormContainer_addMultipleFileUpload(\Nette\Application\UI\Form $_this, $name, $label = NULL, $maxFiles = 25) {
 	return $_this[$name] = new MultipleFileUpload($label, $maxFiles);
 }
 
