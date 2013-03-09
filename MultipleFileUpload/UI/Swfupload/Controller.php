@@ -11,14 +11,14 @@
  */
 
 
-namespace MultipleFileUpload\UI;
+namespace MultipleFileUpload\UI\Swfupload;
 
 /**
  * Description of MFUUISwfupload
  *
  * @author Roman Vykuka, Jan Kuchař
  */
-class Swfupload extends AbstractInterface {
+class Controller extends \MultipleFileUpload\UI\AbstractInterface {
 
 	/**
 	 * Getts interface base url

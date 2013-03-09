@@ -10,14 +10,14 @@
  */
 
 
-namespace MultipleFileUpload\UI;
+namespace MultipleFileUpload\UI\Uploadify;
 
 /**
  * Description of MFUUIUploadify
  *
  * @author Jan Kuchař
  */
-class Uploadify extends AbstractInterface {
+class Controller extends \MultipleFileUpload\UI\AbstractInterface {
 
 	/**
 	 * Getts interface base url

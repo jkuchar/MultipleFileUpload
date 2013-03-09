@@ -10,7 +10,7 @@
  */
 
 
-namespace MultipleFileUpload\UI;
+namespace MultipleFileUpload\UI\Plupload;
 
 use \MultipleFileUpload\MultipleFileUpload;
 
@@ -19,7 +19,7 @@ use \MultipleFileUpload\MultipleFileUpload;
  *
  * @author Jan Kuchař
  */
-class Plupload extends AbstractInterface {
+class Controller extends \MultipleFileUpload\UI\AbstractInterface {
 
 	/**
 	 * Getts interface base url

@@ -10,14 +10,14 @@
  */
 
 
-namespace MultipleFileUpload\UI;
+namespace MultipleFileUpload\UI\HTML4SingleUpload;
 
 /**
  * Description of MFUUIHTML4SingleUpload
  *
  * @author Jan Kuchař
  */
-class HTML4SingleUpload extends AbstractInterface {
+class Controller extends \MultipleFileUpload\UI\AbstractInterface {
 
 	/**
 	 * Is this upload your upload? (upload from this interface)

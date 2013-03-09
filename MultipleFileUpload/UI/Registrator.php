@@ -26,7 +26,8 @@ class Registrator extends \Nette\Object {
 			}
 			$this->interfaces[] = $interface;
 		} elseif (is_string($interface)) {
-			$this->interfaces[] = $interface;
+			// User gives us only namespace
+			$this->interfaces[] = $interface . "\\Controller";
 		} else {
 			throw new InvalidArgumentException("Not supported interface!");
 		}
