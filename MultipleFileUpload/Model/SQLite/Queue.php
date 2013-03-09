@@ -81,7 +81,7 @@ class Queue extends BaseQueue {
 
 		foreach($this->query("SELECT * FROM files WHERE queueID = '".sqlite_escape_string($this->getQueueID())."'")->fetchAll() AS $row) {
 			$f = unserialize($row["data"]);
-			if(!$f instanceof Nette\Http\FileUpload) continue;
+			if(!$f instanceof \Nette\Http\FileUpload) continue;
 			$files[] = $f;
 		}
 		return $files;

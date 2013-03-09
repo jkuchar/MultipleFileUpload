@@ -13,6 +13,7 @@
 namespace MultipleFileUpload\Model\Dibi;
 
 use \MultipleFileUpload\Model\BaseQueues;
+use \dibi;
 
 /**
  * Multiple File Uploader driver for Dibi

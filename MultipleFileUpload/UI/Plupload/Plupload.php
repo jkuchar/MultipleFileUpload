@@ -170,7 +170,7 @@ class Plupload extends AbstractInterface {
 		$lastChunk = ($chunk+1) == $chunks;
 		if($lastChunk OR $nonChunkedTransfer) {
 			// Hotovo
-			$file = new Nette\Http\FileUpload(array(
+			$file = new \Nette\Http\FileUpload(array(
 			    'name' => $fileNameOriginal,
 			    'type' => "",
 			    'size' => filesize($filePath),

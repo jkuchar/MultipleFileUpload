@@ -13,6 +13,7 @@
 namespace MultipleFileUpload\Model\Dibi;
 
 use \MultipleFileUpload\Model\BaseQueue;
+use \dibi;
 
 /**
  * Multiple File Uploader driver for Dibi
@@ -38,7 +39,7 @@ class Queue extends BaseQueue {
 	 * Adds file to queue
 	 * @param HttpUploadedFile $file
 	 */
-	function addFile(Nette\Http\FileUpload $file) {
+	function addFile(\Nette\Http\FileUpload $file) {
 		$file->move($this->getUniqueFilePath());
 		$data = array(
 			'queueID%s' => $this->getQueueID(),
@@ -63,8 +64,8 @@ class Queue extends BaseQueue {
 		$this->query('INSERT INTO [files]', $data);
 	}
 
-	function updateFile($name, $chunk, Nette\Http\FileUpload $file = null) {
-        dibi::begin();
+	function updateFile($name, $chunk, \Nette\Http\FileUpload $file = null) {
+		dibi::begin();
 		$where = array(
 		    "queueID%s" => $this->getQueueID(),
 		    "name%s"    => $name
@@ -109,7 +110,7 @@ class Queue extends BaseQueue {
 
 		foreach($this->query('SELECT * FROM [files] WHERE [queueID] = %s', $this->getQueueID())->fetchAll() as $row) {
 			$f = unserialize(base64_decode($row["data"]));
-			if(!$f instanceof Nette\Http\FileUpload) continue;
+			if(!$f instanceof \Nette\Http\FileUpload) continue;
 			$files[] = $f;
 		}
 
