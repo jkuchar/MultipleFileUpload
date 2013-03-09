@@ -1,13 +1,13 @@
 <?php
 
-namespace MultipleFileUpload;
+namespace MultipleFileUpload\UI;
 
 /**
  * Description of MFUUIUploadify
  *
  * @author Jan Kuchař
  */
-class UploadifyInterface extends AbstractInterface {
+class Uploadify extends AbstractInterface {
 
 	/**
 	 * Getts interface base url

@@ -1,6 +1,8 @@
 <?php
 
-namespace MultipleFileUpload;
+namespace MultipleFileUpload\Model\Dibi;
+
+use \MultipleFileUpload\Model\BaseQueuesModel;
 
 /**
  * Multiple File Uploader driver for Dibi
@@ -8,7 +10,7 @@ namespace MultipleFileUpload;
  * @author  Martin Sadový (SodaE), Jan Kuchař (honzakuchar)
  * @license New BSD License
  */
-class QueuesDibi extends BaseQueuesModel {
+class Queues extends BaseQueuesModel {
 
 	/**
 	 * Path to director of uploaded files (temp)
@@ -60,7 +62,7 @@ class QueuesDibi extends BaseQueuesModel {
 	/**
 	 * Getts queue (if needed create)
 	 * @param string $id
-	 * @return QueueDibi
+	 * @return Queue
 	 */
 	function getQueue($id) {
 		return $this->createQueueObj($id);
@@ -69,10 +71,10 @@ class QueuesDibi extends BaseQueuesModel {
 	/**
 	 * Factory for MFUQueueDibi
 	 * @param string $queueID
-	 * @return QueueDibi
+	 * @return Queue
 	 */
 	function createQueueObj($queueID) {
-		$queue = new QueueDibi();
+		$queue = new Queue();
 		$queue->setQueuesModel($this);
 		$queue->setQueueID($queueID);
 		$queue->initialize();

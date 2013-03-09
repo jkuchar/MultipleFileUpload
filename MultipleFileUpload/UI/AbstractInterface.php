@@ -1,13 +1,13 @@
 <?php
 
-namespace MultipleFileUpload;
+namespace MultipleFileUpload\UI;
 
 /**
  * Description of AbstractInterface
  *
  * @author Honza
  */
-abstract class AbstractInterface extends Nette\Object implements IInterface {
+abstract class AbstractInterface extends Nette\Object implements IUserInterface {
 	
 	/**
 	 * Getts interface base url

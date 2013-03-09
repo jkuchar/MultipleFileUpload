@@ -36,46 +36,45 @@
  * @link       http://nettephp.com/cs/extras/multiplefileupload
  */
 
-namespace MultipleFileUpload;
+
+namespace MultipleFileUpload\UI;
+
 
 /**
- * Registrator of user interfaces
+ *
+ * @author Jan Kuchař
  */
-class Registrator extends Nette\Object {
+interface IUserInterface {
 
-	public $interfaces = array();
+	/**
+	 * Is this upload your upload? (upload from this interface)
+	 */
+	public function isThisYourUpload();
 
-	public function register($interface) {
-		if (is_object($interface)) {
-			if (!$interface instanceof IInterface) {
-				throw new InvalidArgumentException("Interface must implement MFUUIInterface!");
-			}
-			$this->interfaces[] = $interface;
-		} elseif (is_string($interface)) {
-			$this->interfaces[] = $interface;
-		} else {
-			throw new InvalidArgumentException("Not supported interface!");
-		}
-		return $this;
-	}
+	/**
+	 * Handles uploaded files
+	 * forwards it to model
+	 */
+	public function handleUploads();
 
-	public function clear() {
-		$this->interfaces = array();
-		return $this;
-	}
+	/**
+	 * Renders interface to <div>
+	 */
+	public function render(MultipleFileUpload $upload);
 
-	public function getInterfaces() {
-		$interfaces = $this->interfaces;
-		foreach ($interfaces AS $key => $interface) {
-			if (is_string($interface)) {
-				$interface = $interfaces[$key] = new $interface;
-			}
-			if (!$interface instanceof IInterface) {
-				throw new InvalidArgumentException($interface->reflection->name . " is not compatible with MFU!");
-			}
-		}
-		$this->interfaces = $interfaces;
-		return array_reverse($interfaces);
-	}
+	/**
+	 * Renders JavaScript body of function.
+	 */
+	public function renderInitJavaScript(MultipleFileUpload $upload);
+
+	/**
+	 * Renders JavaScript body of function.
+	 */
+	public function renderDestructJavaScript(MultipleFileUpload $upload);
+
+	/**
+	 * Renders set-up tags to <head> attribute
+	 */
+	public function renderHeadSection();
 
 }

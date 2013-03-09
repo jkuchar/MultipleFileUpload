@@ -1,10 +1,11 @@
 <?php
 
+namespace MultipleFileUpload\Model\Log;
+
 use Nette\Environment;
+use \MultipleFileUpload\Model\BaseQueueModel;
 
-namespace MultipleFileUpload;
-
-class QueueLog extends BaseQueueModel {
+class Queue extends BaseQueueModel {
 
 	/**
 	 * Initializes driver

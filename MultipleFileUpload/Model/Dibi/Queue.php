@@ -1,6 +1,8 @@
 <?php
 
-namespace MultipleFileUpload;
+namespace MultipleFileUpload\Model\Dibi;
+
+use \MultipleFileUpload\Model\BaseQueueModel;
 
 /**
  * Multiple File Uploader driver for Dibi
@@ -8,7 +10,7 @@ namespace MultipleFileUpload;
  * @author  Martin Sadový (SodaE), Jan Kuchař (honzakuchar)
  * @license New BSD License
  */
-class QueueDibi extends BaseQueueModel {
+class Queue extends BaseQueueModel {
 
 	/**
 	 * Executes query
@@ -69,23 +71,23 @@ class QueueDibi extends BaseQueueModel {
 	 * @return string
 	 */
 	function getUploadedFilesTemporaryPath() {
-		if(!QueuesDibi::$uploadsTempDir) {
-			QueuesDibi::$uploadsTempDir =\Nette\Environment::expand("%tempDir%".DIRECTORY_SEPARATOR."uploads-MFU");
+		if(!Queues::$uploadsTempDir) {
+			Queues::$uploadsTempDir =\Nette\Environment::expand("%tempDir%".DIRECTORY_SEPARATOR."uploads-MFU");
 		}
 
-		if(!file_exists(QueuesDibi::$uploadsTempDir)) {
-			mkdir(QueuesDibi::$uploadsTempDir,0777,true);
+		if(!file_exists(Queues::$uploadsTempDir)) {
+			mkdir(Queues::$uploadsTempDir,0777,true);
 		}
 
-		if(!is_writable(QueuesDibi::$uploadsTempDir)) {
-			QueuesDibi::$uploadsTempDir =\Nette\Environment::expand("%tempDir%");
+		if(!is_writable(Queues::$uploadsTempDir)) {
+			Queues::$uploadsTempDir =\Nette\Environment::expand("%tempDir%");
 		}
 
-		if(!is_writable(QueuesDibi::$uploadsTempDir)) {
+		if(!is_writable(Queues::$uploadsTempDir)) {
 			throw new InvalidStateException("Directory for temp files is not writable!");
 		}
 
-		return QueuesDibi::$uploadsTempDir;
+		return Queues::$uploadsTempDir;
 	}
 
 	/**

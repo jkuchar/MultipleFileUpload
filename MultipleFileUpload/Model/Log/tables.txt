@@ -1,7 +1,7 @@
 queues:
 
-id (token): string - deintifikátor fronty
-lastAccess: datum+èas=timestamp
+id (token): string - queue identificator
+lastAccess: datum+ï¿½as=timestamp
 
 FileInfos:
 

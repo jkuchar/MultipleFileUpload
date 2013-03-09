@@ -1,10 +1,11 @@
 <?php
 
-use Nette\Environment;
+namespace MultipleFileUpload\Model\Log;
 
-namespace MultipleFileUpload;
+use \Nette\Environment;
+use \MultipleFileUpload\Model\BaseQueuesModel;
 
-class QueuesLog extends BaseQueuesModel {
+class Queues extends BaseQueuesModel {
 
 	/**
 	 * Initializes driver
@@ -16,11 +17,11 @@ class QueuesLog extends BaseQueuesModel {
 	/**
 	 * Getts queue
 	 * @param string $token
-	 * @return QueueSQLite
+	 * @return Queue
 	 */
 	function getQueue($token) {
 		Environment::getService('Nette\Logger')->logMessage("getQueue");
-		$q = new QueueLog();
+		$q = new Queue();
 		$q->setQueueID($token);
 		$q->setQueuesModel($this);
 		return $q;

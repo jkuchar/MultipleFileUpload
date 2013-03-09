@@ -1,6 +1,6 @@
 <?php
 
-namespace MultipleFileUpload;
+namespace MultipleFileUpload\Model;
 
 /**
  * @property IMFUQueuesModel $queuesModel
