@@ -1,0 +1,5 @@
+TODO: 
+- Předělat design
+
+Možná někdy bude:
+- dodělat JavaScriptovou validaci - hidden field kde se budou cpát hodnoty pro Nettí validátor
