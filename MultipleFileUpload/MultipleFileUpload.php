@@ -38,6 +38,8 @@
 use Nette\Environment;
 use Nette\Utils\Html;
 
+namespace MultipleFileUpload;
+
 class MultipleFileUpload extends \Nette\Forms\Controls\UploadControl {
 
 	const NAME = "Multiple File Uploader";
@@ -459,7 +461,7 @@ class MultipleFileUpload extends \Nette\Forms\Controls\UploadControl {
 
 	/**
 	 * FileSize validator: is file size in limit?
-	 * @param  MultipleFileUpload
+	 * @param  \Nette\Forms\Controls\UploadControl
 	 * @param  int  file size limit
 	 * @return bool
 	 */
@@ -479,7 +481,7 @@ class MultipleFileUpload extends \Nette\Forms\Controls\UploadControl {
 	 * @return bool
 	 */
 	public static function validateMimeType(\Nette\Forms\Controls\UploadControl $control, $mimeType) {
-    throw new \Nette\NotSupportedException("Can't validate mime type! This is MULTIPLE file upload control.");
+		throw new \Nette\NotSupportedException("Can't validate mime type! This is MULTIPLE file upload control.");
 	}
 
 	/*	 * ******************* Helpers ******************** */

@@ -1,9 +1,6 @@
 <?php
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+namespace MultipleFileUpload;
 
 /**
  * Description of MFUUIHTML4SingleUpload
@@ -29,7 +26,7 @@ class MFUUIHTML4SingleUpload extends MFUUIBase {
 
 			// MFU vždy posílá soubory v této struktuře:
 			//
-      // array(
+			// array(
 			//	"token" => "blablabla",
 			//	"files" => array(
 			//		0 => HttpUploadedFile(...),
