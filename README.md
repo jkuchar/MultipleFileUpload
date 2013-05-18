@@ -5,6 +5,16 @@ Project that allows you to upload more files to server at once using Nette Forms
 
 Demo page: http://multiplefileupload.projekty.mujserver.net/
 
+Installation
+------------
+1. Open terminal in your project
+2. `composer require jkuchar/multiplefileupload:dev-master`
+3. Copy files from libs/jkuchar/multiplefileupload/public to www/MultipleFileUpload
+4. You are done!
+
+For more information see [example][].
+
+
 Full documentation
 ------------------
 - Czech: http://addons.nette.org/cs/multiplefileupload
@@ -17,3 +27,6 @@ Because this repo is imported from SVN there were no way how to create real fork
 
 - Original: (you are here :-)
 - Ciki's fork: https://github.com/Ciki/MFU
+
+
+[example]: https://github.com/jkuchar/MultipleFileUpload-example
