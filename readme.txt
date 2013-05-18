@@ -1,27 +1,30 @@
+Tato dokumentace je napsÃ¡na v Texy. SprÃ¡vnÄ› naformÃ¡tovanou byste ji mÄ›li najÃ­t zde: http://addons.nette.org/cs/multiplefileupload?rev=50
+
+
 MultipleFileUpload
 ##################
 
 .[perex]
-MultipleFileUpload (zkrácenì MFU) je doplnìk pro Nette Framework, kterı vašim uivatelùm umoní pohodlnì, jednoduše a interaktivnì odesílat hromady souborù. Komfort nabízí nejen uivateli, ale i programátorovi. Uivatel mùe na pár kliknutí odeslat celé fotoalbum a programátorovi staèí na implementaci tohoto doplòku pouhé 2 øádky kódu. Navíc tento doplnìk podporuje AJAX pro maximální rychlost a uivatelské pohodlí! I na uivatele se staršími prohlíeèi se myslelo. Pokud prohlíeè nesplòuje minimální poadavky, uivatel mùe odeslat soubory standardním zpùsobem.
+MultipleFileUpload (zkrï¿½cenï¿½ MFU) je doplnï¿½k pro Nette Framework, kterï¿½ vaï¿½im uï¿½ivatelï¿½m umoï¿½nï¿½ pohodlnï¿½, jednoduï¿½e a interaktivnï¿½ odesï¿½lat hromady souborï¿½. Komfort nabï¿½zï¿½ nejen uï¿½ivateli, ale i programï¿½torovi. Uï¿½ivatel mï¿½ï¿½e na pï¿½r kliknutï¿½ odeslat celï¿½ fotoalbum a programï¿½torovi staï¿½ï¿½ na implementaci tohoto doplï¿½ku pouhï¿½ 2 ï¿½ï¿½dky kï¿½du. Navï¿½c tento doplnï¿½k podporuje AJAX pro maximï¿½lnï¿½ rychlost a uï¿½ivatelskï¿½ pohodlï¿½! I na uï¿½ivatele se starï¿½ï¿½mi prohlï¿½ï¿½eï¿½i se myslelo. Pokud prohlï¿½ï¿½eï¿½ nesplï¿½uje minimï¿½lnï¿½ poï¿½adavky, uï¿½ivatel mï¿½ï¿½e odeslat soubory standardnï¿½m zpï¿½sobem.
 
 
 
 
-|*Autor doplòku     | "Honza Kuchaø":http://forum.nette.org/cs/profile.php?id=1018
-|*Autor driver(ù)   | "Honza Kuchaø":http://forum.nette.org/cs/profile.php?id=1018 (sqlite a log driver), "Martin Sadovı":http://forum.nette.org/cs/profile.php?id=1876 (dibi driver)
-|*Autor interface(ù)| "Honza Kuchaø":http://forum.nette.org/cs/profile.php?id=1018 (HTML4SingleUpload, Plupload, Uploadify), "Roman Vykuka":http://forum.nette.org/cs/profile.php?id=2221 (SWFUpload)
-|*Inspirováno       | http://forum.nette.org/cs/viewtopic.php?pid=15098#p15098
+|*Autor doplï¿½ku     | "Honza Kuchaï¿½":http://forum.nette.org/cs/profile.php?id=1018
+|*Autor driver(ï¿½)   | "Honza Kuchaï¿½":http://forum.nette.org/cs/profile.php?id=1018 (sqlite a log driver), "Martin Sadovï¿½":http://forum.nette.org/cs/profile.php?id=1876 (dibi driver)
+|*Autor interface(ï¿½)| "Honza Kuchaï¿½":http://forum.nette.org/cs/profile.php?id=1018 (HTML4SingleUpload, Plupload, Uploadify), "Roman Vykuka":http://forum.nette.org/cs/profile.php?id=2221 (SWFUpload)
+|*Inspirovï¿½no       | http://forum.nette.org/cs/viewtopic.php?pid=15098#p15098
 |*Licence           | New BSD License
 |*Diskuse           | http://forum.nette.org/cs/2386-addon-multiplefileupload-multiplefileupload-form-control
 |*Demo              | http://multiplefileupload.projekty.mujserver.net/
-|*Stav              | Stabilní. Nicménì pár problémù k vyøešení to ještì je - viz kapitola "Známé problémy":[#toc-zname-problemy]
-|*Nette             | viz "závislosti":[#toc-zavislosti]
+|*Stav              | Stabilnï¿½. Nicmï¿½nï¿½ pï¿½r problï¿½mï¿½ k vyï¿½eï¿½enï¿½ to jeï¿½tï¿½ je - viz kapitola "Znï¿½mï¿½ problï¿½my":[#toc-zname-problemy]
+|*Nette             | viz "zï¿½vislosti":[#toc-zavislosti]
 
 
 Instalace
 *********
 
-1. Zkopírujte následující soubory:
+1. Zkopï¿½rujte nï¿½sledujï¿½cï¿½ soubory:
   - app/controls/MultipleFileUpload/*
   - document_root/css/MultipleFileUpload/*
   - document_root/images/MultipleFileUpload/*
@@ -29,48 +32,48 @@ Instalace
   - document_root/swf/MultipleFileUpload/*
   - document_root/xap/MultipleFileUpload/*
 
-2. Do bootstrapu za registraci "RobotLoaderu":http://doc.nette.org/cs/nette-loaders#toc-nette-loaders-robotloader a pøed `$application->run();` pøidejte následující øádku.
+2. Do bootstrapu za registraci "RobotLoaderu":http://doc.nette.org/cs/nette-loaders#toc-nette-loaders-robotloader a pï¿½ed `$application->run();` pï¿½idejte nï¿½sledujï¿½cï¿½ ï¿½ï¿½dku.
   /---code php
   MultipleFileUpload::register();
   \---
 
-3. Do vašeho layoutu pøípadnì do stránek, kde chcete pouívat MFU, pøidejte následující øádek pøed tag `</head>`
-  JavaScriptové knihovny, které jsou spoleèné (pravdìpodobnì je budete pouívat ve své aplikaci) - viz `@layout.phml` v GITu.
+3. Do vaï¿½eho layoutu pï¿½ï¿½padnï¿½ do strï¿½nek, kde chcete pouï¿½ï¿½vat MFU, pï¿½idejte nï¿½sledujï¿½cï¿½ ï¿½ï¿½dek pï¿½ed tag `</head>`
+  JavaScriptovï¿½ knihovny, kterï¿½ jsou spoleï¿½nï¿½ (pravdï¿½podobnï¿½ je budete pouï¿½ï¿½vat ve svï¿½ aplikaci) - viz `@layout.phml` v GITu.
   /---code html
-  {!=MultipleFi­leUpload::get­Head()}
+  {!=MultipleFiï¿½leUpload::getï¿½Head()}
   \---
-  Tímto krokem naètete a zaregistrujete *Multiple File Upload*.
+  Tï¿½mto krokem naï¿½tete a zaregistrujete *Multiple File Upload*.
 
 .[note]
-Pokud pouíváte Nette 0.9.2 nebo niší, ètìte zde: http://forum.nette.org/cs/2566-httpuploadedfile-bug-pri-safe-mode-nema-opravneni-pri-presunu-souboru . V Nette 0.9.3-RC je u tato "chyba" opravena. http://github.com/dg/nette/commit/f36e5f07e0df3580ebae8a3b26562f8ae53e84a1
+Pokud pouï¿½ï¿½vï¿½te Nette 0.9.2 nebo niï¿½ï¿½ï¿½, ï¿½tï¿½te zde: http://forum.nette.org/cs/2566-httpuploadedfile-bug-pri-safe-mode-nema-opravneni-pri-presunu-souboru . V Nette 0.9.3-RC je uï¿½ tato "chyba" opravena. http://github.com/dg/nette/commit/f36e5f07e0df3580ebae8a3b26562f8ae53e84a1
 
 .[note]
-Pokud na vašem serveru bìí PHP pod (Fast)CGI, je doporuèená verze Nette 0.9.4. V této verzi je u opravené získávání hlavièek. Viz http://github.com/nette/nette/commit/d6b7f0c31ae3e3fcedf0e0a914bae84a260119db.
+Pokud na vaï¿½em serveru bï¿½ï¿½ï¿½ PHP pod (Fast)CGI, je doporuï¿½enï¿½ verze Nette 0.9.4. V tï¿½to verzi je uï¿½ opravenï¿½ zï¿½skï¿½vï¿½nï¿½ hlaviï¿½ek. Viz http://github.com/nette/nette/commit/d6b7f0c31ae3e3fcedf0e0a914bae84a260119db.
 
 .[note]
-**Nette 2.0** zatím není oficiálnì podporováno, nicménì díky skvìlé, aktivní komunitì mùete ji dnes vyuívat originální "MultipleFileUpload na Nette 2.0 a PHP 5.3":http://projekty.mujserver.net/nette/MultipleFileUpload_pro_PHP5.3/.
+**Nette 2.0** zatï¿½m nenï¿½ oficiï¿½lnï¿½ podporovï¿½no, nicmï¿½nï¿½ dï¿½ky skvï¿½lï¿½, aktivnï¿½ komunitï¿½ mï¿½ï¿½ete jiï¿½ dnes vyuï¿½ï¿½vat originï¿½lnï¿½ "MultipleFileUpload na Nette 2.0 a PHP 5.3":http://projekty.mujserver.net/nette/MultipleFileUpload_pro_PHP5.3/.
 
-A potom u mùete zaèít **Multiple File Uploader pouívat**.
-
-
+A potom uï¿½ mï¿½ï¿½ete zaï¿½ï¿½t **Multiple File Uploader pouï¿½ï¿½vat**.
 
 
 
-Pouití
+
+
+Pouï¿½itï¿½
 *******
 /---code php
 $f = new AppForm($this,$name);
 
-$f->addMultipleFileUpload("pokus1","Testík",20)
-    ->addRule("MultipleFileUpload::validateFilled","Musíte odeslat alespoò jeden soubor!")
-    ->addRule("MultipleFileUpload::validateFileSize","Soubory jsou dohromady moc veliké!",1024); // 1 KB
+$f->addMultipleFileUpload("pokus1","Testï¿½k",20)
+    ->addRule("MultipleFileUpload::validateFilled","Musï¿½te odeslat alespoï¿½ jeden soubor!")
+    ->addRule("MultipleFileUpload::validateFileSize","Soubory jsou dohromady moc velikï¿½!",1024); // 1 KB
 \---
 .[note]
-Do formuláøe je potøeba opravdu zadávat pøímo callback, protoe ZATÍM není podporována validace na stranì klienta!
+Do formulï¿½ï¿½e je potï¿½eba opravdu zadï¿½vat pï¿½ï¿½mo callback, protoï¿½e ZATï¿½M nenï¿½ podporovï¿½na validace na stranï¿½ klienta!
 
-Jako hodnotu MFU ve formuláøi dostanu pole ve kterém je kadı soubor validní (prošel HttpUploadedFile::isOK()) a je instancí HttpUploadedFile. Všechny soubory co zùstanou v tempech po odeslání formuláøe budou smazány.
+Jako hodnotu MFU ve formulï¿½ï¿½i dostanu pole ve kterï¿½m je kaï¿½dï¿½ soubor validnï¿½ (proï¿½el HttpUploadedFile::isOK()) a je instancï¿½ HttpUploadedFile. Vï¿½echny soubory co zï¿½stanou v tempech po odeslï¿½nï¿½ formulï¿½ï¿½e budou smazï¿½ny.
 
-Takto vypadá pole co dostanete ke zpracování (`$hodnoty = $form->getValues();`):
+Takto vypadï¿½ pole co dostanete ke zpracovï¿½nï¿½ (`$hodnoty = $form->getValues();`):
 /---code php
 array(1) {
       0 => object(HttpUploadedFile) (5) {
@@ -83,45 +86,45 @@ array(1) {
 }
 \---
 
-Vzhled prvku mùete upravovat v šablonách `MultipleFileUpload-withJS.phtml` a `MultipleFileUpload-withoutJS.phtml`. Popøípadì zde mùete i mìnit nastavení uploadify.
+Vzhled prvku mï¿½ï¿½ete upravovat v ï¿½ablonï¿½ch `MultipleFileUpload-withJS.phtml` a `MultipleFileUpload-withoutJS.phtml`. Popï¿½ï¿½padï¿½ zde mï¿½ï¿½ete i mï¿½nit nastavenï¿½ uploadify.
 
 
 
 
 
 
-Závislosti
+Zï¿½vislosti
 **********
 
 - Nette
-  - minimální verze Nette 0.9.1, 0.9.2 (nutnost pøepsat "HttpUploadedFile::move()":http://forum.nette.org/cs/2566-httpuploadedfile-bug-pri-safe-mode-nema-opravneni-pri-presunu-souboru)
-  - **doporuèená verze Nette 0.9.3** (nebo vyšší)
+  - minimï¿½lnï¿½ verze Nette 0.9.1, 0.9.2 (nutnost pï¿½epsat "HttpUploadedFile::move()":http://forum.nette.org/cs/2566-httpuploadedfile-bug-pri-safe-mode-nema-opravneni-pri-presunu-souboru)
+  - **doporuï¿½enï¿½ verze Nette 0.9.3** (nebo vyï¿½ï¿½ï¿½)
   - Nette 1.0-dev - http://forum.nette.org/cs/profile.php?id=2529.
-  - Nette 2.0 zatím není oficiálnì podporováno, **nicménì díky skvìlé, aktivní komunitì mùete ji dnes "vyuívat originální MultipleFileUpload":http://projekty.mujserver.net/nette/MultipleFileUpload_pro_PHP5.3/ na Nette 2.0 a PHP 5.3**. (hlavní díky v souèasné chvíli patøí Matúši Matulovi, kterı se stará o verzi pro Nette 2.0)
-  - nyní jsou zdrojáky na GIThubu, doufám, e se brzy objeví fork pro Nette 2.0
+  - Nette 2.0 zatï¿½m nenï¿½ oficiï¿½lnï¿½ podporovï¿½no, **nicmï¿½nï¿½ dï¿½ky skvï¿½lï¿½, aktivnï¿½ komunitï¿½ mï¿½ï¿½ete jiï¿½ dnes "vyuï¿½ï¿½vat originï¿½lnï¿½ MultipleFileUpload":http://projekty.mujserver.net/nette/MultipleFileUpload_pro_PHP5.3/ na Nette 2.0 a PHP 5.3**. (hlavnï¿½ dï¿½ky v souï¿½asnï¿½ chvï¿½li patï¿½ï¿½ Matï¿½ï¿½i Matulovi, kterï¿½ se starï¿½ o verzi pro Nette 2.0)
+  - nynï¿½ jsou zdrojï¿½ky na GIThubu, doufï¿½m, ï¿½e se brzy objevï¿½ fork pro Nette 2.0
 
-- JavaScript: Závisí na pouitém interface
-- Napøíklad interface Uploadify:
-  - [jQuery | http://jquery.com/], [Uploadify | http://www.uploadify.com/], [swfobject.js | http://code.google.com/p/swfobject/], [livequery | http://plugins.jquery.com/project/livequery/], [upravenı ajax-form driver | https://github.com/jkuchar/MultipleFileUpload/blob/master/document_root/js/nette-ajax-form.js]
-  - originální `jquery.uploadify.js` nefunguje s Internet Explorerem, protoe má v id objektu pomlèku. IE to interpretuje jako mínus. Proto jsem vydal upravenou verzi, kterou najdete na GITu https://github.com/jkuchar/MultipleFileUpload/tree/master/document_root/js.
-  - originální `swfobject.js` nefunguje v Internet Exploreru, protoe Internet Explorer má bug s flashem  ve formuláøi. Upravenou verzi tohoto souboru najdete na GITu https://github.com/jkuchar/MultipleFileUpload/tree/master/document_root/js.
-
-
+- JavaScript: Zï¿½visï¿½ na pouï¿½itï¿½m interface
+- Napï¿½ï¿½klad interface Uploadify:
+  - [jQuery | http://jquery.com/], [Uploadify | http://www.uploadify.com/], [swfobject.js | http://code.google.com/p/swfobject/], [livequery | http://plugins.jquery.com/project/livequery/], [upravenï¿½ ajax-form driver | https://github.com/jkuchar/MultipleFileUpload/blob/master/document_root/js/nette-ajax-form.js]
+  - originï¿½lnï¿½ `jquery.uploadify.js` nefunguje s Internet Explorerem, protoï¿½e mï¿½ v id objektu pomlï¿½ku. IE to interpretuje jako mï¿½nus. Proto jsem vydal upravenou verzi, kterou najdete na GITu https://github.com/jkuchar/MultipleFileUpload/tree/master/document_root/js.
+  - originï¿½lnï¿½ `swfobject.js` nefunguje v Internet Exploreru, protoï¿½e Internet Explorer mï¿½ bug s flashem  ve formulï¿½ï¿½i. Upravenou verzi tohoto souboru najdete na GITu https://github.com/jkuchar/MultipleFileUpload/tree/master/document_root/js.
 
 
 
 
 
-Známé problémy
+
+
+Znï¿½mï¿½ problï¿½my
 **************
 
 Uploadify
 =========
-- pokud není k dispozici Flash Player, nenastane automatickı fallback a ani není k dispozici ruèní fallback na klasické nahrávání souborù
+- pokud nenï¿½ k dispozici Flash Player, nenastane automatickï¿½ fallback a ani nenï¿½ k dispozici ruï¿½nï¿½ fallback na klasickï¿½ nahrï¿½vï¿½nï¿½ souborï¿½
 
 HTML4SingleUpload
 =================
-- nabídne se i pokud formuláø funguje ajaxovì (soubory se samozøejmì neodešlou). Nìjaké nápady jak toto vyøešit?
+- nabï¿½dne se i pokud formulï¿½ï¿½ funguje ajaxovï¿½ (soubory se samozï¿½ejmï¿½ neodeï¿½lou). Nï¿½jakï¿½ nï¿½pady jak toto vyï¿½eï¿½it?
 
 
 
@@ -134,17 +137,17 @@ HTML4SingleUpload
 Drivery
 *******
 
-Driver má za úkol skladovat informace o pøenesenıch souborech a samotné soubory. V distribuci Multiple File Uploadu se driverù nachází hned nìkolik.
+Driver mï¿½ za ï¿½kol skladovat informace o pï¿½enesenï¿½ch souborech a samotnï¿½ soubory. V distribuci Multiple File Uploadu se driverï¿½ nachï¿½zï¿½ hned nï¿½kolik.
 
 |-----------------------------------------------------------------
-| Driver              | Autor                      | Licence  | Umístìní | Thread-safe   | Popis | Instalace | Stav
+| Driver              | Autor                      | Licence  | Umï¿½stï¿½nï¿½ | Thread-safe   | Popis | Instalace | Stav
 |-----------------------------------------------------------------
-| **SQLite v. 2**     | "Honza Kuchaø":http://forum.nette.org/cs/profile.php?id=1018 | New BSD | distribuce | ano | Ukládá informace o pøenesenıch souborech do databáze SQLite. (vyuívá php_sqlite; nevyaduje dibi) | Staèí povolit zápis (chmod(0777)) ve sloce app/controls/drivers/Sqlite/database.sdb. | **Doporuèenı, Stabilní**
-| **Dibi**            | "Martin Sadovı":http://forum.nette.org/cs/profile.php?id=1876 (prvotní implementace) + "Honza Kuchaø":http://forum.nette.org/cs/profile.php?id=1018 (uèesáno; pøidán workaround pro http://forum.dibiphp.com/cs/1003-pgsql-a-znak-x00-oriznuti-zbytku-vstupu?pid=3840#p3840) | New BSD  | distribuce | ano | Ukládá informace o pøenesenıch souborech do jakékoli databáze, kterou podporuje Dibi. (vyaduje Dibi; tabulku musíte v databázi ruènì vytvoøit; v distribuci pøiloeny dumpy databází mysql (Martin) a postgres (Honza)) | Zprovozníte dibi, vytvoøíte tabulku files v databázi. (viz dumpy databází) | **Experimentální** (nejspíš si ho budete muset poupravit právì pro vaši databázi, ale bez úprav by to mìlo fungovat pod MySQL a PgSQL)
-| **Log**             | "Honza Kuchaø":http://forum.nette.org/cs/profile.php?id=1018 | New BSD | distribuce | ano | Nikam nic neukládá. Slouí pro vıvojáøe k zjištìní poøadí volanıch metod v driveru. Pro bìného uivatele nemá ádnı vıznam. | Nakonfigurovat "Logger":http://addons.nette.org/cs/logger. | **Stabilní**
+| **SQLite v. 2**     | "Honza Kuchaï¿½":http://forum.nette.org/cs/profile.php?id=1018 | New BSD | distribuce | ano | Uklï¿½dï¿½ informace o pï¿½enesenï¿½ch souborech do databï¿½ze SQLite. (vyuï¿½ï¿½vï¿½ php_sqlite; nevyï¿½aduje dibi) | Staï¿½ï¿½ povolit zï¿½pis (chmod(0777)) ve sloï¿½ce app/controls/drivers/Sqlite/database.sdb. | **Doporuï¿½enï¿½, Stabilnï¿½**
+| **Dibi**            | "Martin Sadovï¿½":http://forum.nette.org/cs/profile.php?id=1876 (prvotnï¿½ implementace) + "Honza Kuchaï¿½":http://forum.nette.org/cs/profile.php?id=1018 (uï¿½esï¿½no; pï¿½idï¿½n workaround pro http://forum.dibiphp.com/cs/1003-pgsql-a-znak-x00-oriznuti-zbytku-vstupu?pid=3840#p3840) | New BSD  | distribuce | ano | Uklï¿½dï¿½ informace o pï¿½enesenï¿½ch souborech do jakï¿½koli databï¿½ze, kterou podporuje Dibi. (vyï¿½aduje Dibi; tabulku musï¿½te v databï¿½zi ruï¿½nï¿½ vytvoï¿½it; v distribuci pï¿½iloï¿½eny dumpy databï¿½zï¿½ mysql (Martin) a postgres (Honza)) | Zprovoznï¿½te dibi, vytvoï¿½ï¿½te tabulku files v databï¿½zi. (viz dumpy databï¿½zï¿½) | **Experimentï¿½lnï¿½** (nejspï¿½ï¿½ si ho budete muset poupravit prï¿½vï¿½ pro vaï¿½i databï¿½zi, ale bez ï¿½prav by to mï¿½lo fungovat pod MySQL a PgSQL)
+| **Log**             | "Honza Kuchaï¿½":http://forum.nette.org/cs/profile.php?id=1018 | New BSD | distribuce | ano | Nikam nic neuklï¿½dï¿½. Slouï¿½ï¿½ pro vï¿½vojï¿½ï¿½e k zjiï¿½tï¿½nï¿½ poï¿½adï¿½ volanï¿½ch metod v driveru. Pro bï¿½ï¿½nï¿½ho uï¿½ivatele nemï¿½ ï¿½ï¿½dnï¿½ vï¿½znam. | Nakonfigurovat "Logger":http://addons.nette.org/cs/logger. | **Stabilnï¿½**
 
 
-A jak to v praxi zaregistrovat? Je to jednoduché. Podívejte se do souboru bootstrap.php v distribuci. Najdete tam zhruba toto:
+A jak to v praxi zaregistrovat? Je to jednoduchï¿½. Podï¿½vejte se do souboru bootstrap.php v distribuci. Najdete tam zhruba toto:
 
 /---code php
 // Optional step: register driver
@@ -165,7 +168,7 @@ Dibi::connect(array(
 	"charset"  => "UTF-8"
 ));
 //MultipleFileUpload::$queuesModel = new MFUQueuesDibi(); // do revize 69
-MultipleFileUpload::setQueuesModel(new MFUQueuesDibi()); // od revize 69 (vèetnì)
+MultipleFileUpload::setQueuesModel(new MFUQueuesDibi()); // od revize 69 (vï¿½etnï¿½)
 \---code
 
 
@@ -176,20 +179,20 @@ MultipleFileUpload::setQueuesModel(new MFUQueuesDibi()); // od revize 69 (vèetnì
 
 Interfaces
 **********
-Zaèal bych tím co to vlastnì je. Je to jakısi balíèek s uivatelskım rozhraním a jeho pozadím na stranì serveru, které èeká na data od klientského rozhraní. Èást na stranì serveru má za úkol pøedat pøijatá data ve specifikované formì modelu. Nejlépe pochopíte, pokud si zobrazíte ji funkèní interfacy v distribuci.
+Zaï¿½al bych tï¿½m co to vlastnï¿½ je. Je to jakï¿½si balï¿½ï¿½ek s uï¿½ivatelskï¿½m rozhranï¿½m a jeho pozadï¿½m na stranï¿½ serveru, kterï¿½ ï¿½ekï¿½ na data od klientskï¿½ho rozhranï¿½. ï¿½ï¿½st na stranï¿½ serveru mï¿½ za ï¿½kol pï¿½edat pï¿½ijatï¿½ data ve specifikovanï¿½ formï¿½ modelu. Nejlï¿½pe pochopï¿½te, pokud si zobrazï¿½te jiï¿½ funkï¿½nï¿½ interfacy v distribuci.
 
-V souèasné chvíli máme v distribuci tyto interfacy:
+V souï¿½asnï¿½ chvï¿½li mï¿½me v distribuci tyto interfacy:
 
 |-----------------------------------------------------------------
-| Interface               | Autor                                                        | Licence | Vyadován JavaScript?  | Popis
+| Interface               | Autor                                                        | Licence | Vyï¿½adovï¿½n JavaScript?  | Popis
 |-----------------------------------------------------------------
-| **HTML4SingleUpload**   | "Honza Kuchaø":http://forum.nette.org/cs/profile.php?id=1018 | NewBSD  | **Ne**                 | Implementuje standardní HTML4 odesílací políèka
-| **Plupload**            | "Honza Kuchaø":http://forum.nette.org/cs/profile.php?id=1018 | NewBSD  | Ano                    | Implementuje "plupload":http://www.plupload.com/
-| **SWFUpload**           | "Roman Vykuka":http://forum.nette.org/cs/profile.php?id=2221 | NewBSD  | Ano                    | Implementuje "SwfUpload":http://swfupload.org/; více informací o tomto interface na "fóru":http://forum.nette.org/cs/2386-addon-multiplefileupload-multiplefileupload-form-control?p=4#p37697.
-| **Uploadify**           | "Honza Kuchaø":http://forum.nette.org/cs/profile.php?id=1018 | NewBSD  | Ano                     | Implementuje "Uploadify":http://www.uploadify.com/
+| **HTML4SingleUpload**   | "Honza Kuchaï¿½":http://forum.nette.org/cs/profile.php?id=1018 | NewBSD  | **Ne**                 | Implementuje standardnï¿½ HTML4 odesï¿½lacï¿½ polï¿½ï¿½ka
+| **Plupload**            | "Honza Kuchaï¿½":http://forum.nette.org/cs/profile.php?id=1018 | NewBSD  | Ano                    | Implementuje "plupload":http://www.plupload.com/
+| **SWFUpload**           | "Roman Vykuka":http://forum.nette.org/cs/profile.php?id=2221 | NewBSD  | Ano                    | Implementuje "SwfUpload":http://swfupload.org/; vï¿½ce informacï¿½ o tomto interface na "fï¿½ru":http://forum.nette.org/cs/2386-addon-multiplefileupload-multiplefileupload-form-control?p=4#p37697.
+| **Uploadify**           | "Honza Kuchaï¿½":http://forum.nette.org/cs/profile.php?id=1018 | NewBSD  | Ano                     | Implementuje "Uploadify":http://www.uploadify.com/
 
 
-Teï tedy èistì praktická a logická otázka, jak ten interface zaregistrovat a pouívat? Registrace v do MFU se dìlá pomocí pøedání názvu tøídy interface. V MFU jsou tøídy interfacù pojmenování jako MFUUI a následuje název interface. Tedy napøíklad `MFUUIUploadify`. Poté u nám zbıvá jen interface zaregistrovat. Jak na to nám ukáe pøíklad z bootstrapu.
+Teï¿½ tedy ï¿½istï¿½ praktickï¿½ a logickï¿½ otï¿½zka, jak ten interface zaregistrovat a pouï¿½ï¿½vat? Registrace v do MFU se dï¿½lï¿½ pomocï¿½ pï¿½edï¿½nï¿½ nï¿½zvu tï¿½ï¿½dy interface. V MFU jsou tï¿½ï¿½dy interfacï¿½ pojmenovï¿½nï¿½ jako MFUUI a nï¿½sleduje nï¿½zev interface. Tedy napï¿½ï¿½klad `MFUUIUploadify`. Potï¿½ uï¿½ nï¿½m zbï¿½vï¿½ jen interface zaregistrovat. Jak na to nï¿½m ukï¿½ï¿½e pï¿½ï¿½klad z bootstrapu.
 
 /---code php
 
@@ -200,56 +203,56 @@ MultipleFileUpload::getUIRegistrator()
 
 \---
 
-Jak vidíte nejdøíve jsme získali od objektu MFU UIRegistrator. To je tøída, která v sobì uchovává informace o zaregistrovanıch interfacech. Tedy nejdøíve jsme vymazali ji zaregistrované vıchozí hodnoty (HTML4SingleUpload, Uploadify). A nyní zaregistrujeme nìjakı svùj interface. Poøadí mùeme libovolnì mìnit, jediné co musíme dodret je, aby první registrovanı interface nevyadoval JavaScript, protoe ten jako jedinı se vygeneruje do stránky, pokud ho prohlíeè nepodporuje.
+Jak vidï¿½te nejdï¿½ï¿½ve jsme zï¿½skali od objektu MFU UIRegistrator. To je tï¿½ï¿½da, kterï¿½ v sobï¿½ uchovï¿½vï¿½ informace o zaregistrovanï¿½ch interfacech. Tedy nejdï¿½ï¿½ve jsme vymazali jiï¿½ zaregistrovanï¿½ vï¿½chozï¿½ hodnoty (HTML4SingleUpload, Uploadify). A nynï¿½ zaregistrujeme nï¿½jakï¿½ svï¿½j interface. Poï¿½adï¿½ mï¿½ï¿½eme libovolnï¿½ mï¿½nit, jedinï¿½ co musï¿½me dodrï¿½et je, aby prvnï¿½ registrovanï¿½ interface nevyï¿½adoval JavaScript, protoï¿½e ten jako jedinï¿½ se vygeneruje do strï¿½nky, pokud ho prohlï¿½ï¿½eï¿½ nepodporuje.
 
-Pokud máte svoje klientské øešení a chcete ho pouívat s MFU, ètìte èlánek "Jak na vlastní interface?":[multiplefileupload/jak-na-vlastni-interface].
-
-
+Pokud mï¿½te svoje klientskï¿½ ï¿½eï¿½enï¿½ a chcete ho pouï¿½ï¿½vat s MFU, ï¿½tï¿½te ï¿½lï¿½nek "Jak na vlastnï¿½ interface?":[multiplefileupload/jak-na-vlastni-interface].
 
 
 
 
 
 
-Podpora v prohlíeèích
+
+
+Podpora v prohlï¿½ï¿½eï¿½ï¿½ch
 **********************
 
-Liší se interface od interface. Tedy postupnì.
+Liï¿½ï¿½ se interface od interface. Tedy postupnï¿½.
 
 HTML4SingleUpload
 =================
 
-Nevím jak textové prohlíeèe, ale jinak by mìl bıt podporován všude.
+Nevï¿½m jak textovï¿½ prohlï¿½ï¿½eï¿½e, ale jinak by mï¿½l bï¿½t podporovï¿½n vï¿½ude.
 
 Plupload
 ========
 
-- Všude, kde funguje Javascript.
-- Co jsem zkoušel, jdou odesílat opravdu gigantické soubory, nejvíce jsem zkoušel 6GB. Ale pozor, potom pouije "knihovnu na zjišování velikostí souborù":[bigfiletools], pokud ji potøebujete vìdìt. `HttpUploadeFile` vám bude vracet nesmysly, u takto velikıch souborù.
+- Vï¿½ude, kde funguje Javascript.
+- Co jsem zkouï¿½el, jdou odesï¿½lat opravdu gigantickï¿½ soubory, nejvï¿½ce jsem zkouï¿½el 6GB. Ale pozor, potom pouï¿½ije "knihovnu na zjiï¿½ï¿½ovï¿½nï¿½ velikostï¿½ souborï¿½":[bigfiletools], pokud ji potï¿½ebujete vï¿½dï¿½t. `HttpUploadeFile` vï¿½m bude vracet nesmysly, u takto velikï¿½ch souborï¿½.
 
 SWFUpload
 =========
 
-*(Honza: Prosím autora o doplnìní. Já jsem kompatibilitu netestoval. Nicménì bude to dost podobné jako uploadify)*
+*(Honza: Prosï¿½m autora o doplnï¿½nï¿½. Jï¿½ jsem kompatibilitu netestoval. Nicmï¿½nï¿½ bude to dost podobnï¿½ jako uploadify)*
 
 Uploadify
 =========
 
 
 |-----------------------------------------------------------------
-|   OS   | Prohlíeè          | Verze             | Kvalita podpory            | Komentáø
+|   OS   | Prohlï¿½ï¿½eï¿½          | Verze             | Kvalita podpory            | Komentï¿½ï¿½
 |-----------------------------------------------------------------
-|  Win7  | Google Chrome      |    2              | <b> ***** </b> .<> | Bez vıhrad
-|       ^|                   ^| 4.1.249.1025 beta | <b> ***** </b> .<> | Bez vıhrad
-|       ^| Opera              |   10.0            | <b> ***** </b> .<> | Bez vıhrad
-|       ^|                   ^|   9.65            | <b> ***** </b> .<> | Bez vıhrad
-|       ^| Firefox            |   3.5             | <b> ****  </b> .<> | O nìco pomalejší ne Google Chrome a Opera. Moná je to ale zpùsobeno nìjakım nainstalovanım doplòkem.
-|       ^|                   ^|   3.6             | <b> ****  </b> .<> | O nìco pomalejší ne Google Chrome a Opera. Moná je to ale zpùsobeno nìjakım nainstalovanım doplòkem.
-|       ^| Internet Explorer  | všechny           |  -             .<> | Mezi soubory z nìjakıch dùvodù chvíli èeká. Potøeba ošetøit nìkolik chyb v IE/Flash, aby MFU vùbec fungovalo. (viz "Závislosti":[#toc-zavislosti])
-|       ^|                   ^|    8              | <b> ***   </b> .<> | Soubory odesílá klidnì v deseti vláknech. (ale kadé vlákno vdy chvíli èeká) Tzn. funguje to v celku správnì.
-| WinXP  |                   ^|    6              | <b> *     </b> .<> | Soubory odesílá pouze v jednom vláknì. Tzn. taky to nìjak funguje.
+|  Win7  | Google Chrome      |    2              | <b> ***** </b> .<> | Bez vï¿½hrad
+|       ^|                   ^| 4.1.249.1025 beta | <b> ***** </b> .<> | Bez vï¿½hrad
+|       ^| Opera              |   10.0            | <b> ***** </b> .<> | Bez vï¿½hrad
+|       ^|                   ^|   9.65            | <b> ***** </b> .<> | Bez vï¿½hrad
+|       ^| Firefox            |   3.5             | <b> ****  </b> .<> | O nï¿½co pomalejï¿½ï¿½ neï¿½ Google Chrome a Opera. Moï¿½nï¿½ je to ale zpï¿½sobeno nï¿½jakï¿½m nainstalovanï¿½m doplï¿½kem.
+|       ^|                   ^|   3.6             | <b> ****  </b> .<> | O nï¿½co pomalejï¿½ï¿½ neï¿½ Google Chrome a Opera. Moï¿½nï¿½ je to ale zpï¿½sobeno nï¿½jakï¿½m nainstalovanï¿½m doplï¿½kem.
+|       ^| Internet Explorer  | vï¿½echny           |  -             .<> | Mezi soubory z nï¿½jakï¿½ch dï¿½vodï¿½ chvï¿½li ï¿½ekï¿½. Potï¿½eba oï¿½etï¿½it nï¿½kolik chyb v IE/Flash, aby MFU vï¿½bec fungovalo. (viz "Zï¿½vislosti":[#toc-zavislosti])
+|       ^|                   ^|    8              | <b> ***   </b> .<> | Soubory odesï¿½lï¿½ klidnï¿½ v deseti vlï¿½knech. (ale kaï¿½dï¿½ vlï¿½kno vï¿½dy chvï¿½li ï¿½ekï¿½) Tzn. funguje to v celku sprï¿½vnï¿½.
+| WinXP  |                   ^|    6              | <b> *     </b> .<> | Soubory odesï¿½lï¿½ pouze v jednom vlï¿½knï¿½. Tzn. taky to nï¿½jak funguje.
 
-Pokud není váš prohlíeè v pøedcházející tabulce, tak prosím napište na fórum, zada ve vašem prohlíeèi MFU funguje, èi nikoli. A pokud ano, tak jak.
+Pokud nenï¿½ vï¿½ï¿½ prohlï¿½ï¿½eï¿½ v pï¿½edchï¿½zejï¿½cï¿½ tabulce, tak prosï¿½m napiï¿½te na fï¿½rum, zada ve vaï¿½em prohlï¿½ï¿½eï¿½i MFU funguje, ï¿½i nikoli. A pokud ano, tak jak.
 
 
 
@@ -271,7 +274,7 @@ GIT
 https://github.com/jkuchar/MultipleFileUpload/
 
 .[note]
-Na GITu, tedy na oficiální vìtvi, je k dispozici pouze verze pro Nette 0.9. Pro verzi pro Nette 2.0 pokraèujte do sekce "Závislosti":[#toc-zavislosti], kde se dozvíte vše potøebné.
+Na GITu, tedy na oficiï¿½lnï¿½ vï¿½tvi, je k dispozici pouze verze pro Nette 0.9. Pro verzi pro Nette 2.0 pokraï¿½ujte do sekce "Zï¿½vislosti":[#toc-zavislosti], kde se dozvï¿½te vï¿½e potï¿½ebnï¿½.
 
 
 
