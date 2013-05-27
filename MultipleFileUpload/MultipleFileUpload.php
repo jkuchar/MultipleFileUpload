@@ -23,7 +23,7 @@ use Nette\NotSupportedException;
 class MultipleFileUpload extends Forms\Controls\UploadControl {
 
 	const NAME = "Multiple File Uploader";
-	const VERSION = '$Rev: 77 $ released on $Date: 2011-03-17 23:52:31 +0100 (čt, 17 3 2011) $';
+	const VERSION = 'Unknown';
 
 	/**
 	 * Is files handle uploads called?
