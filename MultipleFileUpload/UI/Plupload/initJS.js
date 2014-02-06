@@ -5,23 +5,23 @@ var fallbackController = this;
 	// Convert divs to queue widgets when the DOM is ready
 	$(function(){
 		// TODO: auto fallback
-		var uploader = $("#"+{!$id|escapeJs}).pluploadQueue({
+		var uploader = $("#"+{$id|escapeJs|noescape}).pluploadQueue({
 			// General settings
 			runtimes : 'gears,browserplus,silverlight,flash,html5,html4',
 			{* runtimes : 'gears,html5,browserplus,silverlight,html4', *}
 			{* runtimes : 'flash',*}
-			url : {!$uploadLink|escapeJs},
-			max_file_size : {!$sizeLimit},
+			url : {$uploadLink|escapeJs|noescape},
+			max_file_size : {$sizeLimit|noescape},
 			chunk_size : '5mb',
 			
 			// Intentionally do not use headers, because not all interfaces allows you to send them.
 			// insted using parameters in URL or POST
 			
 			// Flash settings
-			flash_swf_url : {!$interface->baseUrl|escapeJs}+'/swf/plupload.flash.swf',
+			flash_swf_url : {$interface->baseUrl|escapeJs|noescape}+'/swf/plupload.flash.swf',
 
 			// Silverlight settings
-			silverlight_xap_url : {!$interface->baseUrl|escapeJs}+'/xap/plupload.silverlight.xap'
+			silverlight_xap_url : {$interface->baseUrl|escapeJs|noescape}+'/xap/plupload.silverlight.xap'
 		});
 		uploader = $(uploader).pluploadQueue();
 		console.log(uploader);
