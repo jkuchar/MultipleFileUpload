@@ -1,6 +1,6 @@
 (function($){
 
-	var uploadifyId = {!$uploadifyId|escapeJS};
+	var uploadifyId = {$uploadifyId|escapeJS|noescape};
 	var queue = $('#' + uploadifyId + '-queue');
 	var clearQueueButton = $('#' + uploadifyId + 'ClearQueue');
 	var uploadify = $('#' + uploadifyId);
@@ -9,9 +9,9 @@
 	uploadify.uploadify({
 		auto: false,
 		buttonImage: {!=\Nette\Environment::expand("{$baseModulePath}/images/uploadify/uploadifyButton.png")|escapeJS},
-		fileSizeLimit: {!$sizeLimit|escapeJS},
+		fileSizeLimit: {$sizeLimit|escapeJS|noescape},
 		formData: {
-			token: {!$token|escapeJS},
+			token: {$token|escapeJS|noescape},
 			sender: 'MFU-Uploadify'
 		},
 		height: 22,
@@ -19,10 +19,10 @@
 		multi: true,
 		overrideEvents: ['onQueueComplete'],
 		queueID: uploadifyId + '-queue',
-		queueSizeLimit: {!$maxFiles|escapeJS},
+		queueSizeLimit: {$maxFiles|escapeJS|noescape},
 		removeCompleted: true,
 		swf: {!=\Nette\Environment::expand("{$baseModulePath}/swf/uploadify/uploadify.swf")|escapeJS},
-		uploader: {!$backLink|escapeJS},
+		uploader: {$backLink|escapeJS|noescape},
 		width: 70,
         
 		/**

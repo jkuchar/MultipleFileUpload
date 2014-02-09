@@ -40,15 +40,15 @@ $input =  \Nette\Utils\Html::el("input type=file")->name($mfu->getHtmlName().'[f
 
 <div class="ui-widget ui-widget-content ui-corner-all" style="padding: 5px;">
 	<table cellspacing="5">
-		{? for($i=1;$i<=$maxFiles;$i++): }
+		{for $i=1; $i<=$maxFiles; $i++}
 		<tr>
 			<th>
 				{$i}. soubor
 			</th>
 			<td>
-				{!$input}
+				{$input|noescape}
 			</td>
 		</tr>
-		{? EndFor; }
+		{/for}
 	</table>
 </div>
