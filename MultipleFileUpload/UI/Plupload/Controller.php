@@ -230,7 +230,7 @@ class Controller extends AbstractInterface {
 		$tpl->maxFiles = $upload->maxFiles;
 		
 		// TODO: make creation of link nicer!
-		$baseUrl = Environment::getContext()->httpRequest->url->baseUrl;
+		$baseUrl = Environment::getContext()->getService('httpRequest')->url->baseUrl;
 		$tpl->uploadLink = $baseUrl."?token=".$tpl->token."&uploader=plupload";
 		$tpl->id = $this->getHtmlIdFlashCompatible($upload);
 		return $tpl->__toString(TRUE);
