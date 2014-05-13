@@ -1,6 +1,4 @@
-
-
-$("form").livequery("submit",function(e){
+$(document).on('submit', 'form', function(e){
 	var form = $(this);
 	if(form[0].finito) return;
 	var multipleFileUploadFields = $("div.mfuplupload[id]", this);
@@ -33,7 +31,7 @@ $("form").livequery("submit",function(e){
 					form.submit();
 				}
 			}
-			
+
 			e.stopImmediatePropagation();
 			e.preventDefault();
 			uploader.bind("UploadComplete",function(uploader,files){
@@ -44,6 +42,4 @@ $("form").livequery("submit",function(e){
 			fn();
 		})
 	}
-})
-
-
+});

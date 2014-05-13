@@ -1,4 +1,4 @@
-$("form").livequery("submit",function(e){
+$(document).on('submit', 'form', function(e){
 	var form = $(this);
 	var multipleFileUploadFields = $(".MultipleFileUpload", this);
 	var uploadersInQueue = multipleFileUploadFields.length;
@@ -6,28 +6,28 @@ $("form").livequery("submit",function(e){
 	if(uploadersInQueue>0){
 		multipleFileUploadFields.each(function(){
 
-                        var swfu = $('.swfuflashupload', this).swfuInstance();
+						var swfu = $('.swfuflashupload', this).swfuInstance();
 
-                        var queueSize = 0;
+						var queueSize = 0;
 
 			try{
-                            queueSize = swfu.getStats().files_queued;
+							queueSize = swfu.getStats().files_queued;
 			}catch(ex) {
-                        }
-                        
-                        if(queueSize>0){
+						}
+
+						if(queueSize>0){
 				e.stopImmediatePropagation();
 				e.preventDefault();
 				swfu.startUpload();
 				$('.swfuflashupload', this).bind('queueComplete',function(){
 					uploadersInQueue--;
 
-                                        if(uploadersInQueue==0){
+										if(uploadersInQueue==0){
 
-                                                form.submit()
+												form.submit()
 					}
 				})
 			} else uploadersInQueue--;
 		})
 	}
-})
+});
