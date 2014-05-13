@@ -1,9 +1,10 @@
+var useAjaxSubmit = true;
 
 var MFUFallbackController;
 (function(){
 	MFUFallbackController = function(rootEl, fallbacks) {
 
-		this.fallbackLinkText = "Is there problem with uploading files? Click here."; 
+		this.fallbackLinkText = "Is there problem with uploading files? Click here.";
 
 		this.fallbacks = fallbacks;
 		this.rootEl = rootEl;
@@ -26,7 +27,7 @@ var MFUFallbackController;
 		this.showUI = function(ui) {
 			document.getElementById(ui.id).style.display = "block";
 		}
-		
+
 		this.swithUI = function(ui) {
 			var currentUI = this.activeUI||this.fallbacks[0];
 			if(eval(currentUI.destruct,this) == true &&eval(ui.init,this)==true) {
@@ -35,7 +36,7 @@ var MFUFallbackController;
 				this.showUI(ui);
 
 				this.onUISwitch(currentUI,ui);
-				
+
 			}
 		}
 

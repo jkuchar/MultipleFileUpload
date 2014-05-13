@@ -20,6 +20,11 @@ $(document).on('submit', 'form', function(e) {
 				$('.swfuflashupload', this).bind('queueComplete', function() {
 					uploadersInQueue--;
 					if (uploadersInQueue == 0) {
+						if (useAjaxSubmit) {
+							form.submit(function (e) {
+								form.netteAjax(e);
+							});
+						}
 						form.submit();
 					}
 				});

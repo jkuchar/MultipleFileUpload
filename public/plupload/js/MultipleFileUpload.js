@@ -27,6 +27,11 @@ $(document).on('submit', 'form', function(e){
 					form.each(function(){
 						this.finito = true;
 					});
+					if (useAjaxSubmit) {
+						form.submit(function (e) {
+							form.netteAjax(e);
+						});
+					}
 					form.submit();
 				}
 			};
