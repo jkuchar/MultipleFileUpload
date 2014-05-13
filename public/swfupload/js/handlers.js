@@ -10,7 +10,10 @@
 jQuery.fn.bindAll = function(options) {
 	var $this = this;
 	jQuery.each(options, function(key, val){
-		$this.livequery(key, val);
+//		$this.livequery(key, val);
+		// for some reason does not work
+//		$(document).on(key, $this, val);
+		$this.on(key, val);
 	});
 	return this;
 }
@@ -23,7 +26,7 @@ $(function(){
 
         var listeners = {
             preLoad: function(event) {
-           
+
                     if (!$(this).swfuInstance().support.loading) {
                             alert("You need the Flash Player to use SWFUpload.");
                             return false;
