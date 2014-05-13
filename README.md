@@ -26,7 +26,7 @@ Forks
 Because this repo is imported from SVN there were no way how to create real forks on github during time this project was in SVN. So there are more than one github repos containing MultipleFileUpload.
 
 - Original: (you are here :-)
-- Ciki's fork: https://github.com/Ciki/MFU
+- Ciki's fork: https://github.com/Ciki/MultipleFileUpload/
 
 
 [example]: https://github.com/jkuchar/MultipleFileUpload-example
