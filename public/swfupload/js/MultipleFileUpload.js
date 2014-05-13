@@ -21,10 +21,15 @@ $("form").livequery("submit",function(e){
 				swfu.startUpload();
 				$('.swfuflashupload', this).bind('queueComplete',function(){
 					uploadersInQueue--;
-
-                                        if(uploadersInQueue==0){
-
-                                                form.submit()
+					if (uploadersInQueue == 0) {
+						if (useAjaxSubmit) {
+							form.submit(function (e) {
+								form.netteAjax(e);
+							});
+						}
+						form.submit();
+					}
+				})
 					}
 				})
 			} else uploadersInQueue--;
