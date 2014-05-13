@@ -29,7 +29,7 @@ $(document).on('submit', 'form', function(e){
 					});
 					form.submit();
 				}
-			}
+			};
 
 			e.stopImmediatePropagation();
 			e.preventDefault();
@@ -39,6 +39,6 @@ $(document).on('submit', 'form', function(e){
 			});
 			uploader.start();
 			fn();
-		})
+		});
 	}
 });
