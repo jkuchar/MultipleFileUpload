@@ -1,6 +1,6 @@
 var fallbackController = this;
-(function($){
-	// API: http://www.plupload.com/plupload/docs/api/index.html
+(function($) {
+	// API: http://www.plupload.com/docs/API
 
 	// Convert divs to queue widgets when the DOM is ready
 	$(function(){
@@ -11,18 +11,16 @@ var fallbackController = this;
 			url : {$uploadLink|escapeJs|noescape},
 			max_file_size : {$sizeLimit|noescape},
 			chunk_size : '5mb',
-
-			// Intentionally do not use headers, because not all interfaces allows you to send them.
-			// insted using parameters in URL or POST
-
-			// Flash settings
+			rename : true,
 			flash_swf_url : {$interface->baseUrl|escapeJs|noescape}+'/js/Moxie.swf',
-
-			// Silverlight settings
 			silverlight_xap_url : {$interface->baseUrl|escapeJs|noescape}+'/js/Moxie.xap'
+
+			// Intentionally do not use headers because not all interfaces allows you to send them.
+			// instead use parameters in URL or POST
 		});
 		uploader = $(uploader).pluploadQueue();
-		var refreshFn = function(){ // if plupload moves around page, good to recompute position of uploader
+		// if plupload moves around page, good to recompute position of uploader, @link http://www.plupload.com/docs/UI.Plupload#refresh--method
+		var refreshFn = function(){
 			uploader.refresh();
 		};
 		setInterval(refreshFn,1000);
@@ -30,7 +28,7 @@ var fallbackController = this;
 
 		uploader.bind("Error",function(){
 			fallbackController.fallback();
-		})
+		});
 	});
 
 	return true; // OK
