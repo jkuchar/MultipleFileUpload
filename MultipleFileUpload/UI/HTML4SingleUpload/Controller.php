@@ -79,7 +79,7 @@ class Controller extends \MultipleFileUpload\UI\AbstractInterface {
 	 * Renders JavaScript body of function.
 	 */
 	public function renderInitJavaScript(MultipleFileUpload $upload) {
-		return $this->createTemplate(dirname(__FILE__) . "/initJS.js")->__toString(TRUE);
+		return $this->createTemplate(dirname(__FILE__) . "/initJS.latte")->__toString(TRUE);
 	}
 
 	/**

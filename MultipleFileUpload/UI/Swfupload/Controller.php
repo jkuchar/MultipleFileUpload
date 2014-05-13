@@ -31,7 +31,7 @@ class Controller extends AbstractInterface {
 	function getBaseUrl() {
 		return parent::getBaseUrl() . "swfupload";
 	}
-	
+
 	/**
 	 * Is this upload your upload? (upload from this interface)
 	 */
@@ -80,7 +80,7 @@ class Controller extends AbstractInterface {
 	 * Renders JavaScript body of function.
 	 */
 	public function renderInitJavaScript(MultipleFileUpload $upload) {
-		$tpl = $this->createTemplate(dirname(__FILE__) . "/initJS.js");
+		$tpl = $this->createTemplate(dirname(__FILE__) . "/initJS.latte");
 		$tpl->sizeLimit = ini_get('upload_max_filesize') . 'B';
 		$tpl->token = $upload->getToken();
 		$tpl->maxFiles = $upload->maxFiles;

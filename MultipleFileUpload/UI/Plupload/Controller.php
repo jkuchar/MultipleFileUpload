@@ -30,7 +30,7 @@ class Controller extends AbstractInterface {
 	function getBaseUrl() {
 		return parent::getBaseUrl() . "plupload";
 	}
-	
+
 	/**
 	 * Is this upload your upload? (upload from this interface)
 	 */
@@ -38,7 +38,7 @@ class Controller extends AbstractInterface {
 		$req = Environment::getHttpRequest();
 		return (
 			$req->getQuery("token") !== null
-			AND 
+			AND
 			$req->getQuery("uploader") === "plupload"
 		);
 	}
@@ -51,7 +51,7 @@ class Controller extends AbstractInterface {
 		/* @var $token string */
 		$token = Environment::getHttpRequest()
 			->getQuery("token");
-		
+
 		if (empty($token)) {
 			return;
 		}
@@ -203,7 +203,7 @@ class Controller extends AbstractInterface {
 	 * This is reaction to flash related bug.
 	 * Flash has problems with "-" in ids. So
 	 * solution is simple, replace "-" with "_"
-	 * 
+	 *
 	 * @param MultipleFileUpload $upload
 	 * @return type
 	 */
@@ -224,11 +224,11 @@ class Controller extends AbstractInterface {
 	 * Renders JavaScript body of function.
 	 */
 	public function renderInitJavaScript(MultipleFileUpload $upload) {
-		$tpl = $this->createTemplate(dirname(__FILE__) . "/initJS.js");
+		$tpl = $this->createTemplate(dirname(__FILE__) . "/initJS.latte");
 		$tpl->token = $upload->getToken();
 		$tpl->sizeLimit = $upload->maxFileSize;
 		$tpl->maxFiles = $upload->maxFiles;
-		
+
 		// TODO: make creation of link nicer!
 		$baseUrl = Environment::getContext()->getService('httpRequest')->url->baseUrl;
 		$tpl->uploadLink = $baseUrl."?token=".$tpl->token."&uploader=plupload";

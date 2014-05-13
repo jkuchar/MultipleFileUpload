@@ -29,7 +29,7 @@ class Controller extends \MultipleFileUpload\UI\AbstractInterface {
 	function getBaseUrl() {
 		return parent::getBaseUrl()."uploadify";
 	}
-	
+
 	/**
 	 * Is this upload your upload? (upload from this interface)
 	 */
@@ -78,7 +78,7 @@ class Controller extends \MultipleFileUpload\UI\AbstractInterface {
 	 * Renders JavaScript body of function.
 	 */
 	public function renderInitJavaScript(MultipleFileUpload $upload) {
-		$tpl = $this->createTemplate(dirname(__FILE__) . "/initJS.js");
+		$tpl = $this->createTemplate(dirname(__FILE__) . "/initJS.latte");
 		$tpl->sizeLimit = $upload->maxFileSize;
 		$tpl->token = $upload->getToken();
 		$tpl->maxFiles = $upload->maxFiles;

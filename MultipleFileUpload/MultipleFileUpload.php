@@ -290,7 +290,8 @@ class MultipleFileUpload extends Forms\Controls\UploadControl {
 		$cnt = 1;
 		foreach ($interfaces AS $interface) {
 			$html = $interface->render($this);
-			$init = $interface->renderInitJavaScript($this);
+			// remove wrapping <script> tags
+			$init = \Nette\Utils\Strings::replace($interface->renderInitJavaScript($this), '/\s*<\/?script>\s*/');
 			$desctruct = $interface->renderDestructJavaScript($this);
 			$id = $this->getHtmlId() . "-MFUInterface-" . $interface->reflection->name;
 
