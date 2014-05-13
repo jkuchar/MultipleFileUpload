@@ -1,26 +1,15 @@
 <!-- Load Queue widget CSS and jQuery -->
-<link href="{$interface->baseUrl}/css/jquery.plupload.queue.css" rel="stylesheet" type="text/css" />
-
-<!-- Thirdparty intialization scripts, needed for the Google Gears and BrowserPlus runtimes -->
-<script type="text/javascript" src="{$interface->baseUrl}/js/gears_init.js"></script>
-<script type="text/javascript" src="http://bp.yahooapis.com/2.4.21/browserplus-min.js"></script>
+<link href="{$interface->baseUrl}/js/jquery.plupload.queue/css/jquery.plupload.queue.css" rel="stylesheet" type="text/css" />
 
 <!-- Load plupload and all it's runtimes and finally the jQuery UI queue widget -->
 {if \Nette\Environment::isProduction()}
-<script type="text/javascript" src="{$interface->baseUrl}/js/min/plupload.full.js"></script>
-<script type="text/javascript" src="{$interface->baseUrl}/js/min/jquery.plupload.queue.js"></script>
+<script type="text/javascript" src="{$interface->baseUrl}/js/plupload.full.min.js"></script>
+<script type="text/javascript" src="{$interface->baseUrl}/js/jquery.plupload.queue/jquery.plupload.queue.min.js"></script>
 {else}
-<script type="text/javascript" src="{$interface->baseUrl}/js/dev/plupload.js"></script>
-<script type="text/javascript" src="{$interface->baseUrl}/js/dev/plupload.gears.js"></script>
-<script type="text/javascript" src="{$interface->baseUrl}/js/dev/plupload.html4.js"></script>
-<script type="text/javascript" src="{$interface->baseUrl}/js/dev/plupload.html5.js"></script>
-<script type="text/javascript" src="{$interface->baseUrl}/js/dev/plupload.silverlight.js"></script>
-<script type="text/javascript" src="{$interface->baseUrl}/js/dev/plupload.flash.js"></script>
-<script type="text/javascript" src="{$interface->baseUrl}/js/dev/plupload.browserplus.js"></script>
-
-<script type="text/javascript" src="{$interface->baseUrl}/js/dev/jquery.plupload.queue.js"></script>
+<script type="text/javascript" src="{$interface->baseUrl}/js/moxie.js"></script>
+<script type="text/javascript" src="{$interface->baseUrl}/js/plupload.dev.js"></script>
+<script type="text/javascript" src="{$interface->baseUrl}/js/jquery.plupload.queue/jquery.plupload.queue.js"></script>
 {/if}
-<script type="text/javascript" src="{$interface->baseUrl}/js/cs.js"></script>
 
-
-<script type="text/javascript" src="{$interface->baseUrl}/js/MultipleFileUpload.js"></script>
+<script type="text/javascript" src="{$interface->baseUrl}/js/i18n/cs.js"></script>
+<script type="text/javascript" src="{$interface->baseUrl}/MultipleFileUpload.js"></script>
