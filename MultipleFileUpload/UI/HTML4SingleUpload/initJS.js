@@ -1,4 +1,4 @@
 (function() {
-	jQuery("#"+this.activeUI.id).parents("form").disableAjaxSubmit(); // @see nette-ajax-form.js
+	useAjaxSubmit = false;
 	return true;
 }).call(this);
