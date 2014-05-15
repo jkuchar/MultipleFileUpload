@@ -292,7 +292,7 @@ class MultipleFileUpload extends Forms\Controls\UploadControl {
 			$html = $interface->render($this);
 			$init = $interface->renderInitJavaScript($this);
 			$desctruct = $interface->renderDestructJavaScript($this);
-			$id = $this->getHtmlId() . "-MFUInterface-" . $interface->reflection->name;
+			$id = $this->getHtmlId() . "-MFUInterface-" . \Nette\Utils\Strings::webalize($interface->reflection->name);
 
 			$fallback = (object) array(
 				    "id" => $id,
