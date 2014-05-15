@@ -8,7 +8,7 @@
 
 	uploadify.uploadify({
 		auto: false,
-		buttonImage: {!=\Nette\Environment::expand("{$baseModulePath}/images/uploadify/uploadifyButton.png")|escapeJS},
+		buttonImage: {$interface->baseUrl|escapeJS|noescape} + '/imgs/uploadifyButton.png',
 		fileSizeLimit: {$sizeLimit|escapeJS|noescape},
 		formData: {
 			token: {$token|escapeJS|noescape},
@@ -21,10 +21,10 @@
 		queueID: uploadifyId + '-queue',
 		queueSizeLimit: {$maxFiles|escapeJS|noescape},
 		removeCompleted: true,
-		swf: {!=\Nette\Environment::expand("{$baseModulePath}/swf/uploadify/uploadify.swf")|escapeJS},
+		swf: {$interface->baseUrl|escapeJS|noescape} + '/swf/uploadify.swf',
 		uploader: {$backLink|escapeJS|noescape},
 		width: 70,
-        
+
 		/**
 		 * Triggered when all files in the queue have been processed.
 		onQueueComplete: function(queueData){
@@ -38,12 +38,12 @@
 		    clearQueueButton.fadeOut(500);
 		},
 		 */
-        
+
 		onClearQueue: function(queueItemCount) {
 			queue.fadeOut(500);
 			clearQueueButton.fadeOut(500);
 		},
-        
+
 		/**
 		 * Triggered for each file that successfully uploads.
 		 */
@@ -51,12 +51,12 @@
 			uploadedCount++;
 			$('#' + uploadifyId + 'Count').text('Počet nahraných súborov:' + uploadedCount);
 		},
-        
+
 		/**
 		 * Triggered for each file that is selected from the browse files dialog and added to the queue.
 		 */
 		onSelect: function(fileObj){
-            
+
 			if(fileObj.size > uploadify.uploadify('settings' , 'sizeLimit')) {
 				uploadify.trigger({
 					type: "sizeLimitExceeded",
@@ -73,7 +73,7 @@
 				uploadify.uploadify('cancel');
 				return false;
 			}
-            
+
 			queue.fadeIn(500);
 			clearQueueButton.fadeIn(500);
 			//			$("#"+uploadifyId+"Count").text(uploadify.uploadify('settings', 'queueSize')+" vybraných souborů");
@@ -88,7 +88,7 @@
 	uploadify.bind("emptyFile",function(event){
 		showMessage("soubor '" + event.fileObj.name + "' je prázdný! Bude přeskočen.");
 	});
-    
+
 	/**
 	 * Show info message to user.
 	 * @param string

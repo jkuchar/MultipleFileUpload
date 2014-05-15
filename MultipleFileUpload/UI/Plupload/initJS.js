@@ -11,10 +11,10 @@ var fallbackController = this;
 			url : {$uploadLink|escapeJs|noescape},
 			max_file_size : {$sizeLimit|noescape},
 			chunk_size : '5mb',
-			
+
 			// Intentionally do not use headers, because not all interfaces allows you to send them.
 			// insted using parameters in URL or POST
-			
+
 			// Flash settings
 			flash_swf_url : {$interface->baseUrl|escapeJs|noescape}+'/js/Moxie.swf',
 
@@ -22,13 +22,12 @@ var fallbackController = this;
 			silverlight_xap_url : {$interface->baseUrl|escapeJs|noescape}+'/js/Moxie.xap'
 		});
 		uploader = $(uploader).pluploadQueue();
-		console.log(uploader);
 		var refreshFn = function(){ // if plupload moves around page, good to recompute position of uploader
 			uploader.refresh();
 		};
 		setInterval(refreshFn,1000);
 		refreshFn();
-		
+
 		uploader.bind("Error",function(){
 			fallbackController.fallback();
 		})

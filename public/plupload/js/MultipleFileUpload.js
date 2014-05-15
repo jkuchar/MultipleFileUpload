@@ -5,7 +5,6 @@ $(document).on('submit', 'form', function(e){
 	var uploadersInQueue = multipleFileUploadFields.length;
 	if(uploadersInQueue>0){
 		multipleFileUploadFields.each(function(){
-			console.log(jQuery(this));
 			var uploader = jQuery(this).pluploadQueue();
 
 			if(uploader.state == plupload.STARTED) {
@@ -30,7 +29,7 @@ $(document).on('submit', 'form', function(e){
 					});
 					form.submit();
 				}
-			}
+			};
 
 			e.stopImmediatePropagation();
 			e.preventDefault();
@@ -40,6 +39,6 @@ $(document).on('submit', 'form', function(e){
 			});
 			uploader.start();
 			fn();
-		})
+		});
 	}
 });
