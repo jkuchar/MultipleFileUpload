@@ -1,4 +1,29 @@
-var useAjaxSubmit = true;
+// common ajax setup
+$.nette.ext({
+	before: function(xhr, settings) {
+		// do not process manually triggered xhr using $.ajax()
+		// process only form submissions
+		if (!settings.nette) {
+			return true;
+		}
+		var n = settings.nette,
+			form = n.el.closest('form')[0],
+			$submitBtn = null;
+		if (n.isSubmit || n.isImage) {
+			$submitBtn = n.el;
+		}
+
+		if (formSubmitted(form, n.e, $submitBtn) === false) {
+			return false;
+		}
+	}
+});
+
+// common non-ajax setup
+$(document).on('submit', 'form', function(e) {
+	formSubmitted(this, e);
+});
+
 
 var MFUFallbackController;
 (function(){
