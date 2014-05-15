@@ -241,10 +241,6 @@ class MultipleFileUpload extends Forms\Controls\UploadControl {
 	 * @param string $label Label
 	 */
 	public function __construct($label = NULL, $maxSelectedFiles = 25) {
-		// Monitorování
-		$this->monitor('Nette\Forms\Form');
-		//$this->monitor('Nette\Application\Presenter');
-
 		parent::__construct($label);
 
 		if (!self::$handleUploadsCalled) {
@@ -257,16 +253,6 @@ class MultipleFileUpload extends Forms\Controls\UploadControl {
 		$this->simUploadThreads = 5;
 	}
 
-	/**
-	 * Monitoring
-	 * @param mixed $component
-	 */
-	protected function attached($component) {
-		if ($component instanceof Nette\Application\UI\Form) {
-			$component->getElementPrototype()->enctype = 'multipart/form-data';
-			$component->getElementPrototype()->method = 'post';
-		}
-	}
 
 	/**
 	 * Generates control
