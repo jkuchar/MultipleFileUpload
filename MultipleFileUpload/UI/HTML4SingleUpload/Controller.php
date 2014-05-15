@@ -30,13 +30,16 @@ class Controller extends \MultipleFileUpload\UI\AbstractInterface {
 		return !(Environment::getHttpRequest()->getHeader('user-agent') === 'Shockwave Flash');
 	}
 
+
 	/**
-	 * Handles uploaded files
-	 * forwards it to model
+	 *
+	 * @param array $files
+	 * @param array $names Array of indexes of $files array representing current nesting level. E.g. if we are iterating over $files[k1][k2] then $names=[k1,k2]
 	 */
-	public function handleUploads() {
-		// Iterujeme nad přijatými soubory
-		foreach (Environment::getHttpRequest()->getFiles() AS $name => $controlValue) {
+	private function processFiles(array $files, array $names = [])
+	{
+		foreach ($files as $name => $controlValue) {
+			$names[] = $name;
 
 			// MFU vždy posílá soubory v této struktuře:
 			//
@@ -48,20 +51,35 @@ class Controller extends \MultipleFileUpload\UI\AbstractInterface {
 			//	)
 			// )
 
+			// expanded POST array with $names indexes
+			$postArr = \Nette\Utils\Arrays::getRef($_POST, $names);
 			$isFormMFU = (
 				is_array($controlValue) and
 					isset($controlValue["files"]) and
-					isset($_POST[$name]["token"])
+					isset($postArr['token'])
 			);
 
 			if($isFormMFU) {
-				$token = $_POST[$name]["token"];
+				$token = $postArr["token"];
 				foreach ($controlValue["files"] AS $file) {
 					self::processFile($token, $file);
 				}
+			// support for nested Nette\Forms\Container
+			} elseif (is_array($controlValue)) {
+				$this->processFiles($controlValue, $names);
 			}
 			// soubory, které se netýkají MFU nezpracujeme -> zpracuje si je standardním způsobem formulář
 		}
+	}
+
+
+	/**
+	 * Handles uploaded files
+	 * forwards it to model
+	 */
+	public function handleUploads() {
+		// Iterujeme nad přijatými soubory
+		$this->processFiles(Environment::getHttpRequest()->getFiles());
 		return true; // Skip all next
 	}
 
