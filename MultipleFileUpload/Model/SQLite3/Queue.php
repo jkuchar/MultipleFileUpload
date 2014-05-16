@@ -63,6 +63,7 @@ class Queue extends BaseQueue
 	}
 
 
+	// TODO: rename!!!
 	/**
 	 * Add file to queue manually
 	 * @param FileUpload $file
