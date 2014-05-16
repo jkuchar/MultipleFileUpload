@@ -170,7 +170,7 @@ class MultipleFileUpload extends Forms\Controls\UploadControl {
 	 */
 	public static function getQueuesModel() {
 		if (!self::$queuesModel) { // if nothing is set, setup sqlite model, which should work on all systems with SQLite
-			self::setQueuesModel(new Model\SQLite\Queues());
+			self::setQueuesModel(new Model\SQLite3\Queues());
 		}
 
 		if (!self::$queuesModel instanceof Model\IQueues) {
