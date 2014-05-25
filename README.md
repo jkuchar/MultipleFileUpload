@@ -17,8 +17,7 @@ For more information see [example][].
 
 Full documentation
 ------------------
-- Czech: http://addons.nette.org/cs/multiplefileupload
-- English: http://addons.nette.org/en/multiplefileupload (machine translation)
+- http://addons.nette.org/jkuchar/multiplefileupload
 
 Forks
 -----
