@@ -21,6 +21,18 @@ Installation
 For more information see [example project with this addon](https://github.com/jkuchar/MultipleFileUpload-example).
 
 
+Usage
+-----
+```php
+$f = new Form($this,$name);
+
+$f->addMultipleFileUpload("exampleUploadField1","Upload field 1", /*max num. of files*/ 20)
+  ->addRule("MultipleFileUpload::validateFilled","You must upload at least one file")
+  ->addRule("MultipleFileUpload::validateFileSize","Files you've selected are too big.", 1024); //kB
+```
+
+
+
 Full documentation
 ------------------
 - http://addons.nette.org/jkuchar/multiplefileupload
