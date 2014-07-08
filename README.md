@@ -1,18 +1,24 @@
 MultipleFileUpload
 ==================
 
-Project that allows you to upload more files to server at once using Nette Forms. You can choose from various front-end interfaces and define your own fallbacks between them, best will be used.
+MultipleFileUpload (shorter MFU) is an add-on that makes **uploading thousands of huge files piece of cake**. Just 4 simple steps and you will not need to deal with chunking, autentization of uploads or browser compatibility.
+
+Thanks to multi-backend design you can change your file storage just by changing line in documentation. Currently allows you to pick up one of these storages **SQLite3** (default), **SQLite** and **"Dibi":http://dibiphp.com/** (**MySQL**, **PostgreSQL**, MSSql, ...).
+
+This add-on also allows you to change UI library just by changing one config property. Currently are supported **PlUpload**, **Uploadify**, **SwfUpload** and standard **HTML4 form fields**. You can add more interfaces - than the best supported for client's browser will be automatically chosen.
+
 
 Demo page: http://multiplefileupload.projekty.mujserver.net/
+Composer package: https://packagist.org/packages/jkuchar/multiplefileupload
 
 Installation
 ------------
-1. Open terminal in your project
-2. `composer require jkuchar/multiplefileupload:dev-master`
-3. Copy files from libs/jkuchar/multiplefileupload/public to www/MultipleFileUpload
-4. You are done!
+1. Install [composer](https://getcomposer.org/download/) if you don't have it yet
+2. run `composer require jkuchar/multiplefileupload:1.*`
+3. Copy files from libs/jkuchar/multiplefileupload/public to www/MultipleFileUpload and [include them into your template](https://github.com/jkuchar/MultipleFileUpload-example/blob/edb0a960dea344b4b1790cfc9b30f7ecdfbd9d1c/app/templates/%40layout.latte#L33).
+4. [Register addon](https://github.com/jkuchar/MultipleFileUpload-example/blob/edb0a960dea344b4b1790cfc9b30f7ecdfbd9d1c/app/bootstrap.php#L31) and you are done!
 
-For more information see [example][].
+For more information see [example project with this addon](https://github.com/jkuchar/MultipleFileUpload-example).
 
 
 Full documentation
@@ -21,11 +27,5 @@ Full documentation
 
 Forks
 -----
+Fortunately everything important alredy has been merged back to this repo.
 
-Because this repo is imported from SVN there were no way how to create real forks on github during time this project was in SVN. So there are more than one github repos containing MultipleFileUpload.
-
-- Original: (you are here :-)
-- Ciki's fork: https://github.com/Ciki/MultipleFileUpload/
-
-
-[example]: https://github.com/jkuchar/MultipleFileUpload-example
