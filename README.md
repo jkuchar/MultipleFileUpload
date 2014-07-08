@@ -39,5 +39,5 @@ Full documentation
 
 Forks
 -----
-Fortunately everything important alredy has been merged back to this repo.
+Fortunately everything important has already been merged back to this repo.
 
