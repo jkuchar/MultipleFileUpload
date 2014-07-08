@@ -4,8 +4,16 @@
 	"license": "New BSD",
 	"authors": [
 		{
-			"name": "Jan Kuchař",
-			"homepage": "http://www.jankuchar.cz"
+			"name":     "Jan Kuchař",
+			"email":    "honza@mujserver.net",
+			"homepage": "http://www.jankuchar.cz",
+			"role":     "developer"
+		},
+		{
+			"name":     "Ciki",
+			"email":    "matula.m@gmail.com",
+			"homepage": "https://github.com/Ciki",
+			"role":     "developer"
 		}
 	],
 	"autoload": {
