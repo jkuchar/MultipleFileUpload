@@ -15,7 +15,7 @@ Installation
 ------------
 1. Install [composer](https://getcomposer.org/download/) if you don't have it yet
 2. run `composer require jkuchar/multiplefileupload:1.*`
-3. Copy files from libs/jkuchar/multiplefileupload/public to www/MultipleFileUpload and [include them into your template](https://github.com/jkuchar/MultipleFileUpload-example/blob/edb0a960dea344b4b1790cfc9b30f7ecdfbd9d1c/app/templates/%40layout.latte#L33).
+3. Copy files from libs/jkuchar/multiplefileupload/public to www/MultipleFileUpload and [include them into your template](https://github.com/jkuchar/MultipleFileUpload-example/blob/a80f234740d32dac038e105e9bc6742f52adc841/app/templates/%40layout.latte#L33).
 4. [Register addon](https://github.com/jkuchar/MultipleFileUpload-example/blob/edb0a960dea344b4b1790cfc9b30f7ecdfbd9d1c/app/bootstrap.php#L31) and you are done!
 
 For more information see [example project with this addon](https://github.com/jkuchar/MultipleFileUpload-example).
