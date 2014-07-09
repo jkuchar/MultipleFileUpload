@@ -13,7 +13,7 @@ $.nette.ext({
 			$submitBtn = n.el;
 		}
 
-		if (formSubmitted(form, n.e, $submitBtn) === false) {
+		if (form && formSubmitted(form, n.e, $submitBtn) === false) {
 			return false;
 		}
 	}
