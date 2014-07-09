@@ -73,8 +73,8 @@ class Queue extends BaseQueue
 	function addFileManually($name, $chunk, $chunks)
 	{
 		$this->query("
-            INSERT INTO files (queueID, created, name, chunk, chunks) VALUES (
-            '" . SQLite3::escapeString($this->getQueueID()) . "'," .
+		    INSERT INTO files (queueID, created, name, chunk, chunks) VALUES (
+		    '" . SQLite3::escapeString($this->getQueueID()) . "'," .
 			time() . "," .
 			"'" . SQLite3::escapeString($name) . "'," .
 			SQLite3::escapeString($chunk) . "," .
@@ -141,8 +141,9 @@ class Queue extends BaseQueue
 		$result = $this->query("SELECT * FROM files WHERE queueID = '" . SQLite3::escapeString($this->getQueueID()) . "'");
 		while (($row = $result->fetchArray(SQLITE3_ASSOC)) !== FALSE) {
 			$f = unserialize($row["data"]);
-			if (!$f instanceof FileUpload)
+			if (!$f instanceof FileUpload) {
 				continue;
+			}
 			$files[] = $f;
 		}
 		return $files;
@@ -158,8 +159,7 @@ class Queue extends BaseQueue
 		foreach ($this->getFiles() AS $file) {
 			$fileDir = dirname($file->getTemporaryFile());
 			if (realpath($fileDir) == $dir and file_exists($file->getTemporaryFile())) {
-				// Soubor smažeme poze pokud zůstal ve složce s tempy.
-				// Pokud ho už uživatel přesunul, tak mu ho mazat nebudeme.
+				// Delete file only if user leaved file in temp directory
 				@unlink($file->getTemporaryFile()); // intentionally @
 			}
 		}
@@ -175,11 +175,11 @@ class Queue extends BaseQueue
 	function getLastAccess()
 	{
 		$lastAccess = (int) $this->getQueuesModel()->getConnection()->querySingle("
-            SELECT created
-			FROM files
-			WHERE queueID = '" . SQLite3::escapeString($this->getQueueID()) . "'
-			ORDER BY created DESC
-        ");
+		    SELECT created
+				FROM files
+				WHERE queueID = '" . SQLite3::escapeString($this->getQueueID()) . "'
+				ORDER BY created DESC
+		");
 		return $lastAccess;
 	}
 

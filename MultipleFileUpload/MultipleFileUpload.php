@@ -3,7 +3,8 @@
 /**
  * MultipleFileUpload (https://github.com/jkuchar/MultipleFileUpload/)
  *
- * Copyright (c) 2013 Jan Kuchař (http://www.jankuchar.cz)
+ * Copyright (c) 2014 Jan Kuchař (https://github.com/jkuchar), Ciki (https://github.com/Ciki)
+ * and contributors https://github.com/jkuchar/MultipleFileUpload/graphs/contributors
  *
  * For the full copyright and license information, please view
  * the file license.txt that was distributed with this source code.

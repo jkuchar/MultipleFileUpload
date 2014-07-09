@@ -12,7 +12,6 @@
 
 namespace MultipleFileUpload\Model\Log;
 
-use Nette\Environment;
 use MultipleFileUpload\Model\BaseQueues;
 
 class Queues extends BaseQueues {

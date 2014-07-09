@@ -41,7 +41,7 @@ class Controller extends \MultipleFileUpload\UI\AbstractInterface {
 		foreach ($files as $name => $controlValue) {
 			$names[] = $name;
 
-			// MFU vždy posílá soubory v této struktuře:
+			// MFU sends data in this format:
 			//
 			// array(
 			//	"token" => "blablabla",
@@ -68,7 +68,8 @@ class Controller extends \MultipleFileUpload\UI\AbstractInterface {
 			} elseif (is_array($controlValue)) {
 				$this->processFiles($controlValue, $names);
 			}
-			// soubory, které se netýkají MFU nezpracujeme -> zpracuje si je standardním způsobem formulář
+			// Files that are not processed by MFU we just skip
+			// they will be processed by Nette Forms
 		}
 	}
 

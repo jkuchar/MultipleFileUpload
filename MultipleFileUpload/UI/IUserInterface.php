@@ -15,7 +15,7 @@ namespace MultipleFileUpload\UI;
 use MultipleFileUpload\MultipleFileUpload;
 
 /**
- *
+ * User Interface server representation interface
  * @author Jan Kuchař
  */
 interface IUserInterface {

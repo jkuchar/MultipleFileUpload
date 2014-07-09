@@ -97,8 +97,7 @@ class Queue extends BaseQueue {
 		foreach($this->getFiles() AS $file) {
 			$fileDir = dirname($file->getTemporaryFile());
 			if(realpath($fileDir) == $dir and file_exists($file->getTemporaryFile())) {
-				// Soubor smažeme poze pokud zůstal ve složce s tempy.
-				// Pokud ho už uživatel přesunul, tak mu ho mazat nebudeme.
+				// Delete file only if user leaved file in temp directory
 				@unlink($file->getTemporaryFile()); // intentionally @
 			}
 		}

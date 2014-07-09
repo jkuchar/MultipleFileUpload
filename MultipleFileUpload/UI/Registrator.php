@@ -16,7 +16,7 @@ use Nette\InvalidArgumentException;
 use Nette\Object;
 
 /**
- * Registrator of user interfaces
+ * Registrator of user interfaces used to set priorities of interfaces
  */
 class Registrator extends Object {
 

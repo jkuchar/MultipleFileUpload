@@ -14,12 +14,12 @@ namespace MultipleFileUpload\UI;
 
 class Template extends \Nette\Templating\FileTemplate {
 
-	function __construct($file = NULL) {
+	public function __construct($file = NULL) {
 		parent::__construct($file);
 		$this->onPrepareFilters[] = callback($this, "registerFilters");
 	}
 
-	function registerFilters() {
+	public function registerFilters() {
 		$this->registerFilter(new \Nette\Latte\Engine());
 	}
 

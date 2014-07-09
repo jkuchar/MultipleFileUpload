@@ -89,4 +89,4 @@ interface IQueue {
 	 */
 	function getUploadedFilesTemporaryPath();
 
-};
+}

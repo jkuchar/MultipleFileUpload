@@ -45,7 +45,7 @@ interface IQueues {
 
 	/**
 	 * Getts queue (if needed create)
-	 * @param string $token
+	 * @param string $id
 	 * @return IQueue
 	 */
 	function getQueue($id);
