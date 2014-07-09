@@ -22,9 +22,6 @@ use Nette\NotSupportedException;
 
 class MultipleFileUpload extends Forms\Controls\UploadControl {
 
-	const NAME = "Multiple File Uploader";
-	const VERSION = 'Unknown';
-
 	/**
 	 * Is files handle uploads called?
 	 * @var bool
