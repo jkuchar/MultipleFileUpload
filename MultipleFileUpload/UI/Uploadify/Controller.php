@@ -52,8 +52,8 @@ class Controller extends \MultipleFileUpload\UI\AbstractInterface
 			return;
 		}
 
-		/* @var $file FileUpload */
 		foreach ($this->httpRequest->getFiles() AS $file) {
+			/* @var $file \Nette\Http\FileUpload */
 			self::processFile($token, $file);
 		}
 
