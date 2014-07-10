@@ -3,7 +3,7 @@ MultipleFileUpload
 
 MultipleFileUpload (shorter MFU) is an add-on that makes **uploading thousands of huge files piece of cake**. Just 4 simple steps and you will not need to deal with chunking, autentization of uploads or browser compatibility.
 
-Thanks to multi-backend design you can change your file storage just by changing line in documentation. Currently allows you to pick up one of these storages **SQLite3** (default), **SQLite** and **"Dibi":http://dibiphp.com/** (**MySQL**, **PostgreSQL**, MSSql, ...).
+Thanks to multi-backend design you can change your file storage just by changing line in documentation. Currently allows you to pick up one of these storages **SQLite3** (default), **SQLite** and [Dibi](http://dibiphp.com/) (**MySQL**, **PostgreSQL**, MSSql, ...).
 
 This add-on also allows you to change UI library just by changing one config property. Currently are supported **PlUpload**, **Uploadify**, **SwfUpload** and standard **HTML4 form fields**. You can add more interfaces - than the best supported for client's browser will be automatically chosen.
 
