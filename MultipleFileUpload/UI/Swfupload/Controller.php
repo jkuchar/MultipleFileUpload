@@ -37,10 +37,7 @@ class Controller extends AbstractInterface
 	 */
 	public function isThisYourUpload()
 	{
-		return (
-			$this->httpRequest->getHeader('user-agent') === 'Shockwave Flash'
-			AND $this->httpRequest->getPost('sender') === "MFU-Swfupload"
-			);
+		return $this->httpRequest->getPost('sender') === "MFU-Swfupload";
 	}
 
 
