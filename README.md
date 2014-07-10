@@ -27,8 +27,8 @@ Usage
 $f = new Form($this,$name);
 
 $f->addMultipleFileUpload("exampleUploadField1","Upload field 1", /*max num. of files*/ 20)
-  ->addRule("MultipleFileUpload::validateFilled","You must upload at least one file")
-  ->addRule("MultipleFileUpload::validateFileSize","Files you've selected are too big.", 1024); //kB
+  ->addRule('MultipleFileUpload\MultipleFileUpload::validateFilled',"You must upload at least one file")
+  ->addRule('MultipleFileUpload\MultipleFileUpload::validateFileSize',"Files you've selected are too big.", 1024); //kB
 ```
 
 
