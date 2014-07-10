@@ -37,7 +37,7 @@ class Controller extends \MultipleFileUpload\UI\AbstractInterface
 		return (
 			$this->httpRequest->getHeader('user-agent') === 'Shockwave Flash'
 			AND $this->httpRequest->getPost('sender') === "MFU-Uploadify"
-			);
+		);
 	}
 
 
