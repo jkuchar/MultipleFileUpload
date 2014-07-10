@@ -14,7 +14,6 @@ namespace MultipleFileUpload\UI\Swfupload;
 
 use MultipleFileUpload\MultipleFileUpload,
 	MultipleFileUpload\UI\AbstractInterface,
-	Nette\Environment,
 	Nette\Http\FileUpload;
 
 /**
@@ -41,9 +40,8 @@ class Controller extends AbstractInterface
 	public function isThisYourUpload()
 	{
 		return (
-			Environment::getHttpRequest()->getHeader('user-agent') === 'Shockwave Flash'
-			AND isSet($_POST["sender"])
-			AND $_POST["sender"] == "MFU-Swfupload"
+			$this->httpRequest->getHeader('user-agent') === 'Shockwave Flash'
+			AND $this->httpRequest->getPost('sender') === "MFU-Swfupload"
 			);
 	}
 
@@ -54,15 +52,13 @@ class Controller extends AbstractInterface
 	 */
 	public function handleUploads()
 	{
-		if (!isset($_POST["token"])) {
+		$token = $this->httpRequest->getPost('token');
+		if (!$token) {
 			return;
 		}
 
-		/* @var $token string */
-		$token = $_POST["token"];
-
 		/* @var $file FileUpload */
-		foreach (Environment::getHttpRequest()->getFiles() AS $file) {
+		foreach ($this->httpRequest->getFiles() AS $file) {
 			self::processFile($token, $file);
 		}
 

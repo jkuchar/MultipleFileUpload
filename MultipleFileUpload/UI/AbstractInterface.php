@@ -14,6 +14,7 @@ namespace MultipleFileUpload\UI;
 use MultipleFileUpload\MultipleFileUpload,
 	Nette\Environment,
 	Nette\Http\FileUpload,
+	Nette\Http\Request,
 	Nette\Object,
 	Nette\Utils\Callback;
 
@@ -22,6 +23,15 @@ use MultipleFileUpload\MultipleFileUpload,
  */
 abstract class AbstractInterface extends Object implements IUserInterface
 {
+	/** @var Request */
+	protected $httpRequest;
+
+
+	public function __construct()
+	{
+		$this->httpRequest = Environment::getHttpRequest();
+	}
+
 
 	/**
 	 * Gets interface base url
@@ -69,7 +79,7 @@ abstract class AbstractInterface extends Object implements IUserInterface
 	{
 		$template = new Template($file);
 
-		$template->baseUrl = Environment::getHttpRequest()->url->baseUrl;
+		$template->baseUrl = $this->httpRequest->url->baseUrl;
 		$template->basePath = rtrim($template->baseUrl, '/');
 		$template->interface = $this;
 

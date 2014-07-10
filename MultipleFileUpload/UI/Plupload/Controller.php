@@ -13,7 +13,6 @@ namespace MultipleFileUpload\UI\Plupload;
 
 use MultipleFileUpload\MultipleFileUpload,
 	MultipleFileUpload\UI\AbstractInterface,
-	Nette\Environment,
 	Nette\Http\FileUpload;
 
 /**
@@ -39,7 +38,7 @@ class Controller extends AbstractInterface
 	 */
 	public function isThisYourUpload()
 	{
-		$req = Environment::getHttpRequest();
+		$req = $this->httpRequest;
 		return (
 			$req->getQuery("token") !== null
 			AND
@@ -55,8 +54,7 @@ class Controller extends AbstractInterface
 	public function handleUploads()
 	{
 		/* @var $token string */
-		$token = Environment::getHttpRequest()
-			->getQuery("token");
+		$token = $this->httpRequest->getQuery("token");
 
 		if (empty($token)) {
 			return;
@@ -194,7 +192,7 @@ class Controller extends AbstractInterface
 		die('{"jsonrpc" : "2.0", "result" : null, "id" : "id"}');
 
 		/* @var $file FileUpload */
-		/* foreach(Environment::getHttpRequest()->getFiles() AS $file) {
+		/* foreach($this->httpRequest->getFiles() AS $file) {
 		  self::processFile($token, $file);
 		  }
 
@@ -242,7 +240,7 @@ class Controller extends AbstractInterface
 		$tpl->maxFiles = $upload->maxFiles;
 
 		// TODO: make creation of link nicer!
-		$baseUrl = Environment::getContext()->getService('httpRequest')->url->baseUrl;
+		$baseUrl = $this->httpRequest->url->baseUrl;
 		$tpl->uploadLink = $baseUrl . "?token=" . $tpl->token . "&uploader=plupload";
 		$tpl->id = $this->getHtmlIdFlashCompatible($upload);
 		return $tpl->__toString(TRUE);

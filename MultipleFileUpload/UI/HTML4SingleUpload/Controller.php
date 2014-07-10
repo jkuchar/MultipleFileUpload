@@ -12,7 +12,6 @@
 namespace MultipleFileUpload\UI\HTML4SingleUpload;
 
 use MultipleFileUpload\MultipleFileUpload,
-	Nette\Environment,
 	Nette\Utils\Arrays;
 
 /**
@@ -28,7 +27,7 @@ class Controller extends \MultipleFileUpload\UI\AbstractInterface
 	 */
 	public function isThisYourUpload()
 	{
-		return !(Environment::getHttpRequest()->getHeader('user-agent') === 'Shockwave Flash');
+		return !($this->httpRequest->getHeader('user-agent') === 'Shockwave Flash');
 	}
 
 
@@ -52,7 +51,7 @@ class Controller extends \MultipleFileUpload\UI\AbstractInterface
 			//	)
 			// )
 			// expanded POST array with $names indexes
-			$postArr = Arrays::getRef($_POST, $names);
+			$postArr = Arrays::getRef($this->httpRequest->getPost(), $names);
 			$isFormMFU = (
 				is_array($controlValue) and
 				isset($controlValue["files"]) and
@@ -81,7 +80,7 @@ class Controller extends \MultipleFileUpload\UI\AbstractInterface
 	public function handleUploads()
 	{
 		// Iterate over all received files
-		$this->processFiles(Environment::getHttpRequest()->getFiles());
+		$this->processFiles($this->httpRequest->getFiles());
 		return true; // Skip all next
 	}
 
