@@ -120,7 +120,7 @@ class Queues extends BaseQueues
 
 
 	/**
-	 * Factory for MFUQueueSQLite
+	 * Queue factory.
 	 * @param string $queueID
 	 * @return Queue
 	 */

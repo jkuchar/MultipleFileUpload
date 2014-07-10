@@ -89,7 +89,7 @@ class Queues extends BaseQueues
 
 
 	/**
-	 * Factory for MFUQueueDibi
+	 * Queue factory.
 	 * @param string $queueID
 	 * @return Queue
 	 */

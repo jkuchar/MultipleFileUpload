@@ -213,7 +213,7 @@ class MultipleFileUpload extends UploadControl
 	public static function getUIRegistrator()
 	{
 		if (!self::$interfaceRegistrator instanceof Registrator) {
-			throw new InvalidStateException("Interface registrator is not instance of MFUUIRegistrator!");
+			throw new InvalidStateException("Interface registrator is not instance of MultipleFileUpload\UI\Registrator!");
 		}
 		return self::$interfaceRegistrator;
 	}

@@ -16,8 +16,6 @@ use MultipleFileUpload\MultipleFileUpload,
 	Nette\Http\FileUpload;
 
 /**
- * Description of MFUUIHTML4SingleUpload
- *
  * @author Jan Kuchař
  */
 class Controller extends AbstractInterface

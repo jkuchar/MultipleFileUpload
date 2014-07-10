@@ -15,7 +15,7 @@ use Nette\InvalidStateException,
 	Nette\Object;
 
 /**
- * @property IMFUQueuesModel $queuesModel
+ * @property IQueues $queuesModel
  * @property string $queueID
  */
 abstract class BaseQueue extends Object implements IQueue

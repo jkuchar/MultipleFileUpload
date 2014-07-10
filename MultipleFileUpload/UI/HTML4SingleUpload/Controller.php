@@ -15,8 +15,6 @@ use MultipleFileUpload\MultipleFileUpload,
 	Nette\Utils\Arrays;
 
 /**
- * Description of MFUUIHTML4SingleUpload
- *
  * @author Jan Kuchař
  */
 class Controller extends \MultipleFileUpload\UI\AbstractInterface

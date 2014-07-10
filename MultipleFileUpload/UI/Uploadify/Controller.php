@@ -14,8 +14,6 @@ namespace MultipleFileUpload\UI\Uploadify;
 use MultipleFileUpload\MultipleFileUpload;
 
 /**
- * Description of MFUUIUploadify
- *
  * @author Jan Kuchař
  */
 class Controller extends \MultipleFileUpload\UI\AbstractInterface

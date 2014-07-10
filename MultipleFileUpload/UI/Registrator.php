@@ -26,7 +26,7 @@ class Registrator extends Object
 	{
 		if (is_object($interface)) {
 			if (!$interface instanceof IUserInterface) {
-				throw new InvalidArgumentException("Interface must implement MFUUIInterface!");
+				throw new InvalidArgumentException("Interface must implement MultipleFileUpload\UI\IUserInterface!");
 			}
 			$this->interfaces[] = $interface;
 		} elseif (is_string($interface)) {

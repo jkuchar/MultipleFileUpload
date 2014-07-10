@@ -17,8 +17,6 @@ use MultipleFileUpload\MultipleFileUpload,
 	Nette\Http\FileUpload;
 
 /**
- * Description of MFUUISwfupload
- *
  * @author Roman Vykuka, Jan Kuchař
  */
 class Controller extends AbstractInterface
