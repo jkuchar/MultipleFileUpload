@@ -34,10 +34,8 @@ class Controller extends \MultipleFileUpload\UI\AbstractInterface
 	 */
 	public function isThisYourUpload()
 	{
-		return (
-			$this->httpRequest->getHeader('user-agent') === 'Shockwave Flash'
-			AND $this->httpRequest->getPost('sender') === "MFU-Uploadify"
-		);
+		// @see initJS.latte
+		return $this->httpRequest->getPost('sender') === "MFU-Uploadify"; 
 	}
 
 
