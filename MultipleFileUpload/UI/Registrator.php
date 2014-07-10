@@ -9,20 +9,21 @@
  * the file license.txt that was distributed with this source code.
  */
 
-
 namespace MultipleFileUpload\UI;
 
-use Nette\InvalidArgumentException;
-use Nette\Object;
+use Nette\InvalidArgumentException,
+	Nette\Object;
 
 /**
  * Registrator of user interfaces used to set priorities of interfaces
  */
-class Registrator extends Object {
-
+class Registrator extends Object
+{
 	public $interfaces = array();
 
-	public function register($interface) {
+
+	public function register($interface)
+	{
 		if (is_object($interface)) {
 			if (!$interface instanceof IUserInterface) {
 				throw new InvalidArgumentException("Interface must implement MFUUIInterface!");
@@ -37,12 +38,16 @@ class Registrator extends Object {
 		return $this;
 	}
 
-	public function clear() {
+
+	public function clear()
+	{
 		$this->interfaces = array();
 		return $this;
 	}
 
-	public function getInterfaces() {
+
+	public function getInterfaces()
+	{
 		$interfaces = $this->interfaces;
 		foreach ($interfaces AS $key => $interface) {
 			if (is_string($interface)) {
@@ -55,5 +60,6 @@ class Registrator extends Object {
 		$this->interfaces = $interfaces;
 		return array_reverse($interfaces);
 	}
+
 
 }

@@ -9,29 +9,33 @@
  * the file license.txt that was distributed with this source code.
  */
 
-
 namespace MultipleFileUpload\Model\Log;
 
-use MultipleFileUpload\Model\BaseQueues;
+use MultipleFileUpload\Model\BaseQueues,
+	Tracy\Debugger;
 
-class Queues extends BaseQueues {
+class Queues extends BaseQueues
+{
 
 	/**
 	 * Initializes driver
 	 */
-	function initialize() {
+	function initialize()
+	{
 		$a = func_get_args();
-		Debugger::log(__CLASS__.": ".__METHOD__."; args: ".print_r($a, true));
+		Debugger::log(__CLASS__ . ": " . __METHOD__ . "; args: " . print_r($a, true));
 	}
+
 
 	/**
 	 * Gets queue
 	 * @param string $token
 	 * @return Queue
 	 */
-	function getQueue($token) {
+	function getQueue($token)
+	{
 		$a = func_get_args();
-		Debugger::log(__CLASS__.": ".__METHOD__."; args: ".print_r($a, true));
+		Debugger::log(__CLASS__ . ": " . __METHOD__ . "; args: " . print_r($a, true));
 
 		$q = new Queue();
 		$q->setQueueID($token);
@@ -39,17 +43,22 @@ class Queues extends BaseQueues {
 		return $q;
 	}
 
-	function getQueues() {
+
+	function getQueues()
+	{
 		$a = func_get_args();
-		Debugger::log(__CLASS__.": ".__METHOD__."; args: ".print_r($a, true));
+		Debugger::log(__CLASS__ . ": " . __METHOD__ . "; args: " . print_r($a, true));
 	}
+
 
 	/**
 	 * Executes cleanup
 	 */
-	function cleanup() {
+	function cleanup()
+	{
 		$a = func_get_args();
-		Debugger::log(__CLASS__.": ".__METHOD__."; args: ".print_r($a, true));
+		Debugger::log(__CLASS__ . ": " . __METHOD__ . "; args: " . print_r($a, true));
 	}
+
 
 }

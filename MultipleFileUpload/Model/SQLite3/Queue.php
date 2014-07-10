@@ -9,8 +9,7 @@
  * For the full copyright and license information, please view
  * the file license.txt that was distributed with this source code.
  */
- 
- 
+
 namespace MultipleFileUpload\Model\SQLite3;
 
 use MultipleFileUpload\Model\BaseQueue,
@@ -132,7 +131,7 @@ class Queue extends BaseQueue
 
 	/**
 	 * Get files
-	 * @return array of \Nette\Http\FileUpload
+	 * @return FileUpload[]
 	 */
 	function getFiles()
 	{

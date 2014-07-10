@@ -9,45 +9,51 @@
  * the file license.txt that was distributed with this source code.
  */
 
-
 namespace MultipleFileUpload\UI\Plupload;
 
-use MultipleFileUpload\MultipleFileUpload;
-use MultipleFileUpload\UI\AbstractInterface;
-use Nette\Environment;
+use MultipleFileUpload\MultipleFileUpload,
+	MultipleFileUpload\UI\AbstractInterface,
+	Nette\Environment,
+	Nette\Http\FileUpload;
 
 /**
  * Description of MFUUIHTML4SingleUpload
  *
  * @author Jan Kuchař
  */
-class Controller extends AbstractInterface {
+class Controller extends AbstractInterface
+{
 
 	/**
 	 * Gets interface base url
 	 * @return type string
 	 */
-	function getBaseUrl() {
+	function getBaseUrl()
+	{
 		return parent::getBaseUrl() . "plupload";
 	}
+
 
 	/**
 	 * Is this upload your upload? (upload from this interface)
 	 */
-	public function isThisYourUpload() {
+	public function isThisYourUpload()
+	{
 		$req = Environment::getHttpRequest();
 		return (
 			$req->getQuery("token") !== null
 			AND
 			$req->getQuery("uploader") === "plupload"
-		);
+			);
 	}
+
 
 	/**
 	 * Handles uploaded files
 	 * forwards it to model
 	 */
-	public function handleUploads() {
+	public function handleUploads()
+	{
 		/* @var $token string */
 		$token = Environment::getHttpRequest()
 			->getQuery("token");
@@ -164,20 +170,20 @@ class Controller extends AbstractInterface {
 				die('{"jsonrpc" : "2.0", "error" : {"code": 102, "message": "Failed to open output stream."}, "id" : "id"}');
 		}
 
-		if($chunk == 0) {
-			$queueModel->addFileManually($fileName, $chunk+1,$chunks);
+		if ($chunk == 0) {
+			$queueModel->addFileManually($fileName, $chunk + 1, $chunks);
 		}
 		$file = null;
 		$nonChunkedTransfer = ($chunk == 0 AND $chunks == 0);
-		$lastChunk = ($chunk+1) == $chunks;
-		if($lastChunk OR $nonChunkedTransfer) {
+		$lastChunk = ($chunk + 1) == $chunks;
+		if ($lastChunk OR $nonChunkedTransfer) {
 			// Done
-			$file = new \Nette\Http\FileUpload(array(
-			    'name' => $fileNameOriginal,
-			    'type' => "",
-			    'size' => filesize($filePath),
-			    'tmp_name' => $filePath,
-			    'error' => UPLOAD_ERR_OK
+			$file = new FileUpload(array(
+				'name' => $fileNameOriginal,
+				'type' => "",
+				'size' => filesize($filePath),
+				'tmp_name' => $filePath,
+				'error' => UPLOAD_ERR_OK
 			));
 		}
 		if ($file OR $chunk > 0) {
@@ -187,7 +193,7 @@ class Controller extends AbstractInterface {
 		// Return JSON-RPC response
 		die('{"jsonrpc" : "2.0", "result" : null, "id" : "id"}');
 
-		/* @var $file Nette\Http\FileUpload */
+		/* @var $file FileUpload */
 		/* foreach(Environment::getHttpRequest()->getFiles() AS $file) {
 		  self::processFile($token, $file);
 		  }
@@ -199,6 +205,7 @@ class Controller extends AbstractInterface {
 		  exit; */
 	}
 
+
 	/**
 	 * This is reaction to flash related bug.
 	 * Flash has problems with "-" in ids. So
@@ -207,23 +214,28 @@ class Controller extends AbstractInterface {
 	 * @param MultipleFileUpload $upload
 	 * @return type
 	 */
-	function getHtmlIdFlashCompatible(MultipleFileUpload $upload) {
+	function getHtmlIdFlashCompatible(MultipleFileUpload $upload)
+	{
 		return str_replace("-", "_", $upload->getHtmlId() . "-box");
 	}
+
 
 	/**
 	 * Renders interface to <div>
 	 */
-	public function render(MultipleFileUpload $upload) {
+	public function render(MultipleFileUpload $upload)
+	{
 		$template = $this->createTemplate(dirname(__FILE__) . "/html.latte");
 		$template->id = $this->getHtmlIdFlashCompatible($upload);
 		return $template->__toString(TRUE);
 	}
 
+
 	/**
 	 * Renders JavaScript body of function.
 	 */
-	public function renderInitJavaScript(MultipleFileUpload $upload) {
+	public function renderInitJavaScript(MultipleFileUpload $upload)
+	{
 		$tpl = $this->createTemplate(dirname(__FILE__) . "/initJS.latte");
 		$tpl->token = $upload->getToken();
 		$tpl->sizeLimit = $upload->maxFileSize;
@@ -231,23 +243,28 @@ class Controller extends AbstractInterface {
 
 		// TODO: make creation of link nicer!
 		$baseUrl = Environment::getContext()->getService('httpRequest')->url->baseUrl;
-		$tpl->uploadLink = $baseUrl."?token=".$tpl->token."&uploader=plupload";
+		$tpl->uploadLink = $baseUrl . "?token=" . $tpl->token . "&uploader=plupload";
 		$tpl->id = $this->getHtmlIdFlashCompatible($upload);
 		return $tpl->__toString(TRUE);
 	}
 
+
 	/**
 	 * Renders JavaScript body of function.
 	 */
-	public function renderDestructJavaScript(MultipleFileUpload $upload) {
+	public function renderDestructJavaScript(MultipleFileUpload $upload)
+	{
 		return $this->createTemplate(dirname(__FILE__) . "/destructJS.js")->__toString(TRUE);
 	}
+
 
 	/**
 	 * Renders set-up tags to <head> attribute
 	 */
-	public function renderHeadSection() {
+	public function renderHeadSection()
+	{
 		return $this->createTemplate(dirname(__FILE__) . "/head.latte")->__toString(TRUE);
 	}
+
 
 }

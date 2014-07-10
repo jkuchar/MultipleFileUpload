@@ -9,37 +9,39 @@
  * the file license.txt that was distributed with this source code.
  */
 
-
 namespace MultipleFileUpload\Model;
 
 use Nette\Object;
-
 
 /**
  * @property int $lifeTime Life time
  * @property int $cleanInterval Clean interval
  */
-abstract class BaseQueues extends Object implements IQueues {
-
+abstract class BaseQueues extends Object implements IQueues
+{
 	/**
 	 * Life time
 	 * @var int
 	 */
 	private $lifeTime;
 
+
 	/**
 	 * Gets life time of file
 	 * @return int
 	 */
-	function getLifeTime() {
+	function getLifeTime()
+	{
 		return $this->lifeTime;
 	}
+
 
 	/**
 	 * Sets life time of file
 	 * @param int $time
 	 */
-	function setLifeTime($time) {
+	function setLifeTime($time)
+	{
 		$this->lifeTime = $time;
 		return $this;
 	}
@@ -51,21 +53,26 @@ abstract class BaseQueues extends Object implements IQueues {
 	 */
 	private $cleanInterval;
 
+
 	/**
 	 * Gets cleaning interval
 	 * @return int
 	 */
-	function getCleanInterval() {
+	function getCleanInterval()
+	{
 		return $this->cleanInterval;
 	}
+
 
 	/**
 	 * Sets cleaning interval
 	 * @param int $interval
 	 */
-	function setCleanInterval($interval) {
+	function setCleanInterval($interval)
+	{
 		$this->cleanInterval = $interval;
 		return $this;
 	}
+
 
 }

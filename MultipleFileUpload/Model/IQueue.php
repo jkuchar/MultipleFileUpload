@@ -9,12 +9,13 @@
  * the file license.txt that was distributed with this source code.
  */
 
-
 namespace MultipleFileUpload\Model;
 
-use Nette\Http\FileUpload;
+use MultipleFileUpload\Model\IQueues,
+	Nette\Http\FileUpload;
 
-interface IQueue {
+interface IQueue
+{
 
 	/**
 	 * Gets queues model
@@ -63,7 +64,7 @@ interface IQueue {
 	 * @param type $chunk
 	 * @param type $chunks
 	 */
-	function addFileManually($name, $chunk,$chunks);
+	function addFileManually($name, $chunk, $chunks);
 
 	/**
 	 * Updates file information (useful when processing chunked upload)
@@ -75,7 +76,7 @@ interface IQueue {
 
 	/**
 	 * Gets all files in queue
-	 * @return array of FileUpload
+	 * @return FileUpload[]
 	 */
 	function getFiles();
 
@@ -88,5 +89,4 @@ interface IQueue {
 	 * Gets WRITABLE path to write temps of this upload queue
 	 */
 	function getUploadedFilesTemporaryPath();
-
 }

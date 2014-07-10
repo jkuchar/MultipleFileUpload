@@ -9,10 +9,10 @@
  * the file license.txt that was distributed with this source code.
  */
 
-
 namespace MultipleFileUpload\Model;
 
-interface IQueues {
+interface IQueues
+{
 
 	/**
 	 * Gets life time of file

@@ -9,7 +9,6 @@
  * the file license.txt that was distributed with this source code.
  */
 
-
 namespace MultipleFileUpload\UI;
 
 use MultipleFileUpload\MultipleFileUpload;
@@ -18,7 +17,8 @@ use MultipleFileUpload\MultipleFileUpload;
  * User Interface server representation interface
  * @author Jan Kuchař
  */
-interface IUserInterface {
+interface IUserInterface
+{
 
 	/**
 	 * Is this upload your upload? (upload from this interface)
@@ -50,5 +50,4 @@ interface IUserInterface {
 	 * Renders set-up tags to <head> attribute
 	 */
 	public function renderHeadSection();
-
 }

@@ -9,7 +9,6 @@
  * the file license.txt that was distributed with this source code.
  */
 
-
 namespace MultipleFileUpload\UI\Uploadify;
 
 use MultipleFileUpload\MultipleFileUpload,
@@ -20,20 +19,24 @@ use MultipleFileUpload\MultipleFileUpload,
  *
  * @author Jan Kuchař
  */
-class Controller extends \MultipleFileUpload\UI\AbstractInterface {
+class Controller extends \MultipleFileUpload\UI\AbstractInterface
+{
 
 	/**
 	 * Gets interface base url
 	 * @return type string
 	 */
-	function getBaseUrl() {
-		return parent::getBaseUrl()."uploadify";
+	function getBaseUrl()
+	{
+		return parent::getBaseUrl() . "uploadify";
 	}
+
 
 	/**
 	 * Is this upload your upload? (upload from this interface)
 	 */
-	public function isThisYourUpload() {
+	public function isThisYourUpload()
+	{
 		return (
 			Environment::getHttpRequest()->getHeader('user-agent') === 'Shockwave Flash'
 			AND isSet($_POST["sender"])
@@ -41,11 +44,13 @@ class Controller extends \MultipleFileUpload\UI\AbstractInterface {
 			);
 	}
 
+
 	/**
 	 * Handles uploaded files
 	 * forwards it to model
 	 */
-	public function handleUploads() {
+	public function handleUploads()
+	{
 		if (!isset($_POST["token"])) {
 			return;
 		}
@@ -65,19 +70,23 @@ class Controller extends \MultipleFileUpload\UI\AbstractInterface {
 		exit;
 	}
 
+
 	/**
 	 * Renders interface to <div>
 	 */
-	public function render(MultipleFileUpload $upload) {
+	public function render(MultipleFileUpload $upload)
+	{
 		$template = $this->createTemplate(dirname(__FILE__) . "/html.latte");
 		$template->uploadifyId = $upload->getHtmlId() . "-uploadifyBox";
 		return $template->__toString(TRUE);
 	}
 
+
 	/**
 	 * Renders JavaScript body of function.
 	 */
-	public function renderInitJavaScript(MultipleFileUpload $upload) {
+	public function renderInitJavaScript(MultipleFileUpload $upload)
+	{
 		$tpl = $this->createTemplate(dirname(__FILE__) . "/initJS.latte");
 		$tpl->sizeLimit = $upload->maxFileSize;
 		$tpl->token = $upload->getToken();
@@ -88,18 +97,23 @@ class Controller extends \MultipleFileUpload\UI\AbstractInterface {
 		return $tpl->__toString(TRUE);
 	}
 
+
 	/**
 	 * Renders JavaScript body of function.
 	 */
-	public function renderDestructJavaScript(MultipleFileUpload $upload) {
+	public function renderDestructJavaScript(MultipleFileUpload $upload)
+	{
 		return $this->createTemplate(dirname(__FILE__) . "/destructJS.js")->__toString(TRUE);
 	}
+
 
 	/**
 	 * Renders set-up tags to <head> attribute
 	 */
-	public function renderHeadSection() {
+	public function renderHeadSection()
+	{
 		return $this->createTemplate(dirname(__FILE__) . "/head.latte")->__toString(TRUE);
 	}
+
 
 }

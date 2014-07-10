@@ -9,25 +9,29 @@
  * the file license.txt that was distributed with this source code.
  */
 
-
 namespace MultipleFileUpload\UI;
 
 use MultipleFileUpload\MultipleFileUpload,
+	Nette\Environment,
 	Nette\Http\FileUpload,
-	Nette\Object;
+	Nette\Object,
+	Nette\Utils\Callback;
 
 /**
  * Abstract UI Controller
  */
-abstract class AbstractInterface extends Object implements IUserInterface {
+abstract class AbstractInterface extends Object implements IUserInterface
+{
 
 	/**
 	 * Gets interface base url
 	 * @return type string
 	 */
-	function getBaseUrl() {
+	function getBaseUrl()
+	{
 		return MultipleFileUpload::$baseWWWRoot;
 	}
+
 
 	/**
 	 * Process single file
@@ -35,7 +39,8 @@ abstract class AbstractInterface extends Object implements IUserInterface {
 	 * @param FileUpload $file
 	 * @return bool
 	 */
-	function processFile($token, $file) {
+	function processFile($token, $file)
+	{
 		// Why not in one condition?
 		// @see http://forum.nettephp.com/cs/viewtopic.php?pid=29556#p29556
 		if (!$file instanceof FileUpload) {
@@ -56,13 +61,15 @@ abstract class AbstractInterface extends Object implements IUserInterface {
 		return $isValid;
 	}
 
+
 	/**
 	 * @return Template
 	 */
-	protected function createTemplate($file = null) {
+	protected function createTemplate($file = null)
+	{
 		$template = new Template($file);
 
-		$template->baseUrl = \Nette\Environment::getHttpRequest()->url->baseUrl;
+		$template->baseUrl = Environment::getHttpRequest()->url->baseUrl;
 		$template->basePath = rtrim($template->baseUrl, '/');
 		$template->interface = $this;
 
@@ -70,5 +77,6 @@ abstract class AbstractInterface extends Object implements IUserInterface {
 
 		return $template;
 	}
+
 
 }

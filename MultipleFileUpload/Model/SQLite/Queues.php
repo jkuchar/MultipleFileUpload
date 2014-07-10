@@ -9,7 +9,6 @@
  * the file license.txt that was distributed with this source code.
  */
 
-
 namespace MultipleFileUpload\Model\SQLite;
 
 use MultipleFileUpload\Model\BaseQueues,
@@ -17,8 +16,8 @@ use MultipleFileUpload\Model\BaseQueues,
 	Nette\Environment,
 	Nette\InvalidStateException;
 
-class Queues extends BaseQueues {
-
+class Queues extends BaseQueues
+{
 	/**
 	 * @var \SQLiteDatabase
 	 */
@@ -36,25 +35,29 @@ class Queues extends BaseQueues {
 	 */
 	public static $uploadsTempDir;
 
+
 	/**
 	 * Initializes driver
 	 */
-	function initialize() {
+	function initialize()
+	{
 
 	}
 
+
 	// <editor-fold defaultstate="collapsed" desc="Database functions">
 
-	function getConnection() {
-		if(!$this->connection) {
+	function getConnection()
+	{
+		if (!$this->connection) {
 			$this->connection = $this->openDB();
 
 			// load database
-			if(filesize(self::$databasePath) == 0) {
+			if (filesize(self::$databasePath) == 0) {
 				//$this->beginTransaction();
-				$this->connection->queryExec(file_get_contents(dirname(__FILE__)."/setupDB.sql"),$error);
-				if($error) {
-					throw new InvalidStateException("Can't create SQLite database: ".$error);
+				$this->connection->queryExec(file_get_contents(dirname(__FILE__) . "/setupDB.sql"), $error);
+				if ($error) {
+					throw new InvalidStateException("Can't create SQLite database: " . $error);
 				}
 				//$this->endTransaction();
 			}
@@ -62,41 +65,47 @@ class Queues extends BaseQueues {
 		return $this->connection;
 	}
 
+
 	/**
 	 * Executes query
 	 * @param string $sql
 	 * @return SQLiteResult
 	 * @throws InvalidStateException
 	 */
-	function query($sql) {
-		$r = $this->getConnection()->query($sql,SQLITE_ASSOC, $error);
-		if($error) {
-			throw new InvalidStateException("Can't execute queury: '".$sql."'. error: ".$error);
+	function query($sql)
+	{
+		$r = $this->getConnection()->query($sql, SQLITE_ASSOC, $error);
+		if ($error) {
+			throw new InvalidStateException("Can't execute queury: '" . $sql . "'. error: " . $error);
 		}
 		return $r;
 	}
 
-	/*function beginTransaction() {
-		$this->query("BEGIN TRANSACTION");
-	}
 
-	function endTransaction() {
-		$this->query("END TRANSACTION");
-	}*/
+	/* function beginTransaction() {
+	  $this->query("BEGIN TRANSACTION");
+	  }
+
+	  function endTransaction() {
+	  $this->query("END TRANSACTION");
+	  } */
 
 	/**
 	 * Open SQLite file
 	 * @return SQLiteDatabase
 	 * @throws InvalidStateException
 	 */
-	function openDB() {
+	function openDB()
+	{
 
-		if(!($connection = new \SQLiteDatabase(self::$databasePath, 0777, $error))) {
-			throw new InvalidStateException("Can't create sqlite database: ".$error);
+		if (!($connection = new \SQLiteDatabase(self::$databasePath, 0777, $error))) {
+			throw new InvalidStateException("Can't create sqlite database: " . $error);
 		}
 
 		return $connection;
 	}
+
+
 	// </editor-fold>
 
 	/**
@@ -104,16 +113,19 @@ class Queues extends BaseQueues {
 	 * @param string $id
 	 * @return Queue
 	 */
-	function getQueue($id) {
+	function getQueue($id)
+	{
 		return $this->createQueueObj($id);
 	}
+
 
 	/**
 	 * Factory for MFUQueueSQLite
 	 * @param string $queueID
 	 * @return Queue
 	 */
-	function createQueueObj($queueID) {
+	function createQueueObj($queueID)
+	{
 		$queue = new Queue();
 		$queue->setQueuesModel($this);
 		$queue->setQueueID($queueID);
@@ -121,13 +133,15 @@ class Queues extends BaseQueues {
 		return $queue;
 	}
 
+
 	/**
 	 * Executes cleanup
 	 */
-	function cleanup() {
+	function cleanup()
+	{
 		$this->query("BEGIN TRANSACTION");
-		foreach($this->getQueues() AS $queue) {
-			if($queue->getLastAccess() < time() - $this->getLifeTime()) {
+		foreach ($this->getQueues() AS $queue) {
+			if ($queue->getLastAccess() < time() - $this->getLifeTime()) {
 				$queue->delete();
 			}
 		}
@@ -137,35 +151,39 @@ class Queues extends BaseQueues {
 		$this->query("VACUUM");
 	}
 
+
 	/**
 	 * Gets all queues
 	 * @return IQueue[]
 	 */
-	function getQueues() {
+	function getQueues()
+	{
 		$queuesOut = array();
 		$qs = $this->query("SELECT queueID
 		  FROM files
 		  GROUP BY queueID")->fetchAll();
 
-		foreach($qs AS $row) {
+		foreach ($qs AS $row) {
 			$queuesOut[] = $this->createQueueObj($row["queueID"]);
 		}
 
 		return $queuesOut;
 	}
 
-	static function init() {
+
+	static function init()
+	{
 		// TODO: remove this magic
-		$config = Environment::getConfig("MultipleFileUploader",array(
-			"databasePath" => dirname(__FILE__)."/database.sdb",
-			"uploadsTempDir" => ""
+		$config = Environment::getConfig("MultipleFileUploader", array(
+				"databasePath" => dirname(__FILE__) . "/database.sdb",
+				"uploadsTempDir" => ""
 		));
 
-		foreach($config AS $key => $val) {
+		foreach ($config AS $key => $val) {
 			self::$$key = $val;
 		}
 	}
 
-}
 
+}
 Queues::init();

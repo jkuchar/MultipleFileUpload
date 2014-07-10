@@ -9,24 +9,25 @@
  * the file license.txt that was distributed with this source code.
  */
 
-
 namespace MultipleFileUpload\UI\HTML4SingleUpload;
 
-use Nette\Environment;
-use MultipleFileUpload\MultipleFileUpload;
-
+use MultipleFileUpload\MultipleFileUpload,
+	Nette\Environment,
+	Nette\Utils\Arrays;
 
 /**
  * Description of MFUUIHTML4SingleUpload
  *
  * @author Jan Kuchař
  */
-class Controller extends \MultipleFileUpload\UI\AbstractInterface {
+class Controller extends \MultipleFileUpload\UI\AbstractInterface
+{
 
 	/**
 	 * Is this upload your upload? (upload from this interface)
 	 */
-	public function isThisYourUpload() {
+	public function isThisYourUpload()
+	{
 		return !(Environment::getHttpRequest()->getHeader('user-agent') === 'Shockwave Flash');
 	}
 
@@ -50,21 +51,20 @@ class Controller extends \MultipleFileUpload\UI\AbstractInterface {
 			//		...
 			//	)
 			// )
-
 			// expanded POST array with $names indexes
-			$postArr = \Nette\Utils\Arrays::getRef($_POST, $names);
+			$postArr = Arrays::getRef($_POST, $names);
 			$isFormMFU = (
 				is_array($controlValue) and
-					isset($controlValue["files"]) and
-					isset($postArr['token'])
-			);
+				isset($controlValue["files"]) and
+				isset($postArr['token'])
+				);
 
-			if($isFormMFU) {
+			if ($isFormMFU) {
 				$token = $postArr["token"];
 				foreach ($controlValue["files"] AS $file) {
 					self::processFile($token, $file);
 				}
-			// support for nested Nette\Forms\Container
+				// support for nested Nette\Forms\Container
 			} elseif (is_array($controlValue)) {
 				$this->processFiles($controlValue, $names);
 			}
@@ -78,41 +78,51 @@ class Controller extends \MultipleFileUpload\UI\AbstractInterface {
 	 * Handles uploaded files
 	 * forwards it to model
 	 */
-	public function handleUploads() {
+	public function handleUploads()
+	{
 		// Iterate over all received files
 		$this->processFiles(Environment::getHttpRequest()->getFiles());
 		return true; // Skip all next
 	}
 
+
 	/**
 	 * Renders interface to <div>
 	 */
-	public function render(MultipleFileUpload $upload) {
+	public function render(MultipleFileUpload $upload)
+	{
 		$template = $this->createTemplate(dirname(__FILE__) . "/html.latte");
 		$template->maxFiles = $upload->maxFiles;
 		$template->mfu = $upload;
 		return $template->__toString(TRUE);
 	}
 
-	/**
-	 * Renders JavaScript body of function.
-	 */
-	public function renderInitJavaScript(MultipleFileUpload $upload) {
-		return $this->createTemplate(dirname(__FILE__) . "/initJS.latte")->__toString(TRUE);
-	}
 
 	/**
 	 * Renders JavaScript body of function.
 	 */
-	public function renderDestructJavaScript(MultipleFileUpload $upload) {
+	public function renderInitJavaScript(MultipleFileUpload $upload)
+	{
+		return $this->createTemplate(dirname(__FILE__) . "/initJS.latte")->__toString(TRUE);
+	}
+
+
+	/**
+	 * Renders JavaScript body of function.
+	 */
+	public function renderDestructJavaScript(MultipleFileUpload $upload)
+	{
 		return true;
 	}
+
 
 	/**
 	 * Renders set-up tags to <head> attribute
 	 */
-	public function renderHeadSection() {
+	public function renderHeadSection()
+	{
 		return "";
 	}
+
 
 }

@@ -9,18 +9,25 @@
  * the file license.txt that was distributed with this source code.
  */
 
-
 namespace MultipleFileUpload\UI;
 
-class Template extends \Nette\Templating\FileTemplate {
+use Nette\Latte\Engine,
+	Nette\Templating\FileTemplate;
 
-	public function __construct($file = NULL) {
+class Template extends FileTemplate
+{
+
+	public function __construct($file = NULL)
+	{
 		parent::__construct($file);
 		$this->onPrepareFilters[] = callback($this, "registerFilters");
 	}
 
-	public function registerFilters() {
-		$this->registerFilter(new \Nette\Latte\Engine());
+
+	public function registerFilters()
+	{
+		$this->registerFilter(new Engine());
 	}
+
 
 }
