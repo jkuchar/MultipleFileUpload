@@ -49,7 +49,8 @@ class Controller extends \MultipleFileUpload\UI\AbstractInterface
 			//	)
 			// )
 			// expanded POST array with $names indexes
-			$postArr = Arrays::getRef($this->httpRequest->getPost(), $names);
+			$postFromHttpRequest = $this->httpRequest->getPost(); 
+			$postArr = Arrays::getRef($postFromHttpRequest, $names);
 			$isFormMFU = (
 				is_array($controlValue) and
 				isset($controlValue["files"]) and
