@@ -28,7 +28,7 @@ abstract class BaseQueues extends Object implements IQueues {
 	private $lifeTime;
 
 	/**
-	 * getts life time of file
+	 * Gets life time of file
 	 * @return int
 	 */
 	function getLifeTime() {
@@ -36,7 +36,7 @@ abstract class BaseQueues extends Object implements IQueues {
 	}
 
 	/**
-	 * setts life time of file
+	 * Sets life time of file
 	 * @param int $time
 	 */
 	function setLifeTime($time) {
@@ -52,7 +52,7 @@ abstract class BaseQueues extends Object implements IQueues {
 	private $cleanInterval;
 
 	/**
-	 * getts cleaning interval
+	 * Gets cleaning interval
 	 * @return int
 	 */
 	function getCleanInterval() {
@@ -60,7 +60,7 @@ abstract class BaseQueues extends Object implements IQueues {
 	}
 
 	/**
-	 * setts cleaning interval
+	 * Sets cleaning interval
 	 * @param int $interval
 	 */
 	function setCleanInterval($interval) {

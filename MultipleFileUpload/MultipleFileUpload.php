@@ -88,7 +88,7 @@ class MultipleFileUpload extends Forms\Controls\UploadControl {
 	/* ##########  HANDLING UPLOADS  ########### */
 
 	/**
-	 * Setts life time of files in queue (shortcut for self::getQueuesModel()->setLifeTime)
+	 * Sets life time of files in queue (shortcut for self::getQueuesModel()->setLifeTime)
 	 * @param int $lifeTime Time in seconds
 	 */
 	static function setLifeTime($lifeTime) {
@@ -97,12 +97,13 @@ class MultipleFileUpload extends Forms\Controls\UploadControl {
 	}
 
 	protected static function _doSetLifetime() {
-		// Auto cofing of lifeTime
+		// Auto config of lifeTime
 		$maxInputTime = (int) ini_get("max_input_time");
-		if ($maxInputTime < 0) { // Pokud není žádný maximální čas vstupu (-1)
+		// default if no max input time defined (-1)
+		if ($maxInputTime < 0) {
 			$lifeTime = 3600;
 		} else {
-			$lifeTime = $maxInputTime + 5; // Maximální čas vstupu + pár sekund
+			$lifeTime = $maxInputTime + 5;
 		}
 
 		self::setLifeTime($lifeTime);
@@ -112,7 +113,6 @@ class MultipleFileUpload extends Forms\Controls\UploadControl {
 	 * Handles uploading files
 	 */
 	public static function handleUploads() {
-		// Pokud už bylo voláno handleUploads -> skonči
 		if (self::$handleUploadsCalled === true) {
 			return;
 		} else {
@@ -162,7 +162,6 @@ class MultipleFileUpload extends Forms\Controls\UploadControl {
 	}
 
 	/**
-	 *
 	 * @return type
 	 * @throws \Nette\InvalidStateException
 	 */
@@ -178,7 +177,7 @@ class MultipleFileUpload extends Forms\Controls\UploadControl {
 	}
 
 	/**
-	 * Setts new queues model
+	 * Sets new queues model
 	 * @param \MultipleFileUpload\Model\IQueues $model
 	 */
 	public static function setQueuesModel(Model\IQueues $model) {
@@ -321,7 +320,7 @@ class MultipleFileUpload extends Forms\Controls\UploadControl {
 		  // </section with JavaScript>
 		 */
 
-		// Pokud už byla volána metoda handleUploads -
+		// If handleUploads() already called -
 		/* if(self::$handleUploadsCheck){
 		  $control->add(Html::el('script type=text/javascript')->add(
 		  'jQuery("#' . $uploadifyID . '").uploadify(' . json_encode($this->uploaderOptions) . ');'
@@ -338,8 +337,8 @@ class MultipleFileUpload extends Forms\Controls\UploadControl {
 		$name = $this->getHtmlName() . '[token]';
 		$data = $this->getForm()->getHttpData();
 
-		// Zjistí token fronty souborů, kterou jsou soubory doručeny
-		//  -> Jak JS tak bez JS (akorát s JS už dorazí pouze token - nic jiného)
+		// Get queue token for received files
+		//  -> js & non-js as well (for js only the token is received)
 		if (!empty($data)) {
 			$token = Forms\Helpers::extractHttpData($data, $name, Forms\Form::DATA_LINE);
 			if ($token) {
@@ -351,26 +350,26 @@ class MultipleFileUpload extends Forms\Controls\UploadControl {
 	}
 
 	/**
-	 * Setts value
+	 * Sets value
 	 * @param mixed $value
 	 */
 	public function setValue($value) {
 		if ($value === null) {
-			// pole se vymaže samo v destructoru
+			// deleted automatically in destructor
 		} else {
 			throw new NotSupportedException('Value of MultiFileUpload component cannot be directly set.');
 		}
 	}
 
 	/**
-	 * Getts value
+	 * Gets value
 	 * @return array
 	 */
 	public function getValue() {
 		$data = $this->getQueue()->getFiles();
 
-		// Ořízneme soubory, kterých je více než maximální *počet* souborů
-		// TODO: Nepřesunout jako validační pravidlo?
+		// Get only first <N> allowed files
+		// TODO: Implement as validation rule?
 		$pocetPolozek = count($data);
 		if ($pocetPolozek > $this->maxFiles) {
 			$rozdil = $pocetPolozek - $this->maxFiles;
@@ -391,7 +390,7 @@ class MultipleFileUpload extends Forms\Controls\UploadControl {
 			$this->loadHttpData();
 		}
 
-		// If upload do not start, generate queueID
+		// If upload does not start, generate queueID
 		if (!$this->token and !$this->form->isSubmitted()) {
 			$this->token = uniqid(rand());
 		}
@@ -404,7 +403,7 @@ class MultipleFileUpload extends Forms\Controls\UploadControl {
 	}
 
 	/**
-	 * Getts queue model
+	 * Gets queue model
 	 * @return Model\IQueue
 	 */
 	public function getQueue() {

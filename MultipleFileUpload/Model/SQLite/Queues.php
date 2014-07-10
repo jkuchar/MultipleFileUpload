@@ -12,9 +12,10 @@
 
 namespace MultipleFileUpload\Model\SQLite;
 
-use MultipleFileUpload\Model\BaseQueues;
-use Nette\InvalidStateException;
-use Nette\Environment;
+use MultipleFileUpload\Model\BaseQueues,
+	MultipleFileUpload\Model\IQueue,
+	Nette\Environment,
+	Nette\InvalidStateException;
 
 class Queues extends BaseQueues {
 
@@ -30,7 +31,7 @@ class Queues extends BaseQueues {
 	public static $databasePath;
 
 	/**
-	 * Path to director of uploaded files (temp)
+	 * Path to directory of uploaded files (temp)
 	 * @var string
 	 */
 	public static $uploadsTempDir;
@@ -48,7 +49,7 @@ class Queues extends BaseQueues {
 		if(!$this->connection) {
 			$this->connection = $this->openDB();
 
-			// Nahraj databázi
+			// load database
 			if(filesize(self::$databasePath) == 0) {
 				//$this->beginTransaction();
 				$this->connection->queryExec(file_get_contents(dirname(__FILE__)."/setupDB.sql"),$error);
@@ -99,7 +100,7 @@ class Queues extends BaseQueues {
 	// </editor-fold>
 
 	/**
-	 * Getts queue (if needed create)
+	 * Gets queue (create if needed)
 	 * @param string $id
 	 * @return Queue
 	 */
@@ -132,13 +133,13 @@ class Queues extends BaseQueues {
 		}
 		$this->query("END TRANSACTION");
 
-		// Jedou za čas - promaže fyzicky smazané řádky
+		// physically delete files marked for deletion
 		$this->query("VACUUM");
 	}
 
 	/**
-	 * Getts all queues
-	 * @return array of IMFUQueueModel
+	 * Gets all queues
+	 * @return IQueue[]
 	 */
 	function getQueues() {
 		$queuesOut = array();

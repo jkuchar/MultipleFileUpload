@@ -1,15 +1,15 @@
 
 Queue::initialize(), Queues::initialize()
- - Called on driver initionalization
+ - Called on driver initialization
 
 
 Queues::getQueue($token)
- - returns onbject implementing IMFUQueue
- - if queue do not exits creates one
+ - returns object implementing MultipleFileUpload\Model\IQueue
+ - creates queue if one does not exist
  - must be thread-safe!
 
 
-Queues::cleanup($lifeTime,$cleanInterval)
+Queues::cleanup($lifeTime, $cleanInterval)
  - Executes cleanup
 
-Queue::addFile(Http)
+Queue::addFile(FileUpload $file)

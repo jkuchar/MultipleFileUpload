@@ -12,23 +12,23 @@
 
 namespace MultipleFileUpload\UI;
 
-use MultipleFileUpload\MultipleFileUpload;
-use Nette\Object;
-use Nette\Http\FileUpload;
+use MultipleFileUpload\MultipleFileUpload,
+	Nette\Http\FileUpload,
+	Nette\Object;
 
 /**
  * Abstract UI Controller
  */
 abstract class AbstractInterface extends Object implements IUserInterface {
-	
+
 	/**
-	 * Getts interface base url
+	 * Gets interface base url
 	 * @return type string
 	 */
 	function getBaseUrl() {
 		return MultipleFileUpload::$baseWWWRoot;
 	}
-	
+
 	/**
 	 * Process single file
 	 * @param string $token
@@ -49,8 +49,8 @@ abstract class AbstractInterface extends Object implements IUserInterface {
 		$isValid = $validateCallback->invoke($file);
 
 		if ($isValid) {
-			MultipleFileUpload::getQueuesModel() // returns: IMFUQueuesModel
-				->getQueue($token) // returns: IMFUQueueModel
+			MultipleFileUpload::getQueuesModel()
+				->getQueue($token)
 				->addFile($file);
 		}
 		return $isValid;

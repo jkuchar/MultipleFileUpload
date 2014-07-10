@@ -24,7 +24,7 @@ use Nette\Environment;
 class Controller extends AbstractInterface {
 
 	/**
-	 * Getts interface base url
+	 * Gets interface base url
 	 * @return type string
 	 */
 	function getBaseUrl() {
@@ -64,7 +64,7 @@ class Controller extends AbstractInterface {
 		header("Pragma: no-cache");
 
 		// Settings
-		$queueModel = MultipleFileUpload::getQueuesModel() // returns: IMFUQueuesModel
+		$queueModel = MultipleFileUpload::getQueuesModel()
 			->getQueue($token);
 		$targetDir = $queueModel->getUploadedFilesTemporaryPath();
 		$cleanupTargetDir = false; // Remove old files
@@ -171,7 +171,7 @@ class Controller extends AbstractInterface {
 		$nonChunkedTransfer = ($chunk == 0 AND $chunks == 0);
 		$lastChunk = ($chunk+1) == $chunks;
 		if($lastChunk OR $nonChunkedTransfer) {
-			// Hotovo
+			// Done
 			$file = new \Nette\Http\FileUpload(array(
 			    'name' => $fileNameOriginal,
 			    'type' => "",

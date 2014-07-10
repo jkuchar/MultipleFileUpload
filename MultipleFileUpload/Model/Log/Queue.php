@@ -58,7 +58,7 @@ class Queue extends BaseQueue {
 	}
 
 	/**
-	 * Getts files
+	 * Gets files
 	 * @return array of FileUpload
 	 */
 	function getFiles() {

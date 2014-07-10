@@ -12,8 +12,8 @@
 
 namespace MultipleFileUpload\UI\Uploadify;
 
-use MultipleFileUpload\MultipleFileUpload;
-use Nette\Environment;
+use MultipleFileUpload\MultipleFileUpload,
+	Nette\Environment;
 
 /**
  * Description of MFUUIUploadify
@@ -23,7 +23,7 @@ use Nette\Environment;
 class Controller extends \MultipleFileUpload\UI\AbstractInterface {
 
 	/**
-	 * Getts interface base url
+	 * Gets interface base url
 	 * @return type string
 	 */
 	function getBaseUrl() {

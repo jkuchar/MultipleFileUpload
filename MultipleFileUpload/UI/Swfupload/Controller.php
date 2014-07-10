@@ -13,9 +13,9 @@
 
 namespace MultipleFileUpload\UI\Swfupload;
 
-use Nette\Environment;
-use MultipleFileUpload\MultipleFileUpload;
-use MultipleFileUpload\UI\AbstractInterface;
+use MultipleFileUpload\MultipleFileUpload,
+	MultipleFileUpload\UI\AbstractInterface,
+	Nette\Environment;
 
 /**
  * Description of MFUUISwfupload
@@ -25,7 +25,7 @@ use MultipleFileUpload\UI\AbstractInterface;
 class Controller extends AbstractInterface {
 
 	/**
-	 * Getts interface base url
+	 * Gets interface base url
 	 * @return type string
 	 */
 	function getBaseUrl() {
@@ -55,7 +55,7 @@ class Controller extends AbstractInterface {
 		/* @var $token string */
 		$token = $_POST["token"];
 
-		/* @var $file \Nette\Http\FileUpload */
+		/* @var $file Nette\Http\FileUpload */
 		foreach (Environment::getHttpRequest()->getFiles() AS $file) {
 			self::processFile($token, $file);
 		}

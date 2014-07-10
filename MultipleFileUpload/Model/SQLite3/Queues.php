@@ -9,10 +9,11 @@
  * For the full copyright and license information, please view
  * the file license.txt that was distributed with this source code.
  */
- 
+
 namespace MultipleFileUpload\Model\SQLite3;
 
 use MultipleFileUpload\Model\BaseQueues,
+	MultipleFileUpload\Model\IQueue,
 	Nette\Environment,
 	Nette\InvalidStateException,
 	SQLite3,
@@ -33,7 +34,7 @@ class Queues extends BaseQueues
 	public static $databasePath;
 
 	/**
-	 * Path to director of uploaded files (temp)
+	 * Path to directory of uploaded files (temp)
 	 * @var string
 	 */
 	public static $uploadsTempDir;
@@ -120,7 +121,7 @@ class Queues extends BaseQueues
 	// </editor-fold>
 
 	/**
-	 * Get queue (if needed create)
+	 * Get queue (create if needed)
 	 * @param string $id
 	 * @return Queue
 	 */
@@ -158,14 +159,14 @@ class Queues extends BaseQueues
 		}
 		$this->query('END TRANSACTION');
 
-		// Jednou za čas - promaže fyzicky smazané řádky
+		// physically delete files marked for deletion
 		$this->query('VACUUM');
 	}
 
 
 	/**
 	 * Get all queues
-	 * @return array of IQueue
+	 * @return IQueue[]
 	 */
 	function getQueues()
 	{

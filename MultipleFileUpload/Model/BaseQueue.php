@@ -12,8 +12,8 @@
 
 namespace MultipleFileUpload\Model;
 
-use Nette\Object;
-use Nette\InvalidStateException;
+use Nette\InvalidStateException,
+	Nette\Object;
 
 
 /**
@@ -29,7 +29,7 @@ abstract class BaseQueue extends Object implements IQueue {
 	private $queuesModel;
 
 	/**
-	 * gets queues model
+	 * Gets queues model
 	 * @return IQueues
 	 */
 	function getQueuesModel() {
@@ -39,7 +39,7 @@ abstract class BaseQueue extends Object implements IQueue {
 	}
 
 	/**
-	 * sets queues model
+	 * Sets queues model
 	 * @param IQueues $model
 	 */
 	function setQueuesModel(IQueues $model) {
@@ -54,7 +54,7 @@ abstract class BaseQueue extends Object implements IQueue {
 	private $queueID;
 
 	/**
-	 * Getts queue ID
+	 * Gets queue ID
 	 * @return string
 	 */
 	function getQueueID() {
@@ -62,7 +62,7 @@ abstract class BaseQueue extends Object implements IQueue {
 	}
 
 	/**
-	 * Setts queue ID
+	 * Sets queue ID
 	 * @param string $queueID
 	 */
 	function setQueueID($queueID) {

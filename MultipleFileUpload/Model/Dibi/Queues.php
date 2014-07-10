@@ -12,9 +12,10 @@
 
 namespace MultipleFileUpload\Model\Dibi;
 
-use MultipleFileUpload\Model\BaseQueues;
-use dibi;
-use Nette\InvalidStateException;
+use dibi,
+	MultipleFileUpload\Model\BaseQueues,
+	MultipleFileUpload\Model\IQueue,
+	Nette\InvalidStateException;
 
 /**
  * Multiple File Uploader driver for Dibi
@@ -25,7 +26,7 @@ use Nette\InvalidStateException;
 class Queues extends BaseQueues {
 
 	/**
-	 * Path to director of uploaded files (temp)
+	 * Path to directory of uploaded files (temp)
 	 * @var string
 	 */
 	public static $uploadsTempDir;
@@ -46,7 +47,7 @@ class Queues extends BaseQueues {
 	// <editor-fold defaultstate="collapsed" desc="Database functions">
 
 	/**
-	 * Getts dibi connection
+	 * Gets dibi connection
 	 * @return \DibiConnection
 	 */
 	function getConnection() {
@@ -72,7 +73,7 @@ class Queues extends BaseQueues {
 	// </editor-fold>
 
 	/**
-	 * Getts queue (if needed create)
+	 * Gets queue (create if needed)
 	 * @param string $id
 	 * @return Queue
 	 */
@@ -107,8 +108,8 @@ class Queues extends BaseQueues {
 	}
 
 	/**
-	 * Getts all queues
-	 * @return \MultipleFileUpload\Model\IQueue[]
+	 * Gets all queues
+	 * @return IQueue[]
 	 */
 	function getQueues() {
 		$queuesOut = array();

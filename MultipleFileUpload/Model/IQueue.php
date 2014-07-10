@@ -17,25 +17,25 @@ use Nette\Http\FileUpload;
 interface IQueue {
 
 	/**
-	 * getts queues model
+	 * Gets queues model
 	 * @return IQueues
 	 */
 	function getQueuesModel();
 
 	/**
-	 *setts queues model
+	 * Sets queues model
 	 * @param IQueues $model
 	 */
 	function setQueuesModel(IQueues $model);
 
 	/**
-	 * Getts queue ID
+	 * Gets queue ID
 	 * @return string
 	 */
 	function getQueueID();
 
 	/**
-	 * Setts queue ID
+	 * Sets queue ID
 	 * @param string $queueID
 	 */
 	function setQueueID($queueID);
@@ -56,7 +56,7 @@ interface IQueue {
 	 * @param FileUpload $file
 	 */
 	function addFile(FileUpload $file);
-	
+
 	/**
 	 * TODO
 	 * @param type $name
@@ -64,7 +64,7 @@ interface IQueue {
 	 * @param type $chunks
 	 */
 	function addFileManually($name, $chunk,$chunks);
-	
+
 	/**
 	 * Updates file information (useful when processing chunked upload)
 	 * @param type $name
@@ -74,7 +74,7 @@ interface IQueue {
 	function updateFile($name, $chunk, FileUpload $file = null);
 
 	/**
-	 * Getts all files in queue
+	 * Gets all files in queue
 	 * @return array of FileUpload
 	 */
 	function getFiles();
@@ -85,7 +85,7 @@ interface IQueue {
 	function delete();
 
 	/**
-	 * Getts WRITABLE path to write temps of this upload queue
+	 * Gets WRITABLE path to write temps of this upload queue
 	 */
 	function getUploadedFilesTemporaryPath();
 

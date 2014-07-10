@@ -68,7 +68,7 @@ class Controller extends \MultipleFileUpload\UI\AbstractInterface {
 			} elseif (is_array($controlValue)) {
 				$this->processFiles($controlValue, $names);
 			}
-			// Files that are not processed by MFU we just skip
+			// skip files not processed by MFU
 			// they will be processed by Nette Forms
 		}
 	}
@@ -79,7 +79,7 @@ class Controller extends \MultipleFileUpload\UI\AbstractInterface {
 	 * forwards it to model
 	 */
 	public function handleUploads() {
-		// Iterujeme nad přijatými soubory
+		// Iterate over all received files
 		$this->processFiles(Environment::getHttpRequest()->getFiles());
 		return true; // Skip all next
 	}

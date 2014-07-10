@@ -79,7 +79,7 @@ class Queue extends BaseQueue {
 	}
 
 	/**
-	 * Getts upload directory path
+	 * Gets upload directory path
 	 * @return string
 	 */
 	function getUploadedFilesTemporaryPath() {
@@ -103,7 +103,7 @@ class Queue extends BaseQueue {
 	}
 
 	/**
-	 * Getts files
+	 * Gets files
 	 * @return array of FileUpload
 	 */
 	function getFiles() {
@@ -123,7 +123,7 @@ class Queue extends BaseQueue {
 		foreach($this->getFiles() AS $file) {
 			$fileDir = dirname($file->getTemporaryFile());
 			if(realpath($fileDir) == $dir and file_exists($file->getTemporaryFile())) {
-				// Delete file only if user leaved file in temp directory
+				// Delete only files left in temp directory [not moved by user]
 				@unlink($file->getTemporaryFile()); // intentionally @
 			}
 		}

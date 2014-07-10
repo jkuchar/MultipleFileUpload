@@ -54,7 +54,7 @@ class Queue extends BaseQueue {
 	}
 
 	/**
-	 * Getts upload directory path
+	 * Gets upload directory path
 	 * @return string
 	 */
 	function getUploadedFilesTemporaryPath() {
@@ -78,7 +78,7 @@ class Queue extends BaseQueue {
 	}
 
 	/**
-	 * Getts files
+	 * Gets files
 	 * @return array of FileUpload
 	 */
 	function getFiles() {

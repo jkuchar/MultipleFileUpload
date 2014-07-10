@@ -25,14 +25,14 @@ class Queues extends BaseQueues {
 	}
 
 	/**
-	 * Getts queue
+	 * Gets queue
 	 * @param string $token
 	 * @return Queue
 	 */
 	function getQueue($token) {
 		$a = func_get_args();
 		Debugger::log(__CLASS__.": ".__METHOD__."; args: ".print_r($a, true));
-		
+
 		$q = new Queue();
 		$q->setQueueID($token);
 		$q->setQueuesModel($this);
