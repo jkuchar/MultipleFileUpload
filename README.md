@@ -8,8 +8,8 @@ Thanks to multi-backend design you can change your file storage just by changing
 This add-on also allows you to change UI library just by changing one config property. Currently are supported **PlUpload**, **Uploadify**, **SwfUpload** and standard **HTML4 form fields**. You can add more interfaces - than the best supported for client's browser will be automatically chosen.
 
 
-Demo page: http://multiplefileupload.projekty.mujserver.net/
-Composer package: https://packagist.org/packages/jkuchar/multiplefileupload
+- Demo page: http://multiplefileupload.projekty.mujserver.net/
+- Composer package: https://packagist.org/packages/jkuchar/multiplefileupload
 
 Installation
 ------------
