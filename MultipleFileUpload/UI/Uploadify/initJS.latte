@@ -30,9 +30,9 @@
 		 * Triggered when all files in the queue have been processed.
 		onQueueComplete: function(queueData){
 		    if (queueData.uploadsErrored > 0) {
-			showMessage('Niekoľko súborov sa nepodarilo nahrať (' + queueData.uploadsErrored + ')');
+			showError('Niekoľko súborov sa nepodarilo nahrať (' + queueData.uploadsErrored + ')');
 		    } else {
-			showMessage('Všetky súbory boli úspešne nahrané');
+			showError('Všetky súbory boli úspešne nahrané');
 		    }
 
 		    queue.fadeOut(500);
@@ -81,20 +81,20 @@
 	});
 
 	uploadify.bind("sizeLimitExceeded",function(event){
-		showMessage("soubor '" + event.fileObj.name + "' je moc velký! Bude přeskočen.");
+		showError("File '" + event.fileObj.name + "' is too big. Skipping.");
 	});
 
 	uploadify.bind("emptyFile",function(event){
-		showMessage("soubor '" + event.fileObj.name + "' je prázdný! Bude přeskočen.");
+		showError("File '" + event.fileObj.name + "' is empty! Skipping.");
 	});
 
 	/**
 	 * Show info message to user.
 	 * @param string
 	 */
-	function showMessage(msg)
+	function showError(msg)
 	{
-		$.Nette.showInfo(msg);
+		alert(msg);
 	}
 
 	return true; // OK
