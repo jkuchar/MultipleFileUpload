@@ -36,8 +36,3 @@ $f->addMultipleFileUpload("exampleUploadField1","Upload field 1", /*max num. of 
 Full documentation
 ------------------
 - http://addons.nette.org/jkuchar/multiplefileupload
-
-Forks
------
-Fortunately everything important has already been merged back to this repo.
-
