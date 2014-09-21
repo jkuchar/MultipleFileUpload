@@ -1,5 +1,6 @@
 MultipleFileUpload
 ==================
+
 [![Code Climate](https://codeclimate.com/github/jkuchar/MultipleFileUpload/badges/gpa.svg)](https://codeclimate.com/github/jkuchar/MultipleFileUpload)
 
 MultipleFileUpload (shorter MFU) is an add-on that makes **uploading thousands of huge files piece of cake**. Just 4 simple steps and you will not need to deal with chunking, autentization of uploads or browser compatibility.
