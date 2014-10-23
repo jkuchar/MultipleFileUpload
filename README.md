@@ -34,6 +34,10 @@ $f->addMultipleFileUpload("exampleUploadField1","Upload field 1", /*max num. of 
   ->addRule('MultipleFileUpload\MultipleFileUpload::validateFileSize',"Files you've selected are too big.", 1024); //kB
 ```
 
+Challenge
+---------
+
+Uploadify and SwfUpload are a little unmaintained. If you are interested you can get commit right to this repo. First create pull request and if it is ok, drop me a line that you want to have commit rights.
 
 
 Full documentation
