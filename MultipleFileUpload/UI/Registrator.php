@@ -46,12 +46,12 @@ class Registrator extends Object
 	}
 
 
-	public function getInterfaces()
+	public function getInterfaces($container)
 	{
 		$interfaces = $this->interfaces;
 		foreach ($interfaces AS $key => $interface) {
 			if (is_string($interface)) {
-				$interface = $interfaces[$key] = new $interface;
+				$interface = $interfaces[$key] = new $interface($container->getByType('Nette\Http\IRequest'));
 			}
 			if (!$interface instanceof IUserInterface) {
 				throw new InvalidArgumentException($interface->reflection->name . " is not compatible with MFU!");

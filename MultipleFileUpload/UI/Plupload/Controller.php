@@ -221,7 +221,29 @@ class Controller extends AbstractInterface
 	 */
 	public function render(MultipleFileUpload $upload)
 	{
-		$template = $this->createTemplate(dirname(__FILE__) . "/html.latte");
+        $template = parent::createTemplate();
+        $template->setFile(__DIR__ . "/html.latte");
+        $template->id = $this->getHtmlIdFlashCompatible($upload);
+        return $template->__toString(TRUE);
+	}
+
+
+	/**}}
+	 * Renders JavaScript body of function.
+	 */
+	public function renderInitJavaScript(MultipleFileUpload $upload)
+	{
+        $template = parent::createTemplate();
+        $template->setFile(__DIR__ . "/initJS.latte");
+        $template->token = $upload->getToken();
+        $template->sizeLimit = $upload->maxFileSize;
+        $template->maxFiles = $upload->maxFiles;
+
+		// TODO: make creation of link nicer!
+		//$baseUrl = $this->httpRequest->url->baseUrl;
+		//$template->uploadLink = $baseUrl . "?token=" . $template->token . "&uploader=plupload";
+        $url = $this->httpRequest->url;
+        $template->uploadLink = $url->scheme . "://" . $url->host . $url->path . '?' . $url->query . "&token=" . $template->token . "&uploader=plupload";
 		$template->id = $this->getHtmlIdFlashCompatible($upload);
 		return $template->__toString(TRUE);
 	}
@@ -230,27 +252,10 @@ class Controller extends AbstractInterface
 	/**
 	 * Renders JavaScript body of function.
 	 */
-	public function renderInitJavaScript(MultipleFileUpload $upload)
-	{
-		$tpl = $this->createTemplate(dirname(__FILE__) . "/initJS.latte");
-		$tpl->token = $upload->getToken();
-		$tpl->sizeLimit = $upload->maxFileSize;
-		$tpl->maxFiles = $upload->maxFiles;
-
-		// TODO: make creation of link nicer!
-		$baseUrl = $this->httpRequest->url->baseUrl;
-		$tpl->uploadLink = $baseUrl . "?token=" . $tpl->token . "&uploader=plupload";
-		$tpl->id = $this->getHtmlIdFlashCompatible($upload);
-		return $tpl->__toString(TRUE);
-	}
-
-
-	/**
-	 * Renders JavaScript body of function.
-	 */
 	public function renderDestructJavaScript(MultipleFileUpload $upload)
 	{
-		return $this->createTemplate(dirname(__FILE__) . "/destructJS.js")->__toString(TRUE);
+        $template = parent::createTemplate();
+        $template->setFile(__DIR__ . "/destructJS.js")->__toString(TRUE);
 	}
 
 
@@ -259,7 +264,8 @@ class Controller extends AbstractInterface
 	 */
 	public function renderHeadSection()
 	{
-		return $this->createTemplate(dirname(__FILE__) . "/head.latte")->__toString(TRUE);
+        $template = parent::createTemplate();
+        $template->setFile(__DIR__ . "/head.latte")->__toString(TRUE);
 	}
 
 

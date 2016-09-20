@@ -15,14 +15,15 @@ namespace MultipleFileUpload;
 use MultipleFileUpload\Model\IQueue,
 	MultipleFileUpload\Model\IQueues,
 	MultipleFileUpload\UI\Registrator,
-	Nette\Environment,
+    Latte,
+    Nette,
+    Nette\Bridges,
 	Nette\Forms,
 	Nette\Forms\Container,
 	Nette\Forms\Controls\UploadControl,
 	Nette\Http\FileUpload,
 	Nette\InvalidStateException,
 	Nette\NotSupportedException,
-	Nette\Utils\Callback,
 	Nette\Utils\Html,
 	Nette\Utils\Strings;
 
@@ -63,6 +64,9 @@ class MultipleFileUpload extends UploadControl
 	public static $baseWWWRoot = null;
 
 
+    /** @var Nette\DI\Container */
+    private static $container;
+
 	/**
 	 * Initialize MFU
 	 */
@@ -74,23 +78,22 @@ class MultipleFileUpload extends UploadControl
 		$uiReg->register("MultipleFileUpload\\UI\\Plupload");
 
 		// Set default check callback
-		self::$validateFileCallback = callback(__CLASS__, "validateFile");
+		self::$validateFileCallback = [__CLASS__, "validateFile"];
 
-		// TODO: remove this magic
-		self::$baseWWWRoot = Environment::getHttpRequest()->url->baseUrl . "MultipleFileUpload/";
+        self::$baseWWWRoot = self::$container->getByType('Nette\Http\IRequest')->url->baseUrl . "MultipleFileUpload/";
 	}
 
 
 	/**
 	 * Register MFU into Nette
 	 */
-	public static function register()
+	public static function register($container)
 	{
-		self::init();
-
-		$application = Environment::getApplication();
-		$application->onStartup[] = callback(__CLASS__, "handleUploads");
-		$application->onShutdown[] = callback(__CLASS__, "cleanCache");
+        self::$container = $container;
+        self::init();
+		$application = $container->getByType('Nette\Application\Application');
+		$application->onStartup[] = [__CLASS__, "handleUploads"];
+		$application->onShutdown[] = [__CLASS__, "cleanCache"];
 	}
 
 
@@ -133,8 +136,7 @@ class MultipleFileUpload extends UploadControl
 			self::$handleUploadsCalled = true;
 		}
 
-		$req = Environment::getHttpRequest();
-
+        $req = self::$container->getByType('Nette\Http\IRequest');
 		// Workaround for: http://forum.nettephp.com/cs/3680-httprequest-getheaders-a-content-type
 		$contentType = $req->getHeader("content-type");
 		if (!$contentType and isset($_SERVER["CONTENT_TYPE"])) {
@@ -147,7 +149,7 @@ class MultipleFileUpload extends UploadControl
 
 		self::getQueuesModel()->initialize();
 
-		foreach (self::getUIRegistrator()->getInterfaces() AS $interface) {
+		foreach (self::getUIRegistrator()->getInterfaces(self::$container) AS $interface) {
 //			\Nette\Diagnostics\Debugger::log($interface->getReflection()->getName().": is this your upload? ".$interface->isThisYourUpload());
 			if ($interface->isThisYourUpload()) {
 				$ret = $interface->handleUploads();
@@ -174,7 +176,8 @@ class MultipleFileUpload extends UploadControl
 	 */
 	public static function cleanCache()
 	{
-		if (!Environment::isProduction() or rand(1, 100) < 5) {
+        $parameters = self::$container->getParameters();
+		if (!$parameters['productionMode'] or rand(1, 100) < 5) {
 			self::getQueuesModel()->cleanup();
 		}
 	}
@@ -186,8 +189,9 @@ class MultipleFileUpload extends UploadControl
 	 */
 	public static function getQueuesModel()
 	{
-		if (!self::$queuesModel) { // if nothing is set, setup sqlite model, which should work on all systems with SQLite
-			self::setQueuesModel(new Model\SQLite3\Queues());
+		if (!self::$queuesModel) { // if nothing is set, setup sqlite model, which should work on all systems with MySQL
+            $queuesModel = new Model\MySQL\Queues(self::$container, self::$container->getService("database.default"));
+			self::setQueuesModel($queuesModel);
 		}
 
 		if (!self::$queuesModel instanceof IQueues) {
@@ -291,12 +295,11 @@ class MultipleFileUpload extends UploadControl
 
 		// <section token field>
 		$tokenField = Html::el('input type=hidden')->name($this->getHtmlName() . '[token]')->value($this->getToken());
-		$control->add($tokenField);
+		$control->addHtml($tokenField);
 		// </section token field>
 
 		$fallbacks = array();
-
-		$interfaces = self::getUIRegistrator()->getInterfaces();
+		$interfaces = self::getUIRegistrator()->getInterfaces(self::$container);
 		$num = count($interfaces);
 		$cnt = 1;
 		foreach ($interfaces AS $interface) {
@@ -324,14 +327,15 @@ class MultipleFileUpload extends UploadControl
 			}
 			$cnt++;
 
-			$control->add($container);
+			$control->addHtml($container);
 		}
 
-		$template = new UI\Template();
-		$template->setFile(dirname(__FILE__) . DIRECTORY_SEPARATOR . "RegisterJS.latte");
+        $latte = new Latte\Engine();
+        $template = new Bridges\ApplicationLatte\Template($latte);
+        $template->setFile(__DIR__ . DIRECTORY_SEPARATOR . "RegisterJS.latte");
 		$template->id = $this->getHtmlId();
 		$template->fallbacks = $fallbacks;
-		$control->add($template->__toString(TRUE));
+		$control->addHtml($template->__toString(TRUE));
 		/*
 		  // <section without JavaScript>
 		  $withoutJS = Html::el("div class=withoutJS");
