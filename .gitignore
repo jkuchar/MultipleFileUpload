@@ -1,3 +1,5 @@
 /nbproject/
 /composer.lock
 /Nette/
+.idea/
+vendor/
