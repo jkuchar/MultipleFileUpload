@@ -12,6 +12,7 @@
 namespace MultipleFileUpload\UI;
 
 use Nette\InvalidArgumentException,
+	Nette\Http\Request,
 	Nette\Object;
 
 /**
@@ -46,12 +47,12 @@ class Registrator extends Object
 	}
 
 
-	public function getInterfaces($container)
+	public function getInterfaces(Request $request)
 	{
 		$interfaces = $this->interfaces;
 		foreach ($interfaces AS $key => $interface) {
 			if (is_string($interface)) {
-				$interface = $interfaces[$key] = new $interface($container->getByType('Nette\Http\IRequest'));
+				$interface = $interfaces[$key] = new $interface($request);
 			}
 			if (!$interface instanceof IUserInterface) {
 				throw new InvalidArgumentException($interface->reflection->name . " is not compatible with MFU!");
