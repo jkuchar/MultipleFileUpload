@@ -90,7 +90,7 @@ class Queue extends BaseQueue
 	function getUploadedFilesTemporaryPath()
 	{
 		if (!Queues::$uploadsTempDir) {
-		throw new InvalidStateException("Directory for temp files is not set.");
+			throw new InvalidStateException("Directory for temp files is not set.");
 		}
 
 		if (!file_exists(Queues::$uploadsTempDir)) {
