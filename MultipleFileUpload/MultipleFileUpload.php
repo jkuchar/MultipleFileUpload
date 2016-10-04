@@ -15,9 +15,9 @@ namespace MultipleFileUpload;
 use MultipleFileUpload\Model\IQueue,
 	MultipleFileUpload\Model\IQueues,
 	MultipleFileUpload\UI\Registrator,
-    Latte,
-    Nette,
-    Nette\Bridges,
+	Latte,
+	Nette,
+	Nette\Bridges,
 	Nette\Forms,
 	Nette\Forms\Container,
 	Nette\Forms\Controls\UploadControl,
@@ -63,9 +63,8 @@ class MultipleFileUpload extends UploadControl
 	 */
 	public static $baseWWWRoot = null;
 
-
-    /** @var Nette\DI\Container */
-    private static $container;
+	/** @var Nette\DI\Container */
+	private static $container;
 
 	/**
 	 * Initialize MFU
@@ -79,18 +78,19 @@ class MultipleFileUpload extends UploadControl
 
 		// Set default check callback
 		self::$validateFileCallback = [__CLASS__, "validateFile"];
-
-        self::$baseWWWRoot = self::$container->getByType('Nette\Http\IRequest')->url->baseUrl . "MultipleFileUpload/";
+		self::$baseWWWRoot = self::$container->getByType('Nette\Http\IRequest')->url->baseUrl . "MultipleFileUpload/";
 	}
 
 
 	/**
 	 * Register MFU into Nette
 	 */
-	public static function register($container)
+	public static function register($container, string $queuesModel)
 	{
-        self::$container = $container;
-        self::init();
+		self::$container = $container;
+		$namespace = '\MultipleFileUpload\Model\\'. $queuesModel .  '\Queues';
+		self::$queuesModel = new $namespace($container); 
+		self::init();
 		$application = $container->getByType('Nette\Application\Application');
 		$application->onStartup[] = [__CLASS__, "handleUploads"];
 		$application->onShutdown[] = [__CLASS__, "cleanCache"];
@@ -176,7 +176,7 @@ class MultipleFileUpload extends UploadControl
 	 */
 	public static function cleanCache()
 	{
-        $parameters = self::$container->getParameters();
+ 		$parameters = self::$container->getParameters();
 		if (!$parameters['productionMode'] or rand(1, 100) < 5) {
 			self::getQueuesModel()->cleanup();
 		}
@@ -189,13 +189,8 @@ class MultipleFileUpload extends UploadControl
 	 */
 	public static function getQueuesModel()
 	{
-		if (!self::$queuesModel) { // if nothing is set, setup sqlite model, which should work on all systems with MySQL
-            $queuesModel = new Model\MySQL\Queues(self::$container, self::$container->getService("database.default"));
-			self::setQueuesModel($queuesModel);
-		}
-
 		if (!self::$queuesModel instanceof IQueues) {
-			throw new InvalidStateException("Queues model is not instance of Model\IQueues!");
+			throw new InvalidStateException("Queues model was not set or is not instance of Model\IQueues!");
 		}
 		return self::$queuesModel;
 	}
@@ -330,12 +325,12 @@ class MultipleFileUpload extends UploadControl
 			$control->addHtml($container);
 		}
 
-        $latte = new Latte\Engine();
-        $template = new Bridges\ApplicationLatte\Template($latte);
-        $template->setFile(__DIR__ . DIRECTORY_SEPARATOR . "RegisterJS.latte");
-		$template->id = $this->getHtmlId();
-		$template->fallbacks = $fallbacks;
-		$control->addHtml($template->__toString(TRUE));
+			$latte = new Latte\Engine();
+			$template = new Bridges\ApplicationLatte\Template($latte);
+			$template->setFile(__DIR__ . DIRECTORY_SEPARATOR . "RegisterJS.latte");
+			$template->id = $this->getHtmlId();
+			$template->fallbacks = $fallbacks;
+			$control->addHtml($template->__toString(TRUE));
 		/*
 		  // <section without JavaScript>
 		  $withoutJS = Html::el("div class=withoutJS");
