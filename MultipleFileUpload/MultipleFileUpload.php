@@ -66,9 +66,9 @@ class MultipleFileUpload extends UploadControl
 	/** @var Nette\Http\IRequest */
 	private static $request;
 
-        /** @var bool */
-        private static $productionMode;
-        
+	/** @var bool */
+	private static $productionMode;
+
 	/**
 	 * Initialize MFU
 	 */
@@ -78,8 +78,8 @@ class MultipleFileUpload extends UploadControl
 		$uiReg = self::$interfaceRegistrator = new Registrator();
 		$uiReg->register("MultipleFileUpload\\UI\\HTML4SingleUpload");
 		$uiReg->register("MultipleFileUpload\\UI\\Plupload");
-                self::$request = $request;
-                self::$productionMode = $parameters['productionMode'];
+		self::$request = $request;
+		self::$productionMode = $parameters['productionMode'];
 		// Set default check callback
 		self::$validateFileCallback = [__CLASS__, "validateFile"];
 		self::$baseWWWRoot = self::$request->url->baseUrl . "MultipleFileUpload/";
@@ -173,8 +173,8 @@ class MultipleFileUpload extends UploadControl
 	 * Cleans cache
 	 */
 	public static function cleanCache()
-	{       
-		if (false == self::$productionMode or rand(1, 100) < 5) {
+	{
+		if (FALSE == self::$productionMode or rand(1, 100) < 5) {
 			self::getQueuesModel()->cleanup();
 		}
 	}
