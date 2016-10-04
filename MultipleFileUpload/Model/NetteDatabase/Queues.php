@@ -53,7 +53,9 @@ class Queues extends BaseQueues
 		// TODO: wrong; there must be not dependency on container here
 		$connection = new Nette\Database\Connection($database['dsn'], $database['user'], $database['password']);
 		self::$uploadsTempDir = $tempDir . DIRECTORY_SEPARATOR . "uploads-MFU";
-		!file_exists(self::$uploadsTempDir) ? mkdir(self::$uploadsTempDir, 0775, TRUE) : NULL;
+		if(!file_exists(self::$uploadsTempDir)) {
+			mkdir(self::$uploadsTempDir, 0775, TRUE);
+		};
 		$cacheStorage = new Nette\Caching\Storages\FileStorage(self::$uploadsTempDir);
 		$structure = new Nette\Database\Structure($connection, $cacheStorage);
 		$this->database = new Nette\Database\Context($connection, $structure);
