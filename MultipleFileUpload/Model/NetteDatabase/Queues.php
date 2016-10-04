@@ -48,15 +48,14 @@ class Queues extends BaseQueues
 		return self::$filesTable;
 	}
 	
-	public function __construct($container)
+	public function __construct($database, $tempDir)
 	{
-		$parameters = $container->getParameters();
-		self::$uploadsTempDir = $parameters['tempDir'];
-		$temp = $parameters['tempDir'] . DIRECTORY_SEPARATOR . "uploads-MFU";
-		$journal = new Nette\Caching\Storages\SQLiteJournal($temp);
-		$cacheStorage = new Nette\Caching\Storages\FileStorage($temp, $journal);
-		$structure = new Nette\Database\Structure($container->getService("database.default"), $cacheStorage);
-		$this->database = new Nette\Database\Context($container->getService("database.default"), $structure);
+                $connection = new Nette\Database\Connection($database['dsn'], $database['user'], $database['password']);
+		self::$uploadsTempDir = $tempDir . DIRECTORY_SEPARATOR . "uploads-MFU";
+		$journal = new Nette\Caching\Storages\SQLiteJournal(self::$uploadsTempDir);
+		$cacheStorage = new Nette\Caching\Storages\FileStorage(self::$uploadsTempDir, $journal);
+		$structure = new Nette\Database\Structure($connection, $cacheStorage);
+		$this->database = new Nette\Database\Context($connection, $structure);
 	}
 	
 	// <editor-fold defaultstate="collapsed" desc="Database functions">
