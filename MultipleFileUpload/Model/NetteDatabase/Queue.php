@@ -12,7 +12,6 @@
 namespace MultipleFileUpload\Model\NetteDatabase;
 
 use MultipleFileUpload\Model\BaseQueue,
-	Nette\Environment,
 	Nette\Http\FileUpload,
 	Nette\InvalidStateException;
 
@@ -68,8 +67,9 @@ class Queue extends BaseQueue
 
 	function updateFile($name, $chunk, FileUpload $file = null)
 	{
-		$this->getConnection()->beginTransaction();
-		$selection = $this->getConnection()->table($this->getFilesTable())->where('queueID', $this->getQueueID())->where('name', $name);
+		$connection = $this->getConnection();
+		$connection->beginTransaction();
+		$selection = $connection->table($this->getFilesTable())->where('queueID', $this->getQueueID())->where('name', $name);
 
 		$data = array("chunk" => $chunk);
 		if ($file){
@@ -79,7 +79,7 @@ class Queue extends BaseQueue
 		foreach ($selection as $row){
 			$row->update($data);
 		}
-		$this->getConnection()->commit();
+		$connection->commit();
 	}
 
 
@@ -90,15 +90,11 @@ class Queue extends BaseQueue
 	function getUploadedFilesTemporaryPath()
 	{
 		if (!Queues::$uploadsTempDir) {
-			Queues::$uploadsTempDir = Environment::expand("%tempDir%" . DIRECTORY_SEPARATOR . "uploads-MFU");
+		throw new InvalidStateException("Directory for temp files is not set.");
 		}
 
 		if (!file_exists(Queues::$uploadsTempDir)) {
 			mkdir(Queues::$uploadsTempDir, 0777, true);
-		}
-
-		if (!is_writable(Queues::$uploadsTempDir)) {
-			Queues::$uploadsTempDir = Environment::expand("%tempDir%");
 		}
 
 		if (!is_writable(Queues::$uploadsTempDir)) {
