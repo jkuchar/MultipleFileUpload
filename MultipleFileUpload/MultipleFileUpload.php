@@ -63,37 +63,35 @@ class MultipleFileUpload extends UploadControl
 	 */
 	public static $baseWWWRoot = null;
 
-	/** @var Nette\DI\Container */
-	private static $container;
+	/** @var Nette\Http\IRequest */
+	private static $request;
 
+        /** @var bool */
+        private static $productionMode;
+        
 	/**
 	 * Initialize MFU
 	 */
-	public static function init()
+	public static function init(Nette\Http\IRequest $request, Array $parameters)
 	{
 		// Init UI registrator
 		$uiReg = self::$interfaceRegistrator = new Registrator();
 		$uiReg->register("MultipleFileUpload\\UI\\HTML4SingleUpload");
 		$uiReg->register("MultipleFileUpload\\UI\\Plupload");
-
+                self::$request = $request;
+                self::$productionMode = $parameters['productionMode'];
 		// Set default check callback
 		self::$validateFileCallback = [__CLASS__, "validateFile"];
-		self::$baseWWWRoot = self::$container->getByType('Nette\Http\IRequest')->url->baseUrl . "MultipleFileUpload/";
+		self::$baseWWWRoot = self::$request->url->baseUrl . "MultipleFileUpload/";
 	}
 
 
 	/**
 	 * Register MFU into Nette
 	 */
-	public static function register($container, string $queuesModel)
-	{
-		self::$container = $container;
-		$namespace = '\MultipleFileUpload\Model\\'. $queuesModel .  '\Queues';
-		self::$queuesModel = new $namespace($container); 
-		self::init();
-		$application = $container->getByType('Nette\Application\Application');
-		$application->onStartup[] = [__CLASS__, "handleUploads"];
-		$application->onShutdown[] = [__CLASS__, "cleanCache"];
+	public static function register(Model\IQueues $queuesModel)
+	{   
+            self::$queuesModel = $queuesModel;
 	}
 
 
@@ -136,7 +134,7 @@ class MultipleFileUpload extends UploadControl
 			self::$handleUploadsCalled = true;
 		}
 
-        $req = self::$container->getByType('Nette\Http\IRequest');
+        $req = self::$request;
 		// Workaround for: http://forum.nettephp.com/cs/3680-httprequest-getheaders-a-content-type
 		$contentType = $req->getHeader("content-type");
 		if (!$contentType and isset($_SERVER["CONTENT_TYPE"])) {
@@ -149,7 +147,7 @@ class MultipleFileUpload extends UploadControl
 
 		self::getQueuesModel()->initialize();
 
-		foreach (self::getUIRegistrator()->getInterfaces(self::$container) AS $interface) {
+		foreach (self::getUIRegistrator()->getInterfaces(self::$request) AS $interface) {
 //			\Nette\Diagnostics\Debugger::log($interface->getReflection()->getName().": is this your upload? ".$interface->isThisYourUpload());
 			if ($interface->isThisYourUpload()) {
 				$ret = $interface->handleUploads();
@@ -175,9 +173,8 @@ class MultipleFileUpload extends UploadControl
 	 * Cleans cache
 	 */
 	public static function cleanCache()
-	{
- 		$parameters = self::$container->getParameters();
-		if (!$parameters['productionMode'] or rand(1, 100) < 5) {
+	{       
+		if (false == self::$productionMode or rand(1, 100) < 5) {
 			self::getQueuesModel()->cleanup();
 		}
 	}
@@ -257,15 +254,13 @@ class MultipleFileUpload extends UploadControl
 	 */
 	public $simUploadThreads;
 
-
-	/**
+        /**
 	 * Constructor
 	 * @param string $label Label
 	 */
 	public function __construct($label = NULL, $maxSelectedFiles = 25)
 	{
 		parent::__construct($label);
-
 		if (!self::$handleUploadsCalled) {
 			throw new InvalidStateException("MultipleFileUpload::handleUpload() has not been called. Call `MultipleFileUpload::register();` from your bootstrap before you call Applicaton::run();");
 		};
@@ -294,7 +289,7 @@ class MultipleFileUpload extends UploadControl
 		// </section token field>
 
 		$fallbacks = array();
-		$interfaces = self::getUIRegistrator()->getInterfaces(self::$container);
+		$interfaces = self::getUIRegistrator()->getInterfaces(self::$request);
 		$num = count($interfaces);
 		$cnt = 1;
 		foreach ($interfaces AS $interface) {
