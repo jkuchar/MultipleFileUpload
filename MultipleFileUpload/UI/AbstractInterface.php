@@ -12,12 +12,12 @@
 namespace MultipleFileUpload\UI;
 
 use MultipleFileUpload\MultipleFileUpload,
-    Latte,
-    Nette\Bridges,
+	Nette,
+	Latte,
+	Nette\Bridges,
 	Nette\Http\FileUpload,
 	Nette\Http\Request,
-	Nette\Object,
-    Nette\Http\IRequest;
+	Nette\Object;
 
 /**
  * Abstract UI Controller
@@ -28,7 +28,7 @@ abstract class AbstractInterface extends Object implements IUserInterface
 	protected $httpRequest;
 
 
-	public function __construct(IRequest $httpRequest)
+	public function __construct(Nette\Http\Request$httpRequest)
 	{
 		$this->httpRequest = $httpRequest;
 	}
