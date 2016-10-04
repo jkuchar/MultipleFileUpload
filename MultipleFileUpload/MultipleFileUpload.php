@@ -254,7 +254,7 @@ class MultipleFileUpload extends UploadControl
 	 */
 	public $simUploadThreads;
 
-        /**
+	/**
 	 * Constructor
 	 * @param string $label Label
 	 */

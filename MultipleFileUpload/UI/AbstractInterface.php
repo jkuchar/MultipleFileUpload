@@ -28,7 +28,7 @@ abstract class AbstractInterface extends Object implements IUserInterface
 	protected $httpRequest;
 
 
-	public function __construct(Nette\Http\Request$httpRequest)
+	public function __construct(Nette\Http\Request $httpRequest)
 	{
 		$this->httpRequest = $httpRequest;
 	}
