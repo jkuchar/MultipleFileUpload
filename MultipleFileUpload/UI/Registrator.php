@@ -23,6 +23,22 @@ class Registrator extends Object
 	public $interfaces = array();
 
 
+	private $productionMode;
+
+
+	public function __construct($productionMode, HTML4SingleUpload\Controller $htmlUpload, Plupload\Controller $plupload)
+	{
+		$this->productionMode = $productionMode;
+		$this->interfaces[] = $htmlUpload;
+		$this->interfaces[] = $plupload;
+	}
+
+
+	public function getProductionMode() {
+		return $this->productionMode;
+	}
+
+
 	public function register($interface)
 	{
 		if (is_object($interface)) {

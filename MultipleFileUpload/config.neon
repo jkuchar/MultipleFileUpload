@@ -1,0 +1,4 @@
+services:
+	- MultipleFileUpload\UI\Registrator(%productionMode%,)
+	- MultipleFileUpload\UI\HTML4SingleUpload\Controller
+	- MultipleFileUpload\UI\Plupload\Controller

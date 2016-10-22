@@ -66,32 +66,18 @@ class MultipleFileUpload extends UploadControl
 	/** @var Nette\Http\IRequest */
 	private static $request;
 
-	/** @var bool */
-	private static $productionMode;
 
 	/**
 	 * Initialize MFU
 	 */
-	public static function init(Nette\Http\IRequest $request, Array $parameters)
+	public static function init(Model\IQueues $queuesModel, Nette\Http\IRequest $request, UI\Registrator $registrator)
 	{
-		// Init UI registrator
-		$uiReg = self::$interfaceRegistrator = new Registrator();
-		$uiReg->register("MultipleFileUpload\\UI\\HTML4SingleUpload");
-		$uiReg->register("MultipleFileUpload\\UI\\Plupload");
+		self::$queuesModel = $queuesModel;
 		self::$request = $request;
-		self::$productionMode = $parameters['productionMode'];
+		self::$interfaceRegistrator = $registrator;
 		// Set default check callback
 		self::$validateFileCallback = [__CLASS__, "validateFile"];
 		self::$baseWWWRoot = self::$request->url->baseUrl . "MultipleFileUpload/";
-	}
-
-
-	/**
-	 * Register MFU into Nette
-	 */
-	public static function register(Model\IQueues $queuesModel)
-	{   
-            self::$queuesModel = $queuesModel;
 	}
 
 
@@ -133,15 +119,15 @@ class MultipleFileUpload extends UploadControl
 		} else {
 			self::$handleUploadsCalled = true;
 		}
-
-        $req = self::$request;
+		
+		$request = self::$request;
 		// Workaround for: http://forum.nettephp.com/cs/3680-httprequest-getheaders-a-content-type
-		$contentType = $req->getHeader("content-type");
+		$contentType = $request->getHeader("content-type");
 		if (!$contentType and isset($_SERVER["CONTENT_TYPE"])) {
 			$contentType = $_SERVER["CONTENT_TYPE"];
 		}
 
-		if ($req->getMethod() !== "POST") {
+		if ($request->getMethod() !== "POST") {
 			return;
 		}
 
@@ -174,7 +160,7 @@ class MultipleFileUpload extends UploadControl
 	 */
 	public static function cleanCache()
 	{
-		if (FALSE == self::$productionMode or rand(1, 100) < 5) {
+		if (false == self::getUIRegistrator()->getProductionMode() or rand(1, 100) < 5) {
 			self::getQueuesModel()->cleanup();
 		}
 	}
@@ -203,6 +189,7 @@ class MultipleFileUpload extends UploadControl
 	}
 
 
+
 	/**
 	 * @return Registrator
 	 */
@@ -217,10 +204,8 @@ class MultipleFileUpload extends UploadControl
 
 	public static function getHead()
 	{
-		// TODO: Add MFUFallbackController?
-
 		$out = "";
-		foreach (self::getUIRegistrator()->getInterfaces() AS $interface) {
+		foreach ($this->interfaces AS $interface) {
 			$out .= $interface->renderHeadSection();
 		}
 		return $out;
@@ -258,17 +243,22 @@ class MultipleFileUpload extends UploadControl
 	 * Constructor
 	 * @param string $label Label
 	 */
-	public function __construct($label = NULL, $maxSelectedFiles = 25)
+	public function __construct($label = NULL, $maxSelectedFiles = 25, Nette\Http\IRequest $request, UI\Registrator $registrator)
 	{
 		parent::__construct($label);
-		if (!self::$handleUploadsCalled) {
+		/*if (!self::$handleUploadsCalled) {
 			throw new InvalidStateException("MultipleFileUpload::handleUpload() has not been called. Call `MultipleFileUpload::register();` from your bootstrap before you call Applicaton::run();");
-		};
-
+		};*/
+		
 		$this->maxFiles = $maxSelectedFiles;
 		$this->control = Html::el("div"); // TODO: support for prototype
 		$this->maxFileSize = self::parseIniSize(ini_get('upload_max_filesize'));
 		$this->simUploadThreads = 5;
+		// Set default check callback
+		self::$request = $request;
+		self::$interfaceRegistrator = $registrator;
+		self::$validateFileCallback = [__CLASS__, "validateFile"];
+		self::$baseWWWRoot = self::$request->url->baseUrl . "MultipleFileUpload/";
 	}
 
 
@@ -524,7 +514,7 @@ class MultipleFileUpload extends UploadControl
 
 /**
  * Extension method for FormContainer
- */
+
 function FormContainer_addMultipleFileUpload(Forms\Container $_this, $name, $label = NULL, $maxFiles = 25)
 {
 	return $_this[$name] = new MultipleFileUpload($label, $maxFiles);
@@ -532,3 +522,4 @@ function FormContainer_addMultipleFileUpload(Forms\Container $_this, $name, $lab
 
 
 Container::extensionMethod("\Nette\Forms\Container::addMultipleFileUpload", "MultipleFileUpload\FormContainer_addMultipleFileUpload");
+ */
