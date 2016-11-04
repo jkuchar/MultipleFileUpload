@@ -246,9 +246,9 @@ class MultipleFileUpload extends UploadControl
 	public function __construct($label = NULL, $maxSelectedFiles = 25, Nette\Http\IRequest $request, UI\Registrator $registrator)
 	{
 		parent::__construct($label);
-		/*if (!self::$handleUploadsCalled) {
+		if (!self::$handleUploadsCalled) {
 			throw new InvalidStateException("MultipleFileUpload::handleUpload() has not been called. Call `MultipleFileUpload::register();` from your bootstrap before you call Applicaton::run();");
-		};*/
+		};
 		
 		$this->maxFiles = $maxSelectedFiles;
 		$this->control = Html::el("div"); // TODO: support for prototype

@@ -14,7 +14,6 @@ namespace MultipleFileUpload\Model\SQLite3;
 
 use MultipleFileUpload\Model\BaseQueues,
 	MultipleFileUpload\Model\IQueue,
-	Nette\Environment,
 	Nette\InvalidStateException,
 	SQLite3,
 	SQLite3Result,
@@ -23,7 +22,7 @@ use MultipleFileUpload\Model\BaseQueues,
 class Queues extends BaseQueues
 {
 	/**
-	 * @var \SQLite3
+	 * @var SQLite3
 	 */
 	private $connection;
 
@@ -48,7 +47,16 @@ class Queues extends BaseQueues
 
 	}
 
-
+	public function __construct(string $tempDir, SQLite3 $connection)
+	{
+		self::$uploadsTempDir = $tempDir . DIRECTORY_SEPARATOR . "uploads-MFU";
+		if(!file_exists(self::$uploadsTempDir)) {
+			mkdir(self::$uploadsTempDir, 0775, TRUE);
+		}
+		$this->connection = $connection;
+	}
+	
+	
 	// <editor-fold defaultstate="collapsed" desc="Database functions">
 
 	function getConnection()

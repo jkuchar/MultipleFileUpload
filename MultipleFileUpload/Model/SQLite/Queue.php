@@ -67,15 +67,11 @@ class Queue extends BaseQueue
 	function getUploadedFilesTemporaryPath()
 	{
 		if (!Queues::$uploadsTempDir) {
-			Queues::$uploadsTempDir = Environment::expand("%tempDir%" . DIRECTORY_SEPARATOR . "uploads-MFU");
+			throw new InvalidStateException("Directory for temp files is not set.");
 		}
 
 		if (!file_exists(Queues::$uploadsTempDir)) {
 			mkdir(Queues::$uploadsTempDir, 0777, true);
-		}
-
-		if (!is_writable(Queues::$uploadsTempDir)) {
-			Queues::$uploadsTempDir = Environment::expand("%tempDir%");
 		}
 
 		if (!is_writable(Queues::$uploadsTempDir)) {
