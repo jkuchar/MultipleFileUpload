@@ -12,7 +12,6 @@
 namespace MultipleFileUpload\UI;
 
 use MultipleFileUpload\MultipleFileUpload,
-	Nette,
 	Latte,
 	Nette\Bridges,
 	Nette\Http\FileUpload,
@@ -28,7 +27,7 @@ abstract class AbstractInterface extends Object implements IUserInterface
 	protected $httpRequest;
 
 
-	public function __construct(Nette\Http\Request $httpRequest)
+	public function __construct(Request $httpRequest)
 	{
 		$this->httpRequest = $httpRequest;
 	}
@@ -75,12 +74,12 @@ abstract class AbstractInterface extends Object implements IUserInterface
 
 	protected function createTemplate()
 	{
-        $latte = new Latte\Engine();
-        $template = new Bridges\ApplicationLatte\Template($latte);
+		$latte = new Latte\Engine();
+		$template = new Bridges\ApplicationLatte\Template($latte);
 		$template->baseUrl = $this->httpRequest->url->baseUrl;
 		$template->basePath = rtrim($template->baseUrl, '/');
 		$template->interface = $this;
-        $template->addFilter(NULL, 'Latte\Macros\CoreMacros::install');
+		$template->addFilter(NULL, 'Latte\Macros\CoreMacros::install');
 
 		return $template;
 	}

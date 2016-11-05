@@ -2,7 +2,7 @@
 <link href="{$interface->baseUrl}/js/jquery.plupload.queue/css/jquery.plupload.queue.css" rel="stylesheet" type="text/css" />
 
 <!-- Load plupload and all it's runtimes and finally the jQuery UI queue widget -->
-{if \Nette\Environment::isProduction()}
+{if true == $productionMode}
 <script type="text/javascript" src="{$interface->baseUrl}/js/plupload.full.min.js"></script>
 <script type="text/javascript" src="{$interface->baseUrl}/js/jquery.plupload.queue/jquery.plupload.queue.min.js"></script>
 {else}

@@ -13,7 +13,6 @@ namespace MultipleFileUpload\Model\SQLite;
 
 use MultipleFileUpload\Model\BaseQueues,
 	MultipleFileUpload\Model\IQueue,
-	Nette\Environment,
 	Nette\InvalidStateException,
 	SQLiteDatabase;
 
@@ -51,6 +50,7 @@ class Queues extends BaseQueues
 		if(!file_exists(self::$uploadsTempDir)) {
 			mkdir(self::$uploadsTempDir, 0775, TRUE);
 		}
+		self::$databasePath = dirname(__FILE__) . "/database.sdb";
 		$this->connection = $connection;
 	}
 	// <editor-fold defaultstate="collapsed" desc="Database functions">
@@ -181,15 +181,7 @@ class Queues extends BaseQueues
 
 	static function init()
 	{
-		// TODO: remove this magic
-		$config = Environment::getConfig("MultipleFileUploader", array(
-				"databasePath" => dirname(__FILE__) . "/database.sdb",
-				"uploadsTempDir" => ""
-		));
 
-		foreach ($config AS $key => $val) {
-			self::$$key = $val;
-		}
 	}
 
 

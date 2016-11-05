@@ -12,7 +12,6 @@
 namespace MultipleFileUpload\Model\SQLite;
 
 use MultipleFileUpload\Model\BaseQueue,
-	Nette\Environment,
 	Nette\Http\FileUpload,
 	Nette\InvalidStateException;
 

@@ -13,13 +13,26 @@ namespace MultipleFileUpload\UI\Plupload;
 
 use MultipleFileUpload\MultipleFileUpload,
 	MultipleFileUpload\UI\AbstractInterface,
-	Nette\Http\FileUpload;
+	Nette\DI\Container,
+	Nette\Http\FileUpload,
+	Nette\Http\Request;
 
 /**
  * @author Jan Kuchař
  */
 class Controller extends AbstractInterface
 {
+
+
+	/** @var Array */
+	private $parameters;
+
+
+	public function __construct(Container $container, Request $httpRequest)
+	{
+		parent::__construct($httpRequest);
+		$this->parameters = $container->getParameters();
+	}
 
 	/**
 	 * Gets interface base url
@@ -221,10 +234,10 @@ class Controller extends AbstractInterface
 	 */
 	public function render(MultipleFileUpload $upload)
 	{
-        $template = parent::createTemplate();
-        $template->setFile(__DIR__ . "/html.latte");
-        $template->id = $this->getHtmlIdFlashCompatible($upload);
-        return $template->__toString(TRUE);
+	$template = parent::createTemplate();
+	$template->setFile(__DIR__ . "/html.latte");
+	$template->id = $this->getHtmlIdFlashCompatible($upload);
+	return $template->__toString(TRUE);
 	}
 
 
@@ -233,17 +246,17 @@ class Controller extends AbstractInterface
 	 */
 	public function renderInitJavaScript(MultipleFileUpload $upload)
 	{
-        $template = parent::createTemplate();
-        $template->setFile(__DIR__ . "/initJS.latte");
-        $template->token = $upload->getToken();
-        $template->sizeLimit = $upload->maxFileSize;
-        $template->maxFiles = $upload->maxFiles;
+	$template = parent::createTemplate();
+	$template->setFile(__DIR__ . "/initJS.latte");
+	$template->token = $upload->getToken();
+	$template->sizeLimit = $upload->maxFileSize;
+	$template->maxFiles = $upload->maxFiles;
 
 		// TODO: make creation of link nicer!
 		//$baseUrl = $this->httpRequest->url->baseUrl;
 		//$template->uploadLink = $baseUrl . "?token=" . $template->token . "&uploader=plupload";
-        $url = $this->httpRequest->url;
-        $template->uploadLink = $url->scheme . "://" . $url->host . $url->path . '?' . $url->query . "&token=" . $template->token . "&uploader=plupload";
+	$url = $this->httpRequest->url;
+	$template->uploadLink = $url->scheme . "://" . $url->host . $url->path . '?' . $url->query . "&token=" . $template->token . "&uploader=plupload";
 		$template->id = $this->getHtmlIdFlashCompatible($upload);
 		return $template->__toString(TRUE);
 	}
@@ -254,8 +267,8 @@ class Controller extends AbstractInterface
 	 */
 	public function renderDestructJavaScript(MultipleFileUpload $upload)
 	{
-        $template = parent::createTemplate();
-        $template->setFile(__DIR__ . "/destructJS.js")->__toString(TRUE);
+	$template = parent::createTemplate();
+	$template->setFile(__DIR__ . "/destructJS.js")->__toString(TRUE);
 	}
 
 
@@ -264,8 +277,9 @@ class Controller extends AbstractInterface
 	 */
 	public function renderHeadSection()
 	{
-        $template = parent::createTemplate();
-        $template->setFile(__DIR__ . "/head.latte")->__toString(TRUE);
+	$template = parent::createTemplate();
+	$template->productionMode = $this->parameters['productionMode'];
+	$template->setFile(__DIR__ . "/head.latte")->__toString(TRUE);
 	}
 
 

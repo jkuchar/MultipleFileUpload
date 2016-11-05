@@ -53,6 +53,7 @@ class Queues extends BaseQueues
 		if(!file_exists(self::$uploadsTempDir)) {
 			mkdir(self::$uploadsTempDir, 0775, TRUE);
 		}
+		self::$databasePath = dirname(__FILE__) . "/database.sqlite3";
 		$this->connection = $connection;
 	}
 	
@@ -195,15 +196,7 @@ class Queues extends BaseQueues
 
 	static function init()
 	{
-		// TODO: remove this magic
-		$config = Environment::getConfig('MultipleFileUploader', array(
-				'databasePath' => dirname(__FILE__) . '/database.sqlite3',
-				'uploadsTempDir' => ''
-		));
 
-		foreach ($config AS $key => $val) {
-			self::$$key = $val;
-		}
 	}
 
 
