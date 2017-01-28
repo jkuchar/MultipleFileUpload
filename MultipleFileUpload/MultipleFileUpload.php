@@ -68,13 +68,15 @@ class MultipleFileUpload extends UploadControl
 
 
 	/**
-	 * Initialize MFU
+	 * Initialize MFU uploads handling and cache cleanups
+	 * For form control initialization {@see self::__contruct()}.
 	 */
 	public static function init(Model\IQueues $queuesModel, Nette\Http\IRequest $request, UI\Registrator $registrator)
 	{
 		self::$queuesModel = $queuesModel;
 		self::$request = $request;
 		self::$interfaceRegistrator = $registrator;
+
 		// Set default check callback
 		self::$validateFileCallback = [__CLASS__, "validateFile"];
 		self::$baseWWWRoot = self::$request->url->baseUrl . "MultipleFileUpload/";
@@ -196,7 +198,7 @@ class MultipleFileUpload extends UploadControl
 	public static function getUIRegistrator()
 	{
 		if (!self::$interfaceRegistrator instanceof Registrator) {
-			throw new InvalidStateException("Interface registrator is not instance of MultipleFileUpload\UI\Registrator!");
+			throw new InvalidStateException("Interface registrator is not instance of MultipleFileUpload\\UI\\Registrator!");
 		}
 		return self::$interfaceRegistrator;
 	}

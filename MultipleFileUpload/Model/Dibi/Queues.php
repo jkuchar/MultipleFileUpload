@@ -44,9 +44,13 @@ class Queues extends BaseQueues
 
 	}
 
+	// todo: Queue should have reference to Queues (remove static dependency ---> there is then not assumed that there is onlu one Queues instance in the app)
+	// todo: remove self::$uploadsTempDir ---> create private $uploadsTempDir
+	// todo: create getTempDir()
+
 	public function __construct(string $tempDir, DibiConnection $conection)
 	{
-		self::$uploadsTempDir = $tempDir . DIRECTORY_SEPARATOR . "uploads-MFU";
+		self::$uploadsTempDir = $tempDir;
 		if(!file_exists(self::$uploadsTempDir)) {
 			mkdir(self::$uploadsTempDir, 0775, TRUE);
 		}
@@ -80,7 +84,7 @@ class Queues extends BaseQueues
 	 */
 	function createQueueObj($queueID)
 	{
-		$queue = new Queue();
+		$queue = new Queue(); // todo: remove setQueuesModel --> move to __construct
 		$queue->setQueuesModel($this);
 		$queue->setQueueID($queueID);
 		$queue->initialize();

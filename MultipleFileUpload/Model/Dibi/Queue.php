@@ -24,6 +24,7 @@ use dibi,
  */
 class Queue extends BaseQueue
 {
+	// todo: use $this->queuesModel->getTempDir() (non-existing now)
 
 	/**
 	 * Executes query

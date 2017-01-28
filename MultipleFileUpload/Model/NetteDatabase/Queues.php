@@ -50,7 +50,7 @@ class Queues extends BaseQueues
 	
 	public function __construct($tempDir, Nette\Database\Context $database)
 	{
-		self::$uploadsTempDir = $tempDir . DIRECTORY_SEPARATOR . "uploads-MFU";
+		self::$uploadsTempDir = $tempDir;
 		if(!file_exists(self::$uploadsTempDir)) {
 			mkdir(self::$uploadsTempDir, 0775, TRUE);
 		}

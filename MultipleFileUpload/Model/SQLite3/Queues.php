@@ -47,14 +47,19 @@ class Queues extends BaseQueues
 
 	}
 
-	public function __construct(string $tempDir, SQLite3 $connection)
+	// todo: add to Travis CI parallel lint https://github.com/JakubOnderka/PHP-Parallel-Lint
+	// todo: remove me :-) http://eyeleo.com/
+
+	/**
+	 * */
+	public function __construct($tempDir, $databaseFilePath)
 	{
-		self::$uploadsTempDir = $tempDir . DIRECTORY_SEPARATOR . "uploads-MFU";
+		self::$uploadsTempDir = $tempDir;
 		if(!file_exists(self::$uploadsTempDir)) {
 			mkdir(self::$uploadsTempDir, 0775, TRUE);
 		}
-		self::$databasePath = dirname(__FILE__) . "/database.sqlite3";
-		$this->connection = $connection;
+		self::$databasePath = $databaseFilePath;
+		$this->connection = new SQLite3($databaseFilePath);
 	}
 	
 	
