@@ -27,7 +27,7 @@ class Queues extends BaseQueues
 	 * Path to directory of uploaded files (temp)
 	 * @var string
 	 */
-	public static $uploadsTempDir;
+	public $uploadsTempDir;
 
 	/**
 	 * Connection
@@ -44,15 +44,11 @@ class Queues extends BaseQueues
 
 	}
 
-	// todo: Queue should have reference to Queues (remove static dependency ---> there is then not assumed that there is onlu one Queues instance in the app)
-	// todo: remove self::$uploadsTempDir ---> create private $uploadsTempDir
-	// todo: create getTempDir()
-
 	public function __construct(string $tempDir, DibiConnection $conection)
 	{
-		self::$uploadsTempDir = $tempDir;
-		if(!file_exists(self::$uploadsTempDir)) {
-			mkdir(self::$uploadsTempDir, 0775, TRUE);
+		$this->uploadsTempDir = $tempDir;
+		if(!file_exists($this->uploadsTempDir)) {
+			mkdir($this->uploadsTempDir, 0775, TRUE);
 		}
 		$this->conection = $conection;
 	}

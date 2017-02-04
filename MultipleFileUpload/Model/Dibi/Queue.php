@@ -24,7 +24,6 @@ use dibi,
  */
 class Queue extends BaseQueue
 {
-	// todo: use $this->queuesModel->getTempDir() (non-existing now)
 
 	/**
 	 * Executes query
@@ -94,19 +93,19 @@ class Queue extends BaseQueue
 	 */
 	function getUploadedFilesTemporaryPath()
 	{
-		if (!Queues::$uploadsTempDir) {
+		if (!$this->getQueuesModel()->uploadsTempDir) {
 			throw new InvalidStateException("Directory for temp files is not set.");
 		}
 
-		if (!file_exists(Queues::$uploadsTempDir)) {
-			mkdir(Queues::$uploadsTempDir, 0777, true);
+		if (!file_exists($this->getQueuesModel()->uploadsTempDir)) {
+			mkdir($this->getQueuesModel()->uploadsTempDir, 0777, true);
 		}
 
-		if (!is_writable(Queues::$uploadsTempDir)) {
+		if (!is_writable($this->getQueuesModel()->uploadsTempDir)) {
 			throw new InvalidStateException("Directory for temp files is not writable!");
 		}
 
-		return Queues::$uploadsTempDir;
+		return $this->getQueuesModel()->uploadsTempDir;
 	}
 
 
