@@ -89,7 +89,8 @@ class Controller extends \MultipleFileUpload\UI\AbstractInterface
 	 */
 	public function render(MultipleFileUpload $upload)
 	{
-		$template = $this->createTemplate(dirname(__FILE__) . "/html.latte");
+		$template = parent::createTemplate();
+		$template->setFile(__DIR__ . "/html.latte");
 		$template->maxFiles = $upload->maxFiles;
 		$template->mfu = $upload;
 		return $template->__toString(TRUE);
@@ -101,7 +102,8 @@ class Controller extends \MultipleFileUpload\UI\AbstractInterface
 	 */
 	public function renderInitJavaScript(MultipleFileUpload $upload)
 	{
-		return $this->createTemplate(dirname(__FILE__) . "/initJS.latte")->__toString(TRUE);
+        $template = parent::createTemplate();
+		return $template->setFile(__DIR__ . "/initJS.latte")->__toString(TRUE);
 	}
 
 

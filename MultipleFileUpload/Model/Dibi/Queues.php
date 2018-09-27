@@ -11,10 +11,9 @@
 
 namespace MultipleFileUpload\Model\Dibi;
 
-use dibi,
+use DibiConnection,
 	MultipleFileUpload\Model\BaseQueues,
-	MultipleFileUpload\Model\IQueue,
-	Nette\InvalidStateException;
+	MultipleFileUpload\Model\IQueue;
 
 /**
  * Multiple File Uploader driver for Dibi
@@ -28,13 +27,13 @@ class Queues extends BaseQueues
 	 * Path to directory of uploaded files (temp)
 	 * @var string
 	 */
-	public static $uploadsTempDir;
+	public $uploadsTempDir;
 
 	/**
 	 * Connection
-	 * @var \DibiConnection
+	 * @var DibiConnection
 	 */
-	public static $dibiConnection;
+	public $connection;
 
 
 	/**
@@ -45,38 +44,24 @@ class Queues extends BaseQueues
 
 	}
 
-
-	// <editor-fold defaultstate="collapsed" desc="Database functions">
-
-	/**
-	 * Gets dibi connection
-	 * @return \DibiConnection
-	 */
-	function getConnection()
+	public function __construct(string $tempDir, DibiConnection $conection)
 	{
-		if (!self::$dibiConnection) {
-			self::$dibiConnection = dibi::getConnection();
+		$this->uploadsTempDir = $tempDir;
+		if(!file_exists($this->uploadsTempDir)) {
+			mkdir($this->uploadsTempDir, 0775, TRUE);
 		}
-		return self::$dibiConnection;
+		$this->conection = $conection;
 	}
-
 
 	/**
-	 * Executes query
-	 * @return \DibiResult
-	 * @throws InvalidStateException
+	 * @return DibiConnection 
 	 */
-	function query()
+	public function getConnection()
 	{
-		$params = func_get_args();
-		return call_user_func_array(
-			array($this->getConnection(), 'query'), $params
-		);
+		return $this->database;
 	}
-
-
-	// </editor-fold>
-
+	
+	
 	/**
 	 * Gets queue (create if needed)
 	 * @param string $id
@@ -95,7 +80,7 @@ class Queues extends BaseQueues
 	 */
 	function createQueueObj($queueID)
 	{
-		$queue = new Queue();
+		$queue = new Queue(); // todo: remove setQueuesModel --> move to __construct
 		$queue->setQueuesModel($this);
 		$queue->setQueueID($queueID);
 		$queue->initialize();
@@ -108,13 +93,13 @@ class Queues extends BaseQueues
 	 */
 	function cleanup()
 	{
-		$this->getConnection()->begin();
+		$this->connection->begin();
 		foreach ($this->getQueues() AS $queue) {
 			if ($queue->getLastAccess() < time() - $this->getLifeTime()) {
 				$queue->delete();
 			}
 		}
-		$this->getConnection()->commit();
+		$this->connection->commit();
 	}
 
 

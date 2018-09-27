@@ -14,7 +14,6 @@ namespace MultipleFileUpload\Model\SQLite3;
 
 use MultipleFileUpload\Model\BaseQueues,
 	MultipleFileUpload\Model\IQueue,
-	Nette\Environment,
 	Nette\InvalidStateException,
 	SQLite3,
 	SQLite3Result,
@@ -23,7 +22,7 @@ use MultipleFileUpload\Model\BaseQueues,
 class Queues extends BaseQueues
 {
 	/**
-	 * @var \SQLite3
+	 * @var SQLite3
 	 */
 	private $connection;
 
@@ -48,7 +47,22 @@ class Queues extends BaseQueues
 
 	}
 
+	// todo: add to Travis CI parallel lint https://github.com/JakubOnderka/PHP-Parallel-Lint
+	// todo: remove me :-) http://eyeleo.com/
 
+	/**
+	 * */
+	public function __construct($tempDir, $databaseFilePath)
+	{
+		self::$uploadsTempDir = $tempDir;
+		if(!file_exists(self::$uploadsTempDir)) {
+			mkdir(self::$uploadsTempDir, 0775, TRUE);
+		}
+		self::$databasePath = $databaseFilePath;
+		$this->connection = new SQLite3($databaseFilePath);
+	}
+	
+	
 	// <editor-fold defaultstate="collapsed" desc="Database functions">
 
 	function getConnection()
@@ -187,15 +201,7 @@ class Queues extends BaseQueues
 
 	static function init()
 	{
-		// TODO: remove this magic
-		$config = Environment::getConfig('MultipleFileUploader', array(
-				'databasePath' => dirname(__FILE__) . '/database.sqlite3',
-				'uploadsTempDir' => ''
-		));
 
-		foreach ($config AS $key => $val) {
-			self::$$key = $val;
-		}
 	}
 
 

@@ -68,7 +68,8 @@ class Controller extends \MultipleFileUpload\UI\AbstractInterface
 	 */
 	public function render(MultipleFileUpload $upload)
 	{
-		$template = $this->createTemplate(dirname(__FILE__) . "/html.latte");
+        $template = parent::createTemplate();
+        $template->setFile(__DIR__ . "/html.latte");
 		$template->uploadifyId = $upload->getHtmlId() . "-uploadifyBox";
 		return $template->__toString(TRUE);
 	}
@@ -79,14 +80,15 @@ class Controller extends \MultipleFileUpload\UI\AbstractInterface
 	 */
 	public function renderInitJavaScript(MultipleFileUpload $upload)
 	{
-		$tpl = $this->createTemplate(dirname(__FILE__) . "/initJS.latte");
-		$tpl->sizeLimit = $upload->maxFileSize;
-		$tpl->token = $upload->getToken();
-		$tpl->maxFiles = $upload->maxFiles;
-		$tpl->backLink = (string) $upload->form->action;
-		$tpl->uploadifyId = $upload->getHtmlId() . "-uploadifyBox";
-		$tpl->simUploadFiles = $upload->simUploadThreads;
-		return $tpl->__toString(TRUE);
+        $template = parent::createTemplate();
+        $template->setFile(__DIR__ . "/initJS.latte");
+        $template->sizeLimit = $upload->maxFileSize;
+        $template->token = $upload->getToken();
+        $template->maxFiles = $upload->maxFiles;
+        $template->backLink = (string) $upload->form->action;
+        $template->uploadifyId = $upload->getHtmlId() . "-uploadifyBox";
+        $template->simUploadFiles = $upload->simUploadThreads;
+        return $template->__toString(TRUE);
 	}
 
 
@@ -95,7 +97,8 @@ class Controller extends \MultipleFileUpload\UI\AbstractInterface
 	 */
 	public function renderDestructJavaScript(MultipleFileUpload $upload)
 	{
-		return $this->createTemplate(dirname(__FILE__) . "/destructJS.js")->__toString(TRUE);
+        $template = parent::createTemplate();
+        return $template->setFile(__DIR__ . "/destructJS.js")->__toString(TRUE);
 	}
 
 
@@ -104,7 +107,8 @@ class Controller extends \MultipleFileUpload\UI\AbstractInterface
 	 */
 	public function renderHeadSection()
 	{
-		return $this->createTemplate(dirname(__FILE__) . "/head.latte")->__toString(TRUE);
+        $template = parent::createTemplate();
+        $template->setFile(__DIR__ . "/head.latte")->__toString(TRUE);
 	}
 
 

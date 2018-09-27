@@ -13,7 +13,7 @@ namespace MultipleFileUpload\Model\NetteDatabase;
 
 use MultipleFileUpload\Model\BaseQueues,
 	MultipleFileUpload\Model\IQueue,
-	Nette\InvalidStateException;
+	Nette;
 
 /**
  * Multiple File Uploader driver for Nette\Database
@@ -48,8 +48,12 @@ class Queues extends BaseQueues
 		return self::$filesTable;
 	}
 	
-	public function __construct(\Nette\Database\Context $database)
+	public function __construct($tempDir, Nette\Database\Context $database)
 	{
+		self::$uploadsTempDir = $tempDir;
+		if(!file_exists(self::$uploadsTempDir)) {
+			mkdir(self::$uploadsTempDir, 0775, TRUE);
+		}
 		$this->database = $database;
 	}
 	

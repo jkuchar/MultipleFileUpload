@@ -13,7 +13,6 @@ namespace MultipleFileUpload\Model\Dibi;
 
 use dibi,
 	MultipleFileUpload\Model\BaseQueue,
-	Nette\Environment,
 	Nette\Http\FileUpload,
 	Nette\InvalidStateException;
 
@@ -94,23 +93,19 @@ class Queue extends BaseQueue
 	 */
 	function getUploadedFilesTemporaryPath()
 	{
-		if (!Queues::$uploadsTempDir) {
-			Queues::$uploadsTempDir = Environment::expand("%tempDir%" . DIRECTORY_SEPARATOR . "uploads-MFU");
+		if (!$this->getQueuesModel()->uploadsTempDir) {
+			throw new InvalidStateException("Directory for temp files is not set.");
 		}
 
-		if (!file_exists(Queues::$uploadsTempDir)) {
-			mkdir(Queues::$uploadsTempDir, 0777, true);
+		if (!file_exists($this->getQueuesModel()->uploadsTempDir)) {
+			mkdir($this->getQueuesModel()->uploadsTempDir, 0777, true);
 		}
 
-		if (!is_writable(Queues::$uploadsTempDir)) {
-			Queues::$uploadsTempDir = Environment::expand("%tempDir%");
-		}
-
-		if (!is_writable(Queues::$uploadsTempDir)) {
+		if (!is_writable($this->getQueuesModel()->uploadsTempDir)) {
 			throw new InvalidStateException("Directory for temp files is not writable!");
 		}
 
-		return Queues::$uploadsTempDir;
+		return $this->getQueuesModel()->uploadsTempDir;
 	}
 
 

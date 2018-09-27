@@ -81,14 +81,17 @@ class Controller extends AbstractInterface
 	 */
 	public function renderInitJavaScript(MultipleFileUpload $upload)
 	{
-		$tpl = $this->createTemplate(dirname(__FILE__) . "/initJS.latte");
-		$tpl->sizeLimit = ini_get('upload_max_filesize') . 'B';
-		$tpl->token = $upload->getToken();
-		$tpl->maxFiles = $upload->maxFiles;
-		$tpl->backLink = (string) $upload->form->action;
-		$tpl->swfuId = $upload->getHtmlId() . "-swfuBox";
-		$tpl->simUploadFiles = $upload->simUploadThreads;
-		return $tpl->__toString(TRUE);
+		$template = $this->createTemplate(dirname(__FILE__) . "/initJS.latte");
+		$template->sizeLimit = ini_get('upload_max_filesize') . 'B';
+		$template->token = $upload->getToken();
+		$template->maxFiles = $upload->maxFiles;
+		$template->backLink = (string) $upload->form->action;
+		$template->swfuId = $upload->getHtmlId() . "-swfuBox";
+		$template->simUploadFiles = $upload->simUploadThreads;
+		$template->flash_url = $this->httpRequest->url->baseUrl . '/swf/swfupload.swf';
+		$template->flash9_url = $this->httpRequest->url->baseUrl . '/swf/swfupload_fp9.swf';
+		$template->button_image_url = $this->httpRequest->url->baseUrl . 'imgs/XPButtonUploadText_89x88.png';
+		return $template->__toString(TRUE);
 	}
 
 

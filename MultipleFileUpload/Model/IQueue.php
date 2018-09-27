@@ -72,7 +72,7 @@ interface IQueue
 	 * @param type $chunk
 	 * @param FileUpload $file
 	 */
-	function updateFile($name, $chunk, FileUpload $file = null);
+	function updateFile($name, $chunk, FileUpload $file);
 
 	/**
 	 * Gets all files in queue

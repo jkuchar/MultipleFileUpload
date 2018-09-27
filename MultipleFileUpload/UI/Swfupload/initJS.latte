@@ -2,8 +2,8 @@
 (function($){
 
     $("#{$swfuId|noescape}").swfupload({
-            flash_url : {=\Nette\Environment::expand("{$interface->baseUrl}/swf/swfupload.swf")|escapeJS|noescape},
-            flash9_url : {=\Nette\Environment::expand("{$interface->baseUrl}/swf/swfupload_fp9.swf")|escapeJS|noescape},
+            flash_url : {$flash_url},
+            flash9_url : {$flash9_url},
             upload_url: {$backLink|escapeJS|noescape},
             post_params: {
                 token : {$token|escapeJS|noescape},
@@ -22,7 +22,7 @@
             debug: false,
 
             // Button settings
-            button_image_url: {=\Nette\Environment::expand("{$interface->baseUrl}/imgs/XPButtonUploadText_89x88.png")|escapeJS|noescape},
+            button_image_url: {$button_image_url},
             button_width: "89",
             button_height: "22",
             button_placeholder_id : "{$swfuId|noescape}placeHolder",
