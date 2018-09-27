@@ -1,6 +1,8 @@
 MultipleFileUpload
 ==================
 
+**SEEKING FOR NEW MAINTAINER: As I do not use this code anymore, I rarely contribute to this repository. Feed free to fork it and continue with development. I will be happy to give you access to this repository and composer package.**
+
 [![Code Climate](https://codeclimate.com/github/jkuchar/MultipleFileUpload/badges/gpa.svg)](https://codeclimate.com/github/jkuchar/MultipleFileUpload)
 
 
